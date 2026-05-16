@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="650.0"
+            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.kafpin124.rkpp_kursr.contoller.ReportsController">
+
+    <top>
+        <VBox spacing="10" style="-fx-padding: 10;">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Тип отчёта:"/>
+                <ComboBox fx:id="reportTypeCombo" promptText="Выберите"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Период с:"/>
+                <DatePicker fx:id="reportDateFrom"/>
+                <Label text="по:"/>
+                <DatePicker fx:id="reportDateTo"/>
+                <Button text="Сформировать" onAction="#onGenerateReport"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <TableView fx:id="reportTable">
+            <!-- Колонки будут добавляться динамически в зависимости от типа отчёта -->
+        </TableView>
+    </center>
+
+    <bottom>
+        <ButtonBar style="-fx-padding: 10;">
+            <buttons>
+                <Button text="Экспорт" onAction="#onExport"/>
+                <Button text="Печать" onAction="#onPrint"/>
+                <Button text="Закрыть" onAction="#onCancel"/>
+            </buttons>
+        </ButtonBar>
+    </bottom>
+</BorderPane>

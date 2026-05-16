@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="650.0"
+            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.kafpin124.rkpp_kursr.contoller.ManageTestsController">
+
+    <center>
+        <TableView fx:id="testsTable">
+            <columns>
+                <TableColumn text="ID" prefWidth="40"/>
+                <TableColumn text="Наименование" prefWidth="200"/>
+                <TableColumn text="Биоматериал" prefWidth="120"/>
+                <TableColumn text="Срок (ч)" prefWidth="80"/>
+                <TableColumn text="Цена" prefWidth="80"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <right>
+        <VBox spacing="10" style="-fx-padding: 10;" prefWidth="200">
+            <Button text="Добавить" onAction="#onAddTest" maxWidth="Infinity"/>
+            <Button text="Редактировать" onAction="#onEditTest" maxWidth="Infinity"/>
+            <Button text="Удалить" onAction="#onDeleteTest" maxWidth="Infinity"/>
+            <Separator/>
+            <Button text="Управление нормами" onAction="#onManageReferences"/>
+        </VBox>
+    </right>
+</BorderPane>

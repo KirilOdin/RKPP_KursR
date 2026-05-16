@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane minWidth="270.0" minHeight="140.0"
+            maxWidth="270.0" maxHeight="140.0"
+            prefWidth="270.0" prefHeight="140.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.kafpin124.rkpp_kursr.contoller.LoginController">
+
+    <children>
+        <VBox spacing="8" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+            <HBox spacing="5">
+                <Label fx:id="lbLogin" prefWidth="60" text="Логин:" />
+                <TextField fx:id="loginField" HBox.hgrow="ALWAYS" />
+            </HBox>
+            <HBox spacing="5">
+                <Label fx:id="lbPassword" prefWidth="60" text="Пароль:" />
+                <PasswordField fx:id="passwordField" HBox.hgrow="ALWAYS" />
+            </HBox>
+            <Label fx:id="messageLabel" text="" textFill="red" />
+        </VBox>
+
+        <Separator AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                   AnchorPane.topAnchor="100" />
+
+
+        <ButtonBar AnchorPane.bottomAnchor="5" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+            <buttons>
+                <Button fx:id="btnClose" text="Закрыть" />
+                <Button fx:id="btnLogin" text="Вход" defaultButton="true" />
+            </buttons>
+        </ButtonBar>
+    </children>
+</AnchorPane>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="650.0"
+            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.kafpin124.rkpp_kursr.contoller.NewOrderController">
+
+    <top>
+        <VBox spacing="10" style="-fx-padding: 10;">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Пациент:" prefWidth="80"/>
+                <TextField fx:id="patientField" editable="false" HBox.hgrow="ALWAYS"
+                           promptText="Выберите пациента"/>
+                <Button text="Выбрать" onAction="#onSelectPatient"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Штрих-код:" prefWidth="80"/>
+                <TextField fx:id="barcodeField" editable="false" HBox.hgrow="ALWAYS"/>
+                <Button text="Сгенерировать" onAction="#onGenerateBarcode"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Дата забора:" prefWidth="80"/>
+                <DatePicker fx:id="collectionDatePicker"/>
+                <Label text="Тип биоматериала:"/>
+                <ComboBox fx:id="biomaterialCombo" promptText="Выберите"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="5" style="-fx-padding: 10;">
+            <Label text="Назначенные тесты:"/>
+            <TableView fx:id="selectedTestsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Код" prefWidth="60" resizable="false"/>
+                    <TableColumn text="Наименование" prefWidth="200"/>
+                    <TableColumn text="Биоматериал" prefWidth="120"/>
+                    <TableColumn text="Срок (ч)" prefWidth="80"/>
+                    <TableColumn text="Цена" prefWidth="80"/>
+                </columns>
+            </TableView>
+            <HBox spacing="10">
+                <Button text="Добавить тест" onAction="#onAddTest"/>
+                <Button text="Удалить выбранный" onAction="#onRemoveTest"/>
+            </HBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <ButtonBar style="-fx-padding: 10;">
+            <buttons>
+                <Button text="Создать заказ" onAction="#onCreateOrder"/>
+                <Button text="Отмена" onAction="#onCancel"/>
+            </buttons>
+        </ButtonBar>
+    </bottom>
+</BorderPane>

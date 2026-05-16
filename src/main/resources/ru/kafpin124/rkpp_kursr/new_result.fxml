@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="700.0"
+            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.kafpin124.rkpp_kursr.contoller.NewResultController">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+            <Label text="Заказ:"/>
+            <TextField fx:id="orderField" editable="false" HBox.hgrow="ALWAYS"
+                       promptText="Отсканируйте штрих-код или выберите заказ"/>
+            <Button text="Выбрать заказ" onAction="#onSelectOrder"/>
+        </HBox>
+        <Separator/>
+    </top>
+
+    <center>
+        <VBox spacing="5" style="-fx-padding: 10;">
+            <Label text="Введите результаты:"/>
+            <TableView fx:id="resultTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Тест" prefWidth="150"/>
+                    <TableColumn text="Норма" prefWidth="160"/>
+                    <TableColumn text="Результат" prefWidth="150"/>
+                    <TableColumn text="Отклонение" prefWidth="80"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
+            <Label fx:id="statusLabel" text="Статус заказа: "/>
+            <Button text="Сохранить результаты" onAction="#onSaveResults"/>
+            <Button text="Отмена" onAction="#onCancel"/>
+        </HBox>
+    </bottom>
+</BorderPane>
