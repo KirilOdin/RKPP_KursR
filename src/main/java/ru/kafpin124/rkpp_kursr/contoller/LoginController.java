@@ -1,0 +1,32 @@
+package ru.kafpin124.rkpp_kursr.contoller;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+
+public class LoginController {
+
+    @FXML
+    private Button btnClose;
+
+    @FXML
+    private Button btnLogin;
+
+    @FXML
+    private Label lbLogin;
+
+    @FXML
+    private Label lbPassword;
+
+    @FXML
+    private TextField loginField;
+
+    @FXML
+    private Label messageLabel;
+
+    @FXML
+    private PasswordField passwordField;
+
+}
