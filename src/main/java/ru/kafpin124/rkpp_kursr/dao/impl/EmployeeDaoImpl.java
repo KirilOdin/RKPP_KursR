@@ -2,6 +2,8 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
 
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.kafpin124.rkpp_kursr.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
 import ru.kafpin124.rkpp_kursr.model.Employee;
@@ -19,8 +21,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
             "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
     @Override
-    public void add(Employee employee) {
+    public void add(Employee employee, String rawPassword) {
         try (Connection conn = DBHelper.getConnection(); PreparedStatement pstmt = conn.prepareStatement(ADD, Statement.RETURN_GENERATED_KEYS)){
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+            String hash = passwordEncoder.encode(rawPassword);
+            employee.setPasswordHash(hash);
             pstmt.setString(1, employee.getRole());
             pstmt.setString(2, employee.getPosition());
             pstmt.setString(3, employee.getLastName());

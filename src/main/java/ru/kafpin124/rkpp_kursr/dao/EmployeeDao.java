@@ -12,9 +12,10 @@ public interface EmployeeDao {
     /**
      * Add a new employee.
      *
-     * @param employee the employee object (id will be assigned automatically)
+     * @param employee    the employee object (id will be assigned automatically)
+     * @param rawPassword the password before the hashing operation
      */
-    void add(Employee employee);
+    void add(Employee employee, String rawPassword);
 
     /**
      * Find an employee by ID.

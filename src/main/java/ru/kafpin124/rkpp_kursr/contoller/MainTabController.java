@@ -2,68 +2,64 @@ package ru.kafpin124.rkpp_kursr.contoller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import ru.kafpin124.rkpp_kursr.dao.impl.*;
+import ru.kafpin124.rkpp_kursr.model.Employee;
+
+import java.io.IOException;
 
 public class MainTabController {
+    @FXML private TabPane mainTabPane;
+    @FXML private Tab ordersTab, newOrderTab, resultsTab, verificationTab, reportsTab, employeesTab, testsTab;
+    private Employee currentUser;
 
-    @FXML
-    private Tab employeesTab;
-
-    @FXML
-    private TabPane mainTabPane;
-
-    @FXML
-    private Tab newOrderTab;
-
-    @FXML
-    private Tab ordersTab;
-
-    @FXML
-    private Tab reportsTab;
-
-    @FXML
-    private Tab resultsTab;
-
-    @FXML
-    private Tab testsTab;
-
-    @FXML
-    private Tab verificationTab;
-
-    @FXML
-    void onEnterResults(ActionEvent event) {
-
+    public void setCurrentUser(Employee user) {
+        this.currentUser = user;
+        configureTabsByRole();
     }
 
-    @FXML
-    void onLogout(ActionEvent event) {
-
+    private void configureTabsByRole() {
+        if (!currentUser.getRole().equals("admin")) {
+            mainTabPane.getTabs().remove(employeesTab);
+            mainTabPane.getTabs().remove(testsTab);
+        }
+        if (!currentUser.getRole().equals("lab_doctor")) {
+            mainTabPane.getTabs().remove(verificationTab);
+        }
+        // Можно также скрыть "Новый заказ" или "Ввод результатов" для врача?
     }
 
-    @FXML
-    void onPrintReport(ActionEvent event) {
-
+    @FXML void onLogout() {
+        ((Stage) mainTabPane.getScene().getWindow()).close();
+        // Можно заново открыть логин, если нужно
     }
 
-    @FXML
-    void onRefresh(ActionEvent event) {
-
+    @FXML void onEnterResults() {
+        mainTabPane.getSelectionModel().select(resultsTab);
     }
 
-    @FXML
-    void onSetInProgress(ActionEvent event) {
+    @FXML void onPrintReport() { /* открыть ReportFormController для выделенного заказа */ }
 
+    @FXML void onRefresh() {
+        // Обновить данные в активной вкладке
+        Tab selected = mainTabPane.getSelectionModel().getSelectedItem();
+        if (selected == ordersTab) {
+            // Вызвать метод загрузки списка в OrdersListController
+        }
     }
 
-    @FXML
-    void onSwitchToEmployees(ActionEvent event) {
-
+    @FXML void onSetInProgress() {
+        // Перевести выделенный заказ в статус "в работе"
     }
 
-    @FXML
-    void onSwitchToTests(ActionEvent event) {
-
+    public void onSwitchToEmployees(ActionEvent actionEvent) {
     }
 
+    public void onSwitchToTests(ActionEvent actionEvent) {
+    }
 }
