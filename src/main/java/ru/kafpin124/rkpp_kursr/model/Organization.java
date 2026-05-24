@@ -19,12 +19,4 @@ public class Organization {
 //    public Organization() {
 //    }
 
-
-    /*CREATE TABLE organizations (
-    id_org SERIAL PRIMARY KEY,
-    org_name VARCHAR(200) NOT NULL,
-    contract_number VARCHAR(50),
-    contact_phone VARCHAR(20)
-);
-*/
 }

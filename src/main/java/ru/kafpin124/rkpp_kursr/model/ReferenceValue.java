@@ -1,10 +1,14 @@
 package ru.kafpin124.rkpp_kursr.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReferenceValue {
     private Long idReference;
     private Character genderApplicable;
@@ -17,7 +21,7 @@ public class ReferenceValue {
     private AnalysisTest analysisTest;
 
 
-    public ReferenceValue() {}
+//    public ReferenceValue() {}
 
 
     public AnalysisTest getTest() { return analysisTest; }
