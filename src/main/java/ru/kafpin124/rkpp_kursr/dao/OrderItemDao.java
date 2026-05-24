@@ -75,12 +75,13 @@ public interface OrderItemDao {
     /**
      * Update the test result.
      *
-     * @param itemId   the item id
-     * @param value    the numeric value (can be null)
-     * @param text     the text result (can be null)
-     * @param abnormal the sign of deviation from the norm
+     * @param itemId     the item id
+     * @param value      the numeric value (can be null)
+     * @param text       the text result (can be null)
+     * @param abnormal   the sign of deviation from the norm
+     * @param idEmployee
      */
-    void updateResult(Long itemId, BigDecimal value, String text, boolean abnormal);
+    void updateResult(Long itemId, BigDecimal value, String text, boolean abnormal, Long idEmployee);
 
     /**
      * Update the status of a particular position (assigned, in progress, completed).

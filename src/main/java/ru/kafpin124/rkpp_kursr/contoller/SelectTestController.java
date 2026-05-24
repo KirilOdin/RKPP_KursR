@@ -15,6 +15,9 @@ import java.util.List;
 
 public class SelectTestController {
 
+    //TODO: Реализовать контроллер!
+
+
     @FXML private ListView<AnalysisTest> testListView;
     private List<AnalysisTest> selectedTests = new ArrayList<>();
 

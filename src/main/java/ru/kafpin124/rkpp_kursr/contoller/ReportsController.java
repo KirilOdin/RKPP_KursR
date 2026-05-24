@@ -8,6 +8,9 @@ import javafx.scene.control.TableView;
 
 public class ReportsController {
 
+
+    //TODO: Реализовать контроллер!
+
     @FXML
     private DatePicker reportDateFrom;
 

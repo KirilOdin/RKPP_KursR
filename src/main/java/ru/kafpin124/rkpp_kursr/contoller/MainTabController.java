@@ -2,25 +2,32 @@ package ru.kafpin124.rkpp_kursr.contoller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ru.kafpin124.rkpp_kursr.dao.impl.*;
+import ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.Employee;
-
-import java.io.IOException;
+import ru.kafpin124.rkpp_kursr.model.Order;
 
 public class MainTabController {
     @FXML private TabPane mainTabPane;
     @FXML private Tab ordersTab, newOrderTab, resultsTab, verificationTab, reportsTab, employeesTab, testsTab;
+
+    private OrdersListController ordersListController;
+    private NewOrderController newOrderController;
+    private NewResultController newResultController;
+    private VerificationController verificationController;
+    private ReportsController reportsController;
+    private ManageEmployeesController manageEmployeesController;
+    private ManageTestsController manageTestsController;
+
     private Employee currentUser;
 
     public void setCurrentUser(Employee user) {
         this.currentUser = user;
         configureTabsByRole();
+
+        newOrderController.setCurrentUser(user);
+        newResultController.setCurrentUser(user);
     }
 
     private void configureTabsByRole() {
@@ -31,35 +38,62 @@ public class MainTabController {
         if (!currentUser.getRole().equals("lab_doctor")) {
             mainTabPane.getTabs().remove(verificationTab);
         }
-        // Можно также скрыть "Новый заказ" или "Ввод результатов" для врача?
     }
 
-    @FXML void onLogout() {
+    @FXML
+    void onLogout() {
         ((Stage) mainTabPane.getScene().getWindow()).close();
-        // Можно заново открыть логин, если нужно
     }
 
-    @FXML void onEnterResults() {
+    @FXML
+    void onEnterResults() {
         mainTabPane.getSelectionModel().select(resultsTab);
     }
 
-    @FXML void onPrintReport() { /* открыть ReportFormController для выделенного заказа */ }
-
-    @FXML void onRefresh() {
-        // Обновить данные в активной вкладке
-        Tab selected = mainTabPane.getSelectionModel().getSelectedItem();
-        if (selected == ordersTab) {
-            // Вызвать метод загрузки списка в OrdersListController
+    @FXML
+    void onPrintReport() {
+        // Определяем активную вкладку и текущий выбранный заказ
+        Tab selectedTab = mainTabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab == ordersTab) {
+            Order selectedOrder = ordersListController.getSelectedOrder();
+            if (selectedOrder != null && selectedOrder.getStatus().getStatusName().equals("утверждён")) {
+                // открыть форму печати с этим заказом
+            }
         }
     }
 
-    @FXML void onSetInProgress() {
-        // Перевести выделенный заказ в статус "в работе"
+    @FXML
+    void onRefresh() {
+        Tab selected = mainTabPane.getSelectionModel().getSelectedItem();
+        if (selected == ordersTab) {
+            ordersListController.loadOrders();
+        } else if (selected == resultsTab) {
+            newResultController.refreshOrderList();
+        } else if (selected == verificationTab) {
+            verificationController.refreshPendingOrders();
+        }
     }
 
-    public void onSwitchToEmployees(ActionEvent actionEvent) {
+    @FXML
+    void onSetInProgress() {
+        Tab selected = mainTabPane.getSelectionModel().getSelectedItem();
+        if (selected == ordersTab) {
+            Order selectedOrder = ordersListController.getSelectedOrder();
+            if (selectedOrder != null && selectedOrder.getStatus().getStatusName().equals("зарегистрирован")) {
+                new OrderDaoImpl().updateStatus(selectedOrder.getIdOrder(), 2L); // статус "в работе"
+                // также можно обновить accepted_by и accepted_datetime, но это потом
+                ordersListController.loadOrders();
+            }
+        }
     }
 
-    public void onSwitchToTests(ActionEvent actionEvent) {
+    @FXML
+    void onSwitchToEmployees() {
+        mainTabPane.getSelectionModel().select(employeesTab);
+    }
+
+    @FXML
+    void onSwitchToTests() {
+        mainTabPane.getSelectionModel().select(testsTab);
     }
 }

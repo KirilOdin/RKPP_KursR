@@ -10,6 +10,9 @@ import ru.kafpin124.rkpp_kursr.dao.impl.PatientDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.Patient;
 
 public class SelectPersonController {
+
+    //TODO: Реализовать контроллер!
+
     @FXML private TableView<Patient> tableViewPerson;
     @FXML private Button btSelect, btCancel;
     @Getter

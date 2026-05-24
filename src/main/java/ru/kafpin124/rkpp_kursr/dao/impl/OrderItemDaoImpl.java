@@ -248,15 +248,13 @@ public class OrderItemDaoImpl implements OrderItemDao {
             "status = 'выполнен' WHERE id_item = ?;";
 
     @Override
-    public void updateResult(Long itemId, BigDecimal value, String text, boolean abnormal) {
+    public void updateResult(Long itemId, BigDecimal value, String text, boolean abnormal, Long idEmployee) {
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE_RESULT)) {
             ps.setBigDecimal(1, value);
             ps.setString(2, text);
             ps.setBoolean(3, abnormal);
-            // entered_by и entry_datetime обычно должны передаваться, но у нас метод без них.
-            // Можно либо доработать интерфейс, либо временно оставить так.
-            ps.setNull(4, Types.BIGINT);     // entered_by – позже добавишь
+            ps.setLong(4, idEmployee);
             ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
             ps.setLong(6, itemId);
             int rows = ps.executeUpdate();

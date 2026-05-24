@@ -6,6 +6,8 @@ import javafx.scene.control.TableView;
 
 public class ManageEmployeesController {
 
+    //TODO: Реализовать контроллер!
+
     @FXML
     private TableView<?> employeesTable;
 

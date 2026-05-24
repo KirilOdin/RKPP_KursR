@@ -6,6 +6,9 @@ import javafx.scene.control.TableView;
 
 public class ManageTestsController {
 
+
+    //TODO: Реализовать контроллер!
+
     @FXML
     private TableView<?> testsTable;
 

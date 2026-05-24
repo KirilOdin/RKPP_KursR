@@ -6,6 +6,8 @@ import javafx.scene.control.TextArea;
 
 public class ReportFormController {
 
+    //TODO: Реализовать контроллер!
+
     @FXML
     private TextArea reportArea;
 

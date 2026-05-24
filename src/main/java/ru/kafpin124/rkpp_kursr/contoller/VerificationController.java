@@ -1,15 +1,14 @@
 package ru.kafpin124.rkpp_kursr.contoller;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl;
 import ru.kafpin124.rkpp_kursr.dao.impl.OrderItemDaoImpl;
-import ru.kafpin124.rkpp_kursr.model.Order;
-import ru.kafpin124.rkpp_kursr.model.OrderItem;
+import ru.kafpin124.rkpp_kursr.model.*;
+import ru.kafpin124.rkpp_kursr.model.Employee;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class VerificationController {
@@ -17,30 +16,60 @@ public class VerificationController {
     @FXML private TableView<OrderItem> resultsTable;
     @FXML private TextField commentField;
 
+
     private OrderDaoImpl orderDao = new OrderDaoImpl();
     private OrderItemDaoImpl itemDao = new OrderItemDaoImpl();
+    private Employee currentUser;
 
     @FXML
     void initialize() {
-        List<Order> pending = orderDao.findByStatusId(3L); // выполненные, ожидающие верификации
+    }
+
+    public void setCurrentUser(Employee user) {
+        this.currentUser = user;
+    }
+
+    public void refreshPendingOrders() {
+        List<Order> pending = orderDao.findByStatusId(3L); // "выполнен"
         pendingOrdersTable.setItems(FXCollections.observableArrayList(pending));
-        pendingOrdersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                resultsTable.setItems(FXCollections.observableArrayList(itemDao.findByOrderId(newVal.getIdOrder())));
-            }
-        });
     }
 
     @FXML
     void onApproveOrder() {
         Order order = pendingOrdersTable.getSelectionModel().getSelectedItem();
         if (order != null) {
-            orderDao.updateStatus(order.getIdOrder(), 4L); // утверждён
-            pendingOrdersTable.getItems().remove(order);
+            order.setStatus(new OrderStatus(4L, "утверждён"));
+            order.setVerifiedBy(currentUser);
+            order.setVerificationDatetime(LocalDateTime.now());
+            orderDao.update(order);  // полное обновление
+
+            refreshPendingOrders();
+            resultsTable.getItems().clear();
         }
     }
 
-    public void onRejectOrder(ActionEvent actionEvent) {
+    @FXML
+    void onRejectOrder() {
+        // ? Вернуть статус "в работе" или добавить особый статус "отклонён" ?
+        Order order = pendingOrdersTable.getSelectionModel().getSelectedItem();
+        if (order != null) {
+            // Возвращаем в работу (или статус "отклонён"?)
+            order.setStatus(new OrderStatus(2L, "в работе"));
+            orderDao.update(order);
+            refreshPendingOrders();
+            resultsTable.getItems().clear();
+        }
+    }
 
+    // Слушатель выбора заказа
+    public void bindSelection() {
+        pendingOrdersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                List<OrderItem> items = itemDao.findByOrderId(newVal.getIdOrder());
+                resultsTable.setItems(FXCollections.observableArrayList(items));
+            } else {
+                resultsTable.getItems().clear();
+            }
+        });
     }
 }

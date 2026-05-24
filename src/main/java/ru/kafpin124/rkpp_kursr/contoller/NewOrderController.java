@@ -1,19 +1,21 @@
 package ru.kafpin124.rkpp_kursr.contoller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ru.kafpin124.rkpp_kursr.model.AnalysisTest;
-import ru.kafpin124.rkpp_kursr.model.Order;
-import ru.kafpin124.rkpp_kursr.model.OrderStatus;
-import ru.kafpin124.rkpp_kursr.model.Patient;
+import ru.kafpin124.rkpp_kursr.dao.OrderDao;
+import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
+import ru.kafpin124.rkpp_kursr.dao.PatientDao;
+import ru.kafpin124.rkpp_kursr.dao.SpecimenDao;
+import ru.kafpin124.rkpp_kursr.dao.impl.*;
+import ru.kafpin124.rkpp_kursr.model.*;
+import ru.kafpin124.rkpp_kursr.model.Employee;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -28,11 +30,38 @@ public class NewOrderController {
     @FXML private ComboBox<String> biomaterialCombo;
     @FXML private TableView<AnalysisTest> selectedTestsTable;
 
+
+    //TODO: Убрать Alert'ы, заменить на обычный label?
+
+    private final PatientDao patientDao;
+    private final OrderDao orderDao;
+    private final SpecimenDao specimenDao;
+    private final OrderItemDao orderItemDao;
+
+    public NewOrderController(PatientDao patientDao, OrderDao orderDao,
+                              SpecimenDao specimenDao, OrderItemDao orderItemDao) {
+        this.patientDao = patientDao;
+        this.orderDao = orderDao;
+        this.specimenDao = specimenDao;
+        this.orderItemDao = orderItemDao;
+    }
+
     private Patient selectedPatient;
+    private Employee currentUser;
     private List<AnalysisTest> selectedTests = new ArrayList<>();
 
-    @FXML void onSelectPatient() throws IOException {
-        // Открыть SelectPersonController
+    @FXML
+    void initialize() {
+        biomaterialCombo.setItems(FXCollections.observableArrayList("кровь", "моча", "мазок", "кал", "слюна"));
+        collectionDatePicker.setValue(LocalDateTime.now().toLocalDate());
+    }
+
+    public void setCurrentUser(Employee user) {
+        this.currentUser = user;
+    }
+
+    @FXML
+    void onSelectPatient() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/select_person.fxml"));
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -47,29 +76,117 @@ public class NewOrderController {
         }
     }
 
-    @FXML void onAddTest() {
-        // Открыть SelectTestController
-        // аналогично, получить выбранные тесты, добавить в selectedTests и обновить таблицу
+    @FXML
+    void onAddTest() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/select_test_demo.fxml"));
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(loader.load()));
+            stage.showAndWait();
+
+            SelectTestController controller = loader.getController();
+            List<AnalysisTest> tests = controller.getSelectedTests();
+            if (tests != null && !tests.isEmpty()) {
+                selectedTests.addAll(tests);
+                selectedTestsTable.setItems(FXCollections.observableArrayList(selectedTests));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @FXML void onGenerateBarcode() {
+    @FXML
+    void onGenerateBarcode() {
         barcodeField.setText(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 12));
     }
 
-    @FXML void onCreateOrder() {
-        // Проверки, затем сохранение
+    @FXML
+    void onCreateOrder() {
+        if (selectedPatient == null) {
+            showAlert("Ошибка", "Выберите пациента");
+            return;
+        }
+        if (selectedTests.isEmpty()) {
+            showAlert("Ошибка", "Добавьте хотя бы один анализ");
+            return;
+        }
+        String barcode = barcodeField.getText();
+        if (barcode.isEmpty()) {
+            showAlert("Ошибка", "Сгенерируйте штрих-код");
+            return;
+        }
+        String biomaterial = biomaterialCombo.getValue();
+        if (biomaterial == null) {
+            showAlert("Ошибка", "Выберите тип биоматериала");
+            return;
+        }
+
         Order order = new Order();
         order.setPatient(selectedPatient);
-        order.setStatus(new OrderStatus(1L, "зарегистрирован")); // id=1
-//        order.setRegisteredBy(currentUser); // нужен доступ к текущему пользователю
+        order.setStatus(new OrderStatus(1L, "зарегистрирован"));
+        order.setRegisteredBy(currentUser);
         order.setRegistrationDatetime(LocalDateTime.now());
-        // ... сохранить заказ, потом пробу, потом позиции
+        // Организация – null, если не выбрана (если пациент не от организации)
+        order.setOrganization(null);
+
+        OrderDaoImpl orderDao = new OrderDaoImpl();
+        orderDao.add(order);   // после вызова в order присвоится id
+
+        // Создаём пробу
+        Specimen specimen = new Specimen();
+        specimen.setOrder(order);
+        specimen.setSpecimenType(biomaterial);
+        specimen.setContainerType("стандартный");
+        specimen.setCollectionDatetime(collectionDatePicker.getValue().atStartOfDay());
+        specimen.setBarcode(barcode);
+
+        SpecimenDaoImpl specimenDao = new SpecimenDaoImpl();
+        specimenDao.add(specimen);
+
+        // Создаём позиции заказа (order_items)
+        OrderItemDaoImpl itemDao = new OrderItemDaoImpl();
+        for (AnalysisTest test : selectedTests) {
+            OrderItem item = new OrderItem();
+            item.setOrder(order);
+            item.setTest(test);
+            item.setSpecimen(specimen);
+            item.setStatus("назначен");
+            // result_value и т.д. пока null
+            itemDao.add(item);
+        }
+
+        showAlert("Готово", "Заказ создан");
+        // Очистка полей
+        patientField.clear();
+        selectedPatient = null;
+        selectedTests.clear();
+        selectedTestsTable.getItems().clear();
+        barcodeField.clear();
     }
 
-    public void onRemoveTest(ActionEvent actionEvent) {
+    @FXML
+    void onRemoveTest() {
+        AnalysisTest selected = selectedTestsTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            selectedTests.remove(selected);
+            selectedTestsTable.getItems().remove(selected);
+        }
     }
 
-    public void onCancel(ActionEvent actionEvent) {
+    @FXML
+    void onCancel() {
+        // Очистить форму
+        patientField.clear();
+        selectedTests.clear();
+        selectedTestsTable.getItems().clear();
+        barcodeField.clear();
+    }
 
+    private void showAlert(String title, String msg) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 }
