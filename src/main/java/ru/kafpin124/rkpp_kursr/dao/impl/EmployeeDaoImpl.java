@@ -2,11 +2,11 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
 
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.kafpin124.rkpp_kursr.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
 import ru.kafpin124.rkpp_kursr.model.Employee;
+import ru.kafpin124.rkpp_kursr.util.SqlStatements;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,9 +16,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 
 //    1. Вставка нового сотрудника
-    private static final String ADD = "INSERT INTO public.employees(role, \"position\", last_name, first_name, " +
-            "middle_name, login, password_hash) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?);";
+//    private static final String ADD = "INSERT INTO public.employees(role, \"position\", last_name, first_name, " +
+//            "middle_name, login, password_hash) " +
+//            "VALUES (?, ?, ?, ?, ?, ?, ?);";
+
+    public static final String ADD = SqlStatements.get("sql.Employee.ADD");
 
     @Override
     public void add(Employee employee, String rawPassword) {
@@ -54,8 +56,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 //    2. Поиск сотрудника по идентификатору
 
-    private static final String FIND_BY_ID = "SELECT id_employee, role, \"position\", last_name, first_name, " +
-        "middle_name, login, password_hash FROM public.employees WHERE id_employee = ?;";
+//    private static final String FIND_BY_ID = "SELECT id_employee, role, \"position\", last_name, first_name, " +
+//        "middle_name, login, password_hash FROM public.employees WHERE id_employee = ?;";
+
+    public static final String FIND_BY_ID = SqlStatements.get("sql.Employee.FIND_BY_ID");
 
     @Override
     public Employee findById(Long id) {
@@ -75,8 +79,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 //    3. Вывод всех сотрудников, находящихся в базе данных
 
-    private static final String GET_ALL =  "SELECT id_employee, role, \"position\", last_name, first_name, " +
-            "middle_name, login, password_hash FROM public.employees;";
+//    private static final String GET_ALL =  "SELECT id_employee, role, \"position\", last_name, first_name, " +
+//            "middle_name, login, password_hash FROM public.employees;";
+
+    public static final String GET_ALL = SqlStatements.get("sql.Employee.GET_ALL");
 
     @Override
     public List<Employee> getAll() {
@@ -95,8 +101,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 //    4. Изменение значений у существующего сотрудника
 
-    private static final String UPDATE = "UPDATE public.employees SET role=?, \"position\"=?, last_name=?, " +
-        "first_name=?, middle_name=?, login=?, password_hash=? WHERE id_employee = ?;";
+//    private static final String UPDATE = "UPDATE public.employees SET role=?, \"position\"=?, last_name=?, " +
+//        "first_name=?, middle_name=?, login=?, password_hash=? WHERE id_employee = ?;";
+
+    public static final String UPDATE = SqlStatements.get("sql.Employee.UPDATE");
+
     @Override
     public void update(Employee employee) {
         try (Connection conn = DBHelper.getConnection();
@@ -126,7 +135,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 //    5. Удаление сотрудника из базы данных
 
-    private static final String DELETE_BY_ID = "DELETE FROM public.employees WHERE id_employee = ?;";
+//    private static final String DELETE_BY_ID = "DELETE FROM public.employees WHERE id_employee = ?;";
+
+    public static final String DELETE_BY_ID = SqlStatements.get("sql.Employee.DELETE_BY_ID");
 
     @Override
     public void delete(Employee employee) {
@@ -156,8 +167,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 //    6. Поиск сотрудника по логину
 
-    private static final String FIND_BY_LOGIN = "SELECT id_employee, role, \"position\", last_name, first_name, " +
-            "middle_name, login, password_hash FROM public.employees WHERE login = ?;";
+//    private static final String FIND_BY_LOGIN = "SELECT id_employee, role, \"position\", last_name, first_name, " +
+//            "middle_name, login, password_hash FROM public.employees WHERE login = ?;";
+//
+    public static final String FIND_BY_LOGIN = SqlStatements.get("sql.Employee.FIND_BY_LOGIN");
+
     @Override
     public Employee findByLogin(String login) {
         try (Connection conn = DBHelper.getConnection();
@@ -177,8 +191,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 //    7. Поиск сотрудников по их роли (лаборант, админ...)
 
-    private static final String FIND_BY_ROLE = "SELECT id_employee, role, \"position\", last_name, first_name, " +
-        "middle_name, login, password_hash FROM public.employees WHERE role = ?;";
+//    private static final String FIND_BY_ROLE = "SELECT id_employee, role, \"position\", last_name, first_name, " +
+//        "middle_name, login, password_hash FROM public.employees WHERE role = ?;";
+
+    public static final String FIND_BY_ROLE = SqlStatements.get("sql.Employee.FIND_BY_ROLE");
 
     @Override
     public List<Employee> findByRole(String role) {
@@ -200,9 +216,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 //    8. Поиск сотрудников по ФИО
 
-    private static final String SEARCH_BY_FULLNAME = "SELECT id_employee, role, \"position\", last_name, " +
-        "first_name, middle_name, login, password_hash FROM public.employees " +
-        "WHERE CONCAT_WS(' ', last_name, first_name, middle_name) ILIKE ?;";
+//    private static final String SEARCH_BY_FULLNAME = "SELECT id_employee, role, \"position\", last_name, " +
+//        "first_name, middle_name, login, password_hash FROM public.employees " +
+//        "WHERE CONCAT_WS(' ', last_name, first_name, middle_name) ILIKE ?;";
+
+    public static final String SEARCH_BY_FULLNAME = SqlStatements.get("sql.Employee.SEARCH_BY_FULLNAME");
 
     @Override
     public List<Employee> searchByFullName(String pattern) {

@@ -1,7 +1,7 @@
 package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
-import ru.kafpin124.rkpp_kursr.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.SpecimenDao;
 import ru.kafpin124.rkpp_kursr.model.Order;
 import ru.kafpin124.rkpp_kursr.model.Specimen;

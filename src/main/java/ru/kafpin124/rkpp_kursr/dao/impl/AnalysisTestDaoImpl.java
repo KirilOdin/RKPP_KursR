@@ -2,9 +2,10 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
 
-import ru.kafpin124.rkpp_kursr.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.AnalysisTestDao;
 import ru.kafpin124.rkpp_kursr.model.AnalysisTest;
+import ru.kafpin124.rkpp_kursr.util.SqlStatements;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,10 +22,11 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
 //    1. Вставка нового теста
 
-    private static final String ADD = "INSERT INTO public.tests(test_name, biomaterial, " +
-            "execution_time_hours, price, unit) " +
-            "VALUES (?, ?, ?, ?, ?);";
+//    private static final String ADD = "INSERT INTO public.tests(test_name, biomaterial, " +
+//            "execution_time_hours, price, unit) " +
+//            "VALUES (?, ?, ?, ?, ?);";
 
+    private static final String ADD = SqlStatements.get("sql.AnalysisTest.ADD");
     @Override
     public void add(AnalysisTest analysisTest) {
         try (Connection conn = DBHelper.getConnection();
@@ -57,8 +59,9 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
 //    2. Поиск теста по идентификатору
 
-    private static final String FIND_BY_ID = "SELECT id_test, test_name, biomaterial, " +
-            "execution_time_hours, price, unit FROM public.tests WHERE id_test = ?;";
+//    private static final String FIND_BY_ID = "SELECT id_test, test_name, biomaterial, " +
+//            "execution_time_hours, price, unit FROM public.tests WHERE id_test = ?;";
+    public static final String FIND_BY_ID = SqlStatements.get("sql.AnalysisTest.FIND_BY_ID");
 
     @Override
     public AnalysisTest findById(Long id) {
@@ -80,8 +83,10 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
 //    3. Вывод всех тестов, находящихся в базе данных
 
-    private static final String GET_ALL = "SELECT id_test, test_name, biomaterial, " +
-            "execution_time_hours, price, unit FROM public.tests;";
+//    private static final String GET_ALL = "SELECT id_test, test_name, biomaterial, " +
+//            "execution_time_hours, price, unit FROM public.tests;";
+
+    public static final String GET_ALL = SqlStatements.get("sql.AnalysisTest.GET_ALL");
 
     @Override
     public List<AnalysisTest> getAll() {
@@ -101,8 +106,10 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
 //    4. Изменение значений у существующего теста
 
-    private static final String UPDATE = "UPDATE public.tests SET test_name=?, biomaterial=?, " +
-            "execution_time_hours=?, price=?, unit=? WHERE id_test = ?;";
+//    private static final String UPDATE = "UPDATE public.tests SET test_name=?, biomaterial=?, " +
+//            "execution_time_hours=?, price=?, unit=? WHERE id_test = ?;";
+
+    public static final String UPDATE = SqlStatements.get("sql.AnalysisTest.UPDATE");
 
     @Override
     public void update(AnalysisTest analysisTest) {
@@ -129,7 +136,9 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
 //    5. Удаление теста из базы данных (как побочный?)
 
-    private static final String DELETE_BY_ID = "DELETE FROM public.tests WHERE id_test = ?;";
+//    private static final String DELETE_BY_ID = "DELETE FROM public.tests WHERE id_test = ?;";
+
+    public static final String DELETE_BY_ID = SqlStatements.get("sql.AnalysisTest.DELETE_BY_ID");
 
     @Override
     public void delete(AnalysisTest analysisTest) {
@@ -156,8 +165,10 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
 //    6. Поиск тестов по необходимому биоматериалу
 
-    private static final String FIND_BY_MATERIAL = "SELECT id_test, test_name, biomaterial, " +
-            "execution_time_hours, price, unit FROM public.tests WHERE biomaterial =?;";
+//    private static final String FIND_BY_MATERIAL = "SELECT id_test, test_name, biomaterial, " +
+//            "execution_time_hours, price, unit FROM public.tests WHERE biomaterial =?;";
+
+    public static final String FIND_BY_MATERIAL = SqlStatements.get("sql.AnalysisTest.FIND_BY_MATERIAL");
 
     @Override
     public List<AnalysisTest> findByBiomaterial(String biomaterial) {
@@ -178,8 +189,10 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
 //    7. Поиск тестов по их названию
 
-    private static final String SEARCH_BY_NAME = "SELECT id_test, test_name, biomaterial, " +
-            "execution_time_hours, price, unit FROM public.tests WHERE test_name ILIKE ?;";
+//    private static final String SEARCH_BY_NAME = "SELECT id_test, test_name, biomaterial, " +
+//            "execution_time_hours, price, unit FROM public.tests WHERE test_name ILIKE ?;";
+
+    public static final String SEARCH_BY_NAME = SqlStatements.get("sql.SEARCH_BY_NAME");
 
     @Override
     public List<AnalysisTest> searchByName(String testName) {

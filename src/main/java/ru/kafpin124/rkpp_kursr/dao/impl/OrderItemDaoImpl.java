@@ -1,8 +1,9 @@
 package ru.kafpin124.rkpp_kursr.dao.impl;
 
-import ru.kafpin124.rkpp_kursr.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
 import ru.kafpin124.rkpp_kursr.model.*;
+import ru.kafpin124.rkpp_kursr.util.SqlStatements;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -15,9 +16,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    1. Вставка новой позиции заказа
 
-    private static final String ADD = "INSERT INTO public.order_items(order_id, test_id, specimen_id, " +
-        "status, result_value, result_text, is_abnormal, entered_by, entry_datetime) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+//    private static final String ADD = "INSERT INTO public.order_items(order_id, test_id, specimen_id, " +
+//        "status, result_value, result_text, is_abnormal, entered_by, entry_datetime) " +
+//        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+    public static final String ADD = SqlStatements.get("sql.OrderItem.ADD");
 
     @Override
     public void add(OrderItem orderItem) {
@@ -67,9 +70,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    2. Поиск позиции заказа по идентификатору
 
-    private static final String FIND_BY_ID = "SELECT id_item, order_id, test_id, specimen_id, " +
-            "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
-            "FROM public.order_items WHERE id_item = ?;";
+//    private static final String FIND_BY_ID = "SELECT id_item, order_id, test_id, specimen_id, " +
+//            "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
+//            "FROM public.order_items WHERE id_item = ?;";
+
+    public static final String FIND_BY_ID = SqlStatements.get("sql.OrderItem.FIND_BY_ID");
 
     @Override
     public OrderItem findById(Long id) {
@@ -91,9 +96,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    3. Вывод всех позиций заказов, находящихся в базе данных
 
-    private static final String GET_ALL = "SELECT id_item, order_id, test_id, specimen_id, " +
-            "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
-            "FROM public.order_items;";
+//    private static final String GET_ALL = "SELECT id_item, order_id, test_id, specimen_id, " +
+//            "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
+//            "FROM public.order_items;";
+
+    public static final String GET_ALL = SqlStatements.get("sql.OrderItem.GET_ALL");
 
     @Override
     public List<OrderItem> getAll() {
@@ -112,9 +119,12 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    4. Изменение значений у существующей позиции заказа
 
-    private static final String UPDATE = "UPDATE public.order_items SET order_id=?, test_id=?, specimen_id=?, " +
-            "status=?, result_value=?, result_text=?, is_abnormal=?, entered_by=?, entry_datetime=? " +
-            "WHERE id_item = ?;";
+//    private static final String UPDATE = "UPDATE public.order_items SET order_id=?, test_id=?, specimen_id=?, " +
+//            "status=?, result_value=?, result_text=?, is_abnormal=?, entered_by=?, entry_datetime=? " +
+//            "WHERE id_item = ?;";
+
+
+    public static final String UPDATE = SqlStatements.get("sql.OrderItem.UPDATE");
 
     @Override
     public void update(OrderItem orderItem) {
@@ -158,7 +168,9 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    5. Удаление позиции заказа из базы данных (как несостоявшаяся?)
 
-    private static final String DELETE = "DELETE FROM public.order_items WHERE id_item = ?;";
+//    private static final String DELETE = "DELETE FROM public.order_items WHERE id_item = ?;";
+
+    public static final String DELETE = SqlStatements.get("sql.OrderItem.DELETE");
 
     @Override
     public void delete(OrderItem orderItem) {
@@ -175,9 +187,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    6. Поиск позиций заказов по идентификатору заказа
 
-    private static final String FIND_BY_ORDER_ID = "SELECT id_item, order_id, test_id, specimen_id, " +
-            "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
-            "FROM public.order_items WHERE order_id = ?;";
+//    private static final String FIND_BY_ORDER_ID = "SELECT id_item, order_id, test_id, specimen_id, " +
+//            "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
+//            "FROM public.order_items WHERE order_id = ?;";
+
+    public static final String FIND_BY_ORDER_ID = SqlStatements.get("sql.OrderItem.FIND_BY_ORDER_ID");
 
     @Override
     public List<OrderItem> findByOrderId(Long orderId) {
@@ -198,9 +212,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    7. Поиск позиций заказов по идентификатору биологической пробы
 
-    private static final String FIND_BY_SPECIMEN_ID = "SELECT id_item, order_id, test_id, specimen_id, " +
-            "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
-            "FROM public.order_items WHERE specimen_id = ?;";
+//    private static final String FIND_BY_SPECIMEN_ID = "SELECT id_item, order_id, test_id, specimen_id, " +
+//            "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
+//            "FROM public.order_items WHERE specimen_id = ?;";
+
+    public static final String FIND_BY_SPECIMEN_ID = SqlStatements.get("sql.OrderItem.FIND_BY_SPECIMEN_ID");
 
     @Override
     public List<OrderItem> findBySpecimenId(Long specimenId) {
@@ -220,9 +236,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    8. Поиск позиций заказов по идентификатору работника, обрабатывавшего значения
 
-    private static final String FIND_BY_ENTERED_BY = "SELECT id_item, order_id, test_id, specimen_id, " +
-        "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
-        "FROM public.order_items WHERE entered_by = ?;";
+//    private static final String FIND_BY_ENTERED_BY = "SELECT id_item, order_id, test_id, specimen_id, " +
+//        "status, result_value, result_text, is_abnormal, entered_by, entry_datetime " +
+//        "FROM public.order_items WHERE entered_by = ?;";
+
+    public static final String FIND_BY_ENTERED_BY = SqlStatements.get("sql.OrderItem.FIND_BY_ENTERED_BY");
 
     @Override
     public List<OrderItem> findByEnteredBy(Long employeeId) {
@@ -243,9 +261,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    9. Обновление результатов в позиции заказа
 
-    private static final String UPDATE_RESULT = "UPDATE public.order_items " +
-            "SET result_value = ?, result_text = ?, is_abnormal = ?, entered_by = ?, entry_datetime = ?, " +
-            "status = 'выполнен' WHERE id_item = ?;";
+//    private static final String UPDATE_RESULT = "UPDATE public.order_items " +
+//            "SET result_value = ?, result_text = ?, is_abnormal = ?, entered_by = ?, entry_datetime = ?, " +
+//            "status = 'выполнен' WHERE id_item = ?;";
+
+    public static final String UPDATE_RESULT = SqlStatements.get("sql.OrderItem.UPDATE_RESULT");
 
     @Override
     public void updateResult(Long itemId, BigDecimal value, String text, boolean abnormal, Long idEmployee) {
@@ -268,7 +288,9 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
 //    10. Обновление статуса позиции заказа
 
-    private static final String UPDATE_STATUS = "UPDATE public.order_items SET status = ? WHERE id_item = ?;";
+//    private static final String UPDATE_STATUS = "UPDATE public.order_items SET status = ? WHERE id_item = ?;";
+
+    public static final String UPDATE_STATUS = SqlStatements.get("sql.OrderItem.UPDATE_STATUS");
 
     @Override
     public void updateStatus(Long itemId, String status) {

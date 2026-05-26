@@ -1,4 +1,4 @@
-package ru.kafpin124.rkpp_kursr;
+package ru.kafpin124.rkpp_kursr.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

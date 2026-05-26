@@ -3,7 +3,8 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 import ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao;
 import ru.kafpin124.rkpp_kursr.model.AnalysisTest;
 import ru.kafpin124.rkpp_kursr.model.ReferenceValue;
-import ru.kafpin124.rkpp_kursr.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.SqlStatements;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -16,9 +17,11 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     // 1. Вставка нового референсного значения
 
-    private static final String ADD =
-            "INSERT INTO public.reference_values(test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?);";
+//    private static final String ADD =
+//            "INSERT INTO public.reference_values(test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text) " +
+//                    "VALUES (?, ?, ?, ?, ?, ?, ?);";
+
+    public static final String ADD = SqlStatements.get("sql.ReferenceValue.ADD");
 
     @Override
     public void add(ReferenceValue referenceValue) {
@@ -70,9 +73,11 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     // 2. Поиск по идентификатору
 
-    private static final String GET_BY_ID =
-            "SELECT id_reference, test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text " +
-                    "FROM public.reference_values WHERE id_reference = ?;";
+//    private static final String GET_BY_ID =
+//            "SELECT id_reference, test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text " +
+//                    "FROM public.reference_values WHERE id_reference = ?;";
+
+    public static final String GET_BY_ID = SqlStatements.get("sql.ReferenceValue.GET_BY_ID");
 
     @Override
     public ReferenceValue getById(Long id) {
@@ -94,9 +99,11 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     // 3. Получение всех референсных значений, находящихся в базе данных
 
-    private static final String GET_ALL =
-            "SELECT id_reference, test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text " +
-                    "FROM public.reference_values;";
+//    private static final String GET_ALL =
+//            "SELECT id_reference, test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text " +
+//                    "FROM public.reference_values;";
+
+    public static final String GET_ALL = SqlStatements.get("sql.ReferenceValue.GET_ALL");
 
     @Override
     public List<ReferenceValue> getAll() {
@@ -115,9 +122,11 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     // 4. Изменение значений у существующего референсного значения
 
-    private static final String UPDATE =
-            "UPDATE public.reference_values SET test_id=?, gender_applicable=?, age_min=?, age_max=?, " +
-                    "ref_value_min=?, ref_value_max=?, ref_text=? WHERE id_reference = ?;";
+//    private static final String UPDATE =
+//            "UPDATE public.reference_values SET test_id=?, gender_applicable=?, age_min=?, age_max=?, " +
+//                    "ref_value_min=?, ref_value_max=?, ref_text=? WHERE id_reference = ?;";
+
+    public static final String UPDATE = SqlStatements.get("sql.ReferenceValue.UPDATE");
 
     @Override
     public void update(ReferenceValue referenceValue) {
@@ -161,8 +170,10 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
     }
 
     // 5. Удаление референсного значения из базы данных
-    private static final String DELETE =
-            "DELETE FROM public.reference_values WHERE id_reference = ?;";
+//    private static final String DELETE =
+//            "DELETE FROM public.reference_values WHERE id_reference = ?;";
+
+    public static final String DELETE = SqlStatements.get("sql.ReferenceValue.DELETE");
 
     @Override
     public void delete(ReferenceValue referenceValue) {
@@ -178,9 +189,11 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
     }
 
     // 6. Поиск референсного значения по идентификатору теста
-    private static final String FIND_BY_TEST_ID =
-            "SELECT id_reference, test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text " +
-                    "FROM public.reference_values WHERE test_id = ?;";
+//    private static final String FIND_BY_TEST_ID =
+//            "SELECT id_reference, test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text " +
+//                    "FROM public.reference_values WHERE test_id = ?;";
+
+    public static final String FIND_BY_TEST_ID = SqlStatements.get("sql.ReferenceValue.FIND_BY_TEST_ID");
 
     @Override
     public List<ReferenceValue> findByTestId(Long testId) {
@@ -199,12 +212,14 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
     }
 
     // 7. Поиск референсного значения по тесту, полу и возрасту
-    private static final String FIND_BY_TEST_AND_GENDER_AND_AGE =
-            "SELECT id_reference, test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text " +
-                    "FROM public.reference_values WHERE test_id = ? " +
-                    "AND gender_applicable = ? " +
-                    "AND (age_min IS NULL OR age_min <= ?) " +
-                    "AND (age_max IS NULL OR age_max >= ?);";
+//    private static final String FIND_BY_TEST_AND_GENDER_AND_AGE =
+//            "SELECT id_reference, test_id, gender_applicable, age_min, age_max, ref_value_min, ref_value_max, ref_text " +
+//                    "FROM public.reference_values WHERE test_id = ? " +
+//                    "AND gender_applicable = ? " +
+//                    "AND (age_min IS NULL OR age_min <= ?) " +
+//                    "AND (age_max IS NULL OR age_max >= ?);";
+
+    public static final String FIND_BY_TEST_AND_GENDER_AND_AGE = SqlStatements.get("sql.ReferenceValue.FIND_BY_TEST_AND_GENDER_AND_AGE");
 
     @Override
     public ReferenceValue findByTestAndGenderAndAge(Long testId, char gender, int age) {

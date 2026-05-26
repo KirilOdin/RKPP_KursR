@@ -2,9 +2,10 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
 
-import ru.kafpin124.rkpp_kursr.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.model.*;
+import ru.kafpin124.rkpp_kursr.util.SqlStatements;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -15,10 +16,12 @@ public class OrderDaoImpl implements OrderDao {
 
 //    1. Вставка нового заказа
 
-    private static final String ADD = "INSERT INTO public.orders(status_id, patient_id, " +
-            "organization_id, registered_by, accepted_by, verified_by, " +
-            "registration_datetime, acceptance_datetime, verification_datetime) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+//    private static final String ADD = "INSERT INTO public.orders(status_id, patient_id, " +
+//            "organization_id, registered_by, accepted_by, verified_by, " +
+//            "registration_datetime, acceptance_datetime, verification_datetime) " +
+//            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+    public static final String ADD = SqlStatements.get("sql.Order.ADD");
 
     @Override
     public void add(Order order) {
@@ -72,11 +75,12 @@ public class OrderDaoImpl implements OrderDao {
 
 //    2. Поиск заказа по идентификатору
 
-    private static final String FIND_BY_ID = "SELECT id_order, status_id, patient_id, " +
-            "organization_id, registered_by, accepted_by, verified_by, " +
-            "registration_datetime, acceptance_datetime, verification_datetime " +
-            "FROM public.orders WHERE id_order = ?;";
+//    private static final String FIND_BY_ID = "SELECT id_order, status_id, patient_id, " +
+//            "organization_id, registered_by, accepted_by, verified_by, " +
+//            "registration_datetime, acceptance_datetime, verification_datetime " +
+//            "FROM public.orders WHERE id_order = ?;";
 
+    public static final String FIND_BY_ID = SqlStatements.get("sql.Order.FIND_BY_ID");
 
     @Override
     public Order findById(Long id) {
@@ -97,9 +101,11 @@ public class OrderDaoImpl implements OrderDao {
 
 //    3. Вывод всех заказов, находящихся в базе данных
 
-    private static final String GET_ALL = "SELECT id_order, status_id, patient_id, " +
-            "organization_id, registered_by, accepted_by, verified_by, " +
-            "registration_datetime, acceptance_datetime, verification_datetime FROM public.orders;";
+//    private static final String GET_ALL = "SELECT id_order, status_id, patient_id, " +
+//            "organization_id, registered_by, accepted_by, verified_by, " +
+//            "registration_datetime, acceptance_datetime, verification_datetime FROM public.orders;";
+
+    public static final String GET_ALL = SqlStatements.get("sql.Order.GET_ALL");
 
     @Override
     public List<Order> getAll() {
@@ -117,9 +123,11 @@ public class OrderDaoImpl implements OrderDao {
 
 //    4. Изменение значений у существующего заказа
 
-    private static final String UPDATE = "UPDATE public.orders SET status_id=?, patient_id=?, " +
-            "organization_id=?, registered_by=?, accepted_by=?, verified_by=?, " +
-            "registration_datetime=?, acceptance_datetime=?, verification_datetime=? WHERE id_order = ?;";
+//    private static final String UPDATE = "UPDATE public.orders SET status_id=?, patient_id=?, " +
+//            "organization_id=?, registered_by=?, accepted_by=?, verified_by=?, " +
+//            "registration_datetime=?, acceptance_datetime=?, verification_datetime=? WHERE id_order = ?;";
+
+    public static final String UPDATE = SqlStatements.get("sql.Order.UPDATE");
 
     @Override
     public void update(Order order) {
@@ -166,7 +174,9 @@ public class OrderDaoImpl implements OrderDao {
 
 //    5. Удаление заказа из базы данных (как несостоявшийся?)
 
-    private static final String DELETE_BY_ID = "DELETE FROM public.orders WHERE id_order = ?;";
+//    private static final String DELETE_BY_ID = "DELETE FROM public.orders WHERE id_order = ?;";
+
+    public static final String DELETE_BY_ID = SqlStatements.get("sql.Order.DELETE_BY_ID");
 
     @Override
     public void delete(Order order) {
@@ -183,10 +193,12 @@ public class OrderDaoImpl implements OrderDao {
 
 //    6. Поиск заказов по идентификатору пациента
 
-    private static final String FIND_BY_PATIENT_ID = "SELECT id_order, status_id, patient_id, " +
-            "organization_id, registered_by, accepted_by, verified_by, " +
-            "registration_datetime, acceptance_datetime, verification_datetime " +
-            "FROM public.orders WHERE patient_id = ?;";
+//    private static final String FIND_BY_PATIENT_ID = "SELECT id_order, status_id, patient_id, " +
+//            "organization_id, registered_by, accepted_by, verified_by, " +
+//            "registration_datetime, acceptance_datetime, verification_datetime " +
+//            "FROM public.orders WHERE patient_id = ?;";
+
+    public static final String FIND_BY_PATIENT_ID = SqlStatements.get("sql.Order.FIND_BY_PATIENT_ID");
 
     @Override
     public List<Order> findByPatientId(Long patientId) {
@@ -207,10 +219,12 @@ public class OrderDaoImpl implements OrderDao {
 
 //    7. Поиск заказов по идентификатору статуса заказа
 
-    private static final String FIND_BY_STATUS_ID = "SELECT id_order, status_id, patient_id, " +
-            "organization_id, registered_by, accepted_by, verified_by, " +
-            "registration_datetime, acceptance_datetime, verification_datetime " +
-            "FROM public.orders WHERE status_id = ?;";
+//    private static final String FIND_BY_STATUS_ID = "SELECT id_order, status_id, patient_id, " +
+//            "organization_id, registered_by, accepted_by, verified_by, " +
+//            "registration_datetime, acceptance_datetime, verification_datetime " +
+//            "FROM public.orders WHERE status_id = ?;";
+
+    public static final String FIND_BY_STATUS_ID = SqlStatements.get("sql.Order.FIND_BY_STATUS_ID");
 
     @Override
     public List<Order> findByStatusId(Long statusId) {
@@ -231,12 +245,14 @@ public class OrderDaoImpl implements OrderDao {
 
 //  8. Поиск заказов по дате регистрации за данный промежуток времени
 
-    private static final String FIND_BY_DATE_RANGE = "SELECT id_order, status_id, patient_id, " +
-            "organization_id, registered_by, accepted_by, verified_by, " +
-            "registration_datetime, acceptance_datetime, verification_datetime " +
-            "FROM public.orders " +
-            "WHERE registration_datetime >= ? AND registration_datetime <= ? " +
-            "ORDER BY registration_datetime DESC;";
+//    private static final String FIND_BY_DATE_RANGE = "SELECT id_order, status_id, patient_id, " +
+//            "organization_id, registered_by, accepted_by, verified_by, " +
+//            "registration_datetime, acceptance_datetime, verification_datetime " +
+//            "FROM public.orders " +
+//            "WHERE registration_datetime >= ? AND registration_datetime <= ? " +
+//            "ORDER BY registration_datetime DESC;";
+
+    public static final String FIND_BY_DATE_RANGE = SqlStatements.get("sql.Order.FIND_BY_DATE_RANGE");
 
     @Override
     public List<Order> findByDateRange(LocalDateTime from, LocalDateTime to) {
@@ -258,10 +274,12 @@ public class OrderDaoImpl implements OrderDao {
 
 //    9. Поиск заказа по идентификатору сотрудника, зарегистрировавшего заказ
 
-    private static final String FIND_BY_REGISTERED_BY = "SELECT id_order, status_id, patient_id, " +
-            "organization_id, registered_by, accepted_by, verified_by, " +
-            "registration_datetime, acceptance_datetime, verification_datetime " +
-            "FROM public.orders WHERE registered_by = ?;";
+//    private static final String FIND_BY_REGISTERED_BY = "SELECT id_order, status_id, patient_id, " +
+//            "organization_id, registered_by, accepted_by, verified_by, " +
+//            "registration_datetime, acceptance_datetime, verification_datetime " +
+//            "FROM public.orders WHERE registered_by = ?;";
+
+    public static final String FIND_BY_REGISTERED_BY = SqlStatements.get("sql.Order.FIND_BY_REGISTERED_BY");
 
     @Override
     public List<Order> findByRegisteredBy(Long employeeId) {
@@ -282,12 +300,14 @@ public class OrderDaoImpl implements OrderDao {
 
 //    10. Поиск заказа по штрих-коду с биологической пробы
 
-    private static final String FIND_BY_SPECIMEN_BARCODE = "SELECT o.id_order, o.status_id, o.patient_id, " +
-            "o.organization_id, o.registered_by, o.accepted_by, o.verified_by, " +
-            "o.registration_datetime, o.acceptance_datetime, o.verification_datetime " +
-            "FROM public.orders o " +
-            "JOIN public.specimens s ON o.id_order = s.order_id " +
-            "WHERE s.barcode = ?;";
+//    private static final String FIND_BY_SPECIMEN_BARCODE = "SELECT o.id_order, o.status_id, o.patient_id, " +
+//            "o.organization_id, o.registered_by, o.accepted_by, o.verified_by, " +
+//            "o.registration_datetime, o.acceptance_datetime, o.verification_datetime " +
+//            "FROM public.orders o " +
+//            "JOIN public.specimens s ON o.id_order = s.order_id " +
+//            "WHERE s.barcode = ?;";
+
+    public static final String FIND_BY_SPECIMEN_BARCODE = SqlStatements.get("sql.Order.FIND_BY_SPECIMEN_BARCODE");
 
     @Override
     public Order findBySpecimenBarcode(String barcode) {
@@ -309,7 +329,9 @@ public class OrderDaoImpl implements OrderDao {
 
 //    11. Обновление статуса заказа
 
-    private static final String UPDATE_STATUS = "UPDATE public.orders SET status_id = ? WHERE id_order = ?;";
+//    private static final String UPDATE_STATUS = "UPDATE public.orders SET status_id = ? WHERE id_order = ?;";
+
+    public static final String UPDATE_STATUS = SqlStatements.get("sql.Order.UPDATE_STATUS");
 
     @Override
     public void updateStatus(Long orderId, Long statusId) {

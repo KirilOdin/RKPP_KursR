@@ -2,7 +2,8 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 import ru.kafpin124.rkpp_kursr.dao.OrganizationDao;
 import ru.kafpin124.rkpp_kursr.model.Organization;
-import ru.kafpin124.rkpp_kursr.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.SqlStatements;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,10 +13,12 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
 //    1. Вставка новой организации
 
-    private static final String ADD =
-            "INSERT INTO public.organizations(org_name, contract_number, " +
-                    "contact_last_name, contact_first_name, contact_middle_name, contact_person_phone) " +
-                    "VALUES (?, ?, ?, ?, ?, ?);";
+//    private static final String ADD =
+//            "INSERT INTO public.organizations(org_name, contract_number, " +
+//                    "contact_last_name, contact_first_name, contact_middle_name, contact_person_phone) " +
+//                    "VALUES (?, ?, ?, ?, ?, ?);";
+
+    public static final String ADD = SqlStatements.get("sql.Organization.ADD");
 
     @Override
     public void add(Organization organization) {
@@ -46,10 +49,12 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
 //    2. Поиск организации по идентификатору
 
-    private static final String FIND_BY_ID =
-            "SELECT id_org, org_name, contract_number, contact_last_name, " +
-                    "contact_first_name, contact_middle_name, contact_person_phone " +
-                    "FROM public.organizations WHERE id_org = ?;";
+//    private static final String FIND_BY_ID =
+//            "SELECT id_org, org_name, contract_number, contact_last_name, " +
+//                    "contact_first_name, contact_middle_name, contact_person_phone " +
+//                    "FROM public.organizations WHERE id_org = ?;";
+
+    public static final String FIND_BY_ID = SqlStatements.get("sql.Organization.FIND_BY_ID");
 
     @Override
     public Organization getById(Long id) {
@@ -70,10 +75,12 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
 //    3. Вывод всех организаций, находящихся в базе данных
 
-    private static final String GET_ALL =
-            "SELECT id_org, org_name, contract_number, contact_last_name, " +
-                    "contact_first_name, contact_middle_name, contact_person_phone " +
-                    "FROM public.organizations;";
+//    private static final String GET_ALL =
+//            "SELECT id_org, org_name, contract_number, contact_last_name, " +
+//                    "contact_first_name, contact_middle_name, contact_person_phone " +
+//                    "FROM public.organizations;";
+
+    public static final String GET_ALL = SqlStatements.get("sql.Organization.GET_ALL");
 
     @Override
     public List<Organization> getAll() {
@@ -91,11 +98,12 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
 //    4. Изменение значений у существующей компании
 
-    private static final String UPDATE =
-            "UPDATE public.organizations SET org_name=?, contract_number=?, " +
-                    "contact_last_name=?, contact_first_name=?, contact_middle_name=?, " +
-                    "contact_person_phone=? WHERE id_org = ?;";
+//    private static final String UPDATE =
+//            "UPDATE public.organizations SET org_name=?, contract_number=?, " +
+//                    "contact_last_name=?, contact_first_name=?, contact_middle_name=?, " +
+//                    "contact_person_phone=? WHERE id_org = ?;";
 
+    public static final String UPDATE = SqlStatements.get("sql.Organization.UPDATE");
 
     @Override
     public void update(Organization organization) {
@@ -121,8 +129,10 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
 //    5. Удаление организации из базы данных
 
-    private static final String DELETE_BY_ID =
-            "DELETE FROM public.organizations WHERE id_org = ?;";
+//    private static final String DELETE_BY_ID =
+//            "DELETE FROM public.organizations WHERE id_org = ?;";
+
+    public static final String DELETE_BY_ID = SqlStatements.get("sql.Organization.DELETE_BY_ID");
 
     @Override
     public void delete(Organization organization) {
@@ -140,10 +150,12 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
 //    6. Поиск организации по названию (ILIKE)
 
-    private static final String SEARCH_BY_NAME =
-            "SELECT id_org, org_name, contract_number, contact_last_name, " +
-                    "contact_first_name, contact_middle_name, contact_person_phone " +
-                    "FROM public.organizations WHERE org_name ILIKE ?;";
+//    private static final String SEARCH_BY_NAME =
+//            "SELECT id_org, org_name, contract_number, contact_last_name, " +
+//                    "contact_first_name, contact_middle_name, contact_person_phone " +
+//                    "FROM public.organizations WHERE org_name ILIKE ?;";
+
+    public static final String SEARCH_BY_NAME = SqlStatements.get("sql.Organization.SEARCH_BY_NAME");
 
     @Override
     public List<Organization> searchByName(String pattern) {

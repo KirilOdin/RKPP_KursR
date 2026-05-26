@@ -2,9 +2,10 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
 
-import ru.kafpin124.rkpp_kursr.DBHelper;
+import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.PatientDao;
 import ru.kafpin124.rkpp_kursr.model.Patient;
+import ru.kafpin124.rkpp_kursr.util.SqlStatements;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,9 +16,11 @@ public class PatientDaoImpl implements PatientDao {
 
 //    1. Вставка нового пациента
 
-    private static final String ADD = "INSERT INTO public.patients(policy_number, last_name, " +
-            "first_name, middle_name, gender, birth_date, phone) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?);";
+//    private static final String ADD = "INSERT INTO public.patients(policy_number, last_name, " +
+//            "first_name, middle_name, gender, birth_date, phone) " +
+//            "VALUES (?, ?, ?, ?, ?, ?, ?);";
+
+    public static final String ADD = SqlStatements.get("sql.Patient.ADD");
 
     @Override
     public void add(Patient patient) {
@@ -51,9 +54,12 @@ public class PatientDaoImpl implements PatientDao {
 
 //    2. Поиск пациента по идентификатору
 
-    private static final String FIND_BY_ID = "SELECT id_patient, policy_number, last_name, " +
-            "first_name, middle_name, gender, birth_date, phone " +
-            "FROM public.patients WHERE id_patient = ?;";
+//    private static final String FIND_BY_ID = "SELECT id_patient, policy_number, last_name, " +
+//            "first_name, middle_name, gender, birth_date, phone " +
+//            "FROM public.patients WHERE id_patient = ?;";
+
+    public static final String FIND_BY_ID = SqlStatements.get("sql.Patient.FIND_BY_ID");
+
     @Override
     public Patient findById(Long id) {
         try (Connection conn = DBHelper.getConnection();
@@ -73,9 +79,11 @@ public class PatientDaoImpl implements PatientDao {
 
     //    3. Вывод всех пациентов, находящихся в базе данных
 
-    private static final String GET_ALL = "SELECT id_patient, policy_number, last_name, " +
-            "first_name, middle_name, gender, birth_date, phone " +
-            "FROM public.patients;";
+//    private static final String GET_ALL = "SELECT id_patient, policy_number, last_name, " +
+//            "first_name, middle_name, gender, birth_date, phone " +
+//            "FROM public.patients;";
+
+    public static final String GET_ALL = SqlStatements.get("sql.Patient.GET_ALL");
 
     @Override
     public List<Patient> getAll() {
@@ -93,9 +101,11 @@ public class PatientDaoImpl implements PatientDao {
 
 //    4. Изменение значений у существующего пациента
 
-    private static final String UPDATE = "UPDATE public.patients " +
-            "SET policy_number=?, last_name=?, first_name=?, middle_name=?, " +
-            "gender=?, birth_date=?, phone=? WHERE id_patient = ?;";
+//    private static final String UPDATE = "UPDATE public.patients " +
+//            "SET policy_number=?, last_name=?, first_name=?, middle_name=?, " +
+//            "gender=?, birth_date=?, phone=? WHERE id_patient = ?;";
+
+    public static final String UPDATE = SqlStatements.get("sql.Patient.UPDATE");
 
     @Override
     public void update(Patient patient) {
@@ -123,7 +133,9 @@ public class PatientDaoImpl implements PatientDao {
 
 //    5. Удаление пациента из базы данных
 
-    private static final String DELETE_BY_ID = "DELETE FROM public.patients WHERE id_patient = ?;";
+//    private static final String DELETE_BY_ID = "DELETE FROM public.patients WHERE id_patient = ?;";
+
+    public static final String DELETE_BY_ID = SqlStatements.get("sql.Patient.DELETE_BY_ID");
 
     @Override
     public void delete(Patient patient) {
@@ -140,9 +152,11 @@ public class PatientDaoImpl implements PatientDao {
 
 //    6. Поиск пациента по номеру медицинского полиса
 
-    private static final String FIND_BY_POLICY = "SELECT id_patient, policy_number, " +
-            "last_name, first_name, middle_name, gender, birth_date, phone " +
-            "FROM public.patients WHERE policy_number = ?;";
+//    private static final String FIND_BY_POLICY = "SELECT id_patient, policy_number, " +
+//            "last_name, first_name, middle_name, gender, birth_date, phone " +
+//            "FROM public.patients WHERE policy_number = ?;";
+
+    public static final String FIND_BY_POLICY = SqlStatements.get("sql.Patient.FIND_BY_POLICY");
 
     @Override
     public Patient findByPolicyNumber(String policyNumber) {
@@ -163,9 +177,11 @@ public class PatientDaoImpl implements PatientDao {
 
 //    7. Поиск пациентов по ФИО
 
-    private static final String SEARCH_BY_FULLNAME = "SELECT id_patient, " +
-            "policy_number, last_name, first_name, middle_name, gender, birth_date, phone " +
-            "FROM public.patients WHERE CONCAT_WS(' ', last_name, first_name, middle_name) ILIKE ?;";
+//    private static final String SEARCH_BY_FULLNAME = "SELECT id_patient, " +
+//            "policy_number, last_name, first_name, middle_name, gender, birth_date, phone " +
+//            "FROM public.patients WHERE CONCAT_WS(' ', last_name, first_name, middle_name) ILIKE ?;";
+
+    public static final String SEARCH_BY_FULLNAME = SqlStatements.get("sql.Patient.SEARCH_BY_FULLNAME");
 
     @Override
     public List<Patient> searchByFullName(String pattern) {
