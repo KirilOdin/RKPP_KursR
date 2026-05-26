@@ -10,12 +10,12 @@
     <center>
         <TableView fx:id="employeesTable">
             <columns>
-                <TableColumn text="ID" prefWidth="40"/>
-                <TableColumn text="Фамилия" prefWidth="100"/>
-                <TableColumn text="Имя" prefWidth="100"/>
-                <TableColumn text="Отчество" prefWidth="120"/>
-                <TableColumn text="Должность" prefWidth="120"/>
-                <TableColumn text="Роль" prefWidth="100"/>
+                <TableColumn fx:id="colId" text="ID" prefWidth="40"/>
+                <TableColumn fx:id="colLastName" text="Фамилия" prefWidth="100"/>
+                <TableColumn fx:id="colFirstName" text="Имя" prefWidth="100"/>
+                <TableColumn fx:id="colMiddleName" text="Отчество" prefWidth="120"/>
+                <TableColumn fx:id="colPosition" text="Должность" prefWidth="120"/>
+                <TableColumn fx:id="colRole" text="Роль" prefWidth="100"/>
             </columns>
         </TableView>
     </center>

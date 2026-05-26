@@ -34,25 +34,25 @@
         <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <Tab fx:id="ordersTab" closable="false" text="%m.tab.ordersTab">
-                    <fx:include source="orders_list.fxml" />
+<!--                    <fx:include source="orders_list.fxml" />-->
                 </Tab>
                 <Tab fx:id="newOrderTab" closable="false" text="%m.tab.newOrderTab">
-                    <fx:include source="new_order.fxml" />
+<!--                    <fx:include source="new_order.fxml" />-->
                 </Tab>
                 <Tab fx:id="resultsTab" closable="false" text="%m.tab.resultsTab">
-                    <fx:include source="new_result.fxml" />
+<!--                    <fx:include source="new_result.fxml" />-->
                 </Tab>
                 <Tab fx:id="verificationTab" closable="false" text="%m.tab.verificationTab">
-                    <fx:include source="verification.fxml" />
+<!--                    <fx:include source="verification.fxml" />-->
                 </Tab>
                 <Tab fx:id="reportsTab" closable="false" text="%m.tab.reportsTab">
-                    <fx:include source="reports.fxml" />
+<!--                    <fx:include source="reports.fxml" />-->
                 </Tab>
                 <Tab fx:id="employeesTab" closable="false" text="%m.tab.employeesTab">
-                    <fx:include source="manage_employees.fxml" />
+<!--                    <fx:include source="manage_employees.fxml" />-->
                 </Tab>
                 <Tab fx:id="testsTab" closable="false" text="%m.tab.testsTab">
-                    <fx:include source="manage_tests.fxml" />
+<!--                    <fx:include source="manage_tests.fxml" />-->
                 </Tab>
             </tabs>
         </TabPane>

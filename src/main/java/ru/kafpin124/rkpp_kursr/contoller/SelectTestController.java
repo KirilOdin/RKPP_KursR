@@ -1,56 +1,68 @@
 package ru.kafpin124.rkpp_kursr.contoller;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import ru.kafpin124.rkpp_kursr.dao.impl.AnalysisTestDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.AnalysisTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SelectTestController {
 
-    //TODO: Реализовать контроллер!
-
-
     @FXML private ListView<AnalysisTest> testListView;
+    @FXML private ComboBox<String> filterCombo;
+    @FXML private Button btAddSelected, btCancel, btFilter;
+
+    private AnalysisTestDaoImpl testDao = new AnalysisTestDaoImpl();
+    private List<AnalysisTest> allTests;
     private List<AnalysisTest> selectedTests = new ArrayList<>();
-
-
-    @FXML
-    private ComboBox<?> filterCombo;
-
 
     @FXML
     void initialize() {
         testListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        AnalysisTestDaoImpl dao = new AnalysisTestDaoImpl();
-        testListView.setItems(FXCollections.observableArrayList(dao.getAll()));
+        allTests = testDao.getAll();
+        testListView.setItems(FXCollections.observableArrayList(allTests));
+
+        // Заполняем ComboBox уникальными биоматериалами
+        List<String> biomaterials = allTests.stream()
+                .map(AnalysisTest::getBiomaterial)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        filterCombo.setItems(FXCollections.observableArrayList(biomaterials));
+        filterCombo.setValue(null); // или "Все"
+    }
+
+    @FXML
+    void onFilter() {
+        String selectedBiomaterial = filterCombo.getValue();
+        if (selectedBiomaterial == null || selectedBiomaterial.isEmpty()) {
+            testListView.setItems(FXCollections.observableArrayList(allTests));
+        } else {
+            List<AnalysisTest> filtered = allTests.stream()
+                    .filter(t -> t.getBiomaterial().equals(selectedBiomaterial))
+                    .collect(Collectors.toList());
+            testListView.setItems(FXCollections.observableArrayList(filtered));
+        }
     }
 
     @FXML
     void onAddSelected() {
         selectedTests = testListView.getSelectionModel().getSelectedItems();
-        ((Stage) testListView.getScene().getWindow()).close();
+        ((Stage) btAddSelected.getScene().getWindow()).close();
+    }
+
+    @FXML
+    void onCancel() {
+        selectedTests.clear();
+        ((Stage) btCancel.getScene().getWindow()).close();
     }
 
     public List<AnalysisTest> getSelectedTests() {
         return selectedTests;
     }
-
-    @FXML
-    void onCancel(ActionEvent event) {
-
-    }
-
-    @FXML
-    void onFilter(ActionEvent event) {
-
-    }
-
 }

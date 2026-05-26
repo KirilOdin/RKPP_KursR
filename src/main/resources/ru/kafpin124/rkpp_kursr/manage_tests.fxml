@@ -10,11 +10,11 @@
     <center>
         <TableView fx:id="testsTable">
             <columns>
-                <TableColumn text="ID" prefWidth="40"/>
-                <TableColumn text="Наименование" prefWidth="200"/>
-                <TableColumn text="Биоматериал" prefWidth="120"/>
-                <TableColumn text="Срок (ч)" prefWidth="80"/>
-                <TableColumn text="Цена" prefWidth="80"/>
+                <TableColumn fx:id="colId" text="ID" prefWidth="40"/>
+                <TableColumn fx:id="colName" text="Наименование" prefWidth="200"/>
+                <TableColumn fx:id="colBiomaterial" text="Биоматериал" prefWidth="120"/>
+                <TableColumn fx:id="colTime" text="Срок (ч)" prefWidth="80"/>
+                <TableColumn fx:id="colPrice" text="Цена" prefWidth="80"/>
             </columns>
         </TableView>
     </center>

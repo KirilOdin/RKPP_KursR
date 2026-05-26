@@ -6,11 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.kafpin124.rkpp_kursr.HelloApplication;
+import ru.kafpin124.rkpp_kursr.MainApplication;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
-import ru.kafpin124.rkpp_kursr.dao.impl.EmployeeDaoImpl;
+import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ public class LoginController {
     private final EmployeeDao employeeDao;
     private final BCryptPasswordEncoder encoder;
 
-    // Внедряем зависимости через конструктор
+
     public LoginController(EmployeeDao employeeDao, BCryptPasswordEncoder encoder) {
         this.employeeDao = employeeDao;
         this.encoder = encoder;
@@ -58,9 +57,42 @@ public class LoginController {
 
         // Открытие основного окна АРМ
         try {
-            Locale locale = Locale.getDefault(); // или new Locale("de", "DE")
+
+            EmployeeDaoImpl employeeDao = new EmployeeDaoImpl();
+            OrderDaoImpl orderDao = new OrderDaoImpl();
+            PatientDaoImpl patientDao = new PatientDaoImpl();
+            AnalysisTestDaoImpl testDao = new AnalysisTestDaoImpl();
+            OrderItemDaoImpl itemDao = new OrderItemDaoImpl();
+            SpecimenDaoImpl specimenDao = new SpecimenDaoImpl();
+            ReportDaoImpl reportDao = new ReportDaoImpl();
+            ReferenceValueDaoImpl refDao = new ReferenceValueDaoImpl();
+            Locale locale = Locale.getDefault(); // new Locale("de", "DE")
             ResourceBundle bundle = ResourceBundle.getBundle("text", locale);
-            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("main_tab.fxml"), bundle);
+            FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("main_tab.fxml"), bundle);
+
+            loader.setControllerFactory(clazz -> {
+                if (clazz == MainTabController.class) {
+                    return new MainTabController(orderDao);
+                } else if (clazz == OrdersListController.class) {
+                    return new OrdersListController(orderDao);
+                } else if (clazz == NewOrderController.class) {
+                    return new NewOrderController(patientDao, testDao, orderDao, specimenDao, itemDao);
+                } else if (clazz == NewResultController.class) {
+                    return new NewResultController(orderDao, itemDao, refDao);
+                } else if (clazz == VerificationController.class) {
+                    return new VerificationController(orderDao, itemDao);
+                } else if (clazz == ReportsController.class) {
+                    return new ReportsController(reportDao);
+                } else if (clazz == ManageEmployeesController.class) {
+                    return new ManageEmployeesController(employeeDao);
+                } else if (clazz == ManageTestsController.class) {
+                    return new ManageTestsController(testDao, refDao);
+                }
+                // Для остальных (SelectPersonController и т.п.) можно возвращать null,
+                // тогда будет использован стандартный конструктор без параметров.
+                return null;
+            });
+
             Parent root = loader.load();
             MainTabController mainCtrl = loader.getController();
             mainCtrl.setCurrentUser(emp);

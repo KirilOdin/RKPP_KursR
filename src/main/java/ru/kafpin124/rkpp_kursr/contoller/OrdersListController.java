@@ -5,6 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lombok.NoArgsConstructor;
+import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.Order;
 
@@ -12,14 +14,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor(force = true)
 public class OrdersListController {
     @FXML private TableView<Order> ordersTable;
     @FXML private ComboBox<String> filterStatus;
     @FXML private TextField searchField;
     @FXML private DatePicker dateFrom, dateTo;
 
-    private OrderDaoImpl orderDao = new OrderDaoImpl();
+    private final OrderDaoImpl orderDao;
+    public OrdersListController(OrderDaoImpl orderDao) {
+        this.orderDao = orderDao;
+    }
 
+//    public OrdersListController() {
+//        this.orderDao = new OrderDaoImpl();
+//    }
     @FXML
     void initialize() {
 

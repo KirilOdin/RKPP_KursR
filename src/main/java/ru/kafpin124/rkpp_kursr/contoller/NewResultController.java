@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.StringConverter;
+import lombok.NoArgsConstructor;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
+@NoArgsConstructor(force = true)
 public class NewResultController {
     @FXML private TextField orderField;
     @FXML private TextField searchBarcodeField;
@@ -26,9 +28,16 @@ public class NewResultController {
 
     private Order currentOrder;
     private Employee currentUser;
-    private final OrderDaoImpl orderDao = new OrderDaoImpl();
-    private final OrderItemDaoImpl itemDao = new OrderItemDaoImpl();
-    private final ReferenceValueDaoImpl refDao = new ReferenceValueDaoImpl();
+    private final OrderDaoImpl orderDao;
+    private final OrderItemDaoImpl itemDao;
+    private final ReferenceValueDaoImpl refDao;
+
+    public NewResultController(OrderDaoImpl orderDao, OrderItemDaoImpl itemDao, ReferenceValueDaoImpl refDao) {
+        this.orderDao = orderDao;
+        this.itemDao = itemDao;
+        this.refDao = refDao;
+    }
+
 
     @FXML
     void initialize() {

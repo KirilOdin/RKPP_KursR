@@ -9,10 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ru.kafpin124.rkpp_kursr.dao.OrderDao;
-import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
-import ru.kafpin124.rkpp_kursr.dao.PatientDao;
-import ru.kafpin124.rkpp_kursr.dao.SpecimenDao;
+import lombok.NoArgsConstructor;
+import ru.kafpin124.rkpp_kursr.dao.*;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
@@ -23,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@NoArgsConstructor(force = true)
 public class NewOrderController {
     @FXML private TextField patientField;
     @FXML private TextField barcodeField;
@@ -33,18 +32,28 @@ public class NewOrderController {
 
     //TODO: Убрать Alert'ы, заменить на обычный label?
 
-    private final PatientDao patientDao;
-    private final OrderDao orderDao;
-    private final SpecimenDao specimenDao;
-    private final OrderItemDao orderItemDao;
+    private final PatientDaoImpl patientDao;
+    private final OrderDaoImpl orderDao;
+    private final AnalysisTestDaoImpl testDao;
+    private final SpecimenDaoImpl specimenDao;
+    private final OrderItemDaoImpl orderItemDao;
 
-    public NewOrderController(PatientDao patientDao, OrderDao orderDao,
-                              SpecimenDao specimenDao, OrderItemDao orderItemDao) {
+    public NewOrderController(PatientDaoImpl patientDao, AnalysisTestDaoImpl testDao,OrderDaoImpl orderDao,
+                              SpecimenDaoImpl specimenDao, OrderItemDaoImpl orderItemDao) {
         this.patientDao = patientDao;
+        this.testDao = testDao;
         this.orderDao = orderDao;
         this.specimenDao = specimenDao;
         this.orderItemDao = orderItemDao;
     }
+
+//    public NewOrderController() {
+//        this.patientDao = new PatientDaoImpl();
+//        this.testDao = new AnalysisTestDaoImpl();
+//        this.orderDao = new OrderDaoImpl();
+//        this.specimenDao = new SpecimenDaoImpl();
+//        this.orderItemDao = new OrderItemDaoImpl();
+//    }
 
     private Patient selectedPatient;
     private Employee currentUser;
