@@ -9,6 +9,9 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.StringConverter;
 import lombok.NoArgsConstructor;
+import ru.kafpin124.rkpp_kursr.dao.OrderDao;
+import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
+import ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
@@ -19,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
-@NoArgsConstructor(force = true)
+//@NoArgsConstructor(force = true)
 public class NewResultController {
     @FXML private TextField orderField;
     @FXML private TextField searchBarcodeField;
@@ -28,11 +31,11 @@ public class NewResultController {
 
     private Order currentOrder;
     private Employee currentUser;
-    private final OrderDaoImpl orderDao;
-    private final OrderItemDaoImpl itemDao;
-    private final ReferenceValueDaoImpl refDao;
+    private final OrderDao orderDao;
+    private final OrderItemDao itemDao;
+    private final ReferenceValueDao refDao;
 
-    public NewResultController(OrderDaoImpl orderDao, OrderItemDaoImpl itemDao, ReferenceValueDaoImpl refDao) {
+    public NewResultController(OrderDao orderDao, OrderItemDao itemDao, ReferenceValueDao refDao) {
         this.orderDao = orderDao;
         this.itemDao = itemDao;
         this.refDao = refDao;

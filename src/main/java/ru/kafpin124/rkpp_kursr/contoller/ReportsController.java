@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.print.PrinterJob;
 import lombok.NoArgsConstructor;
+import ru.kafpin124.rkpp_kursr.dao.ReportDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.ReportDaoImpl;
 import ru.kafpin124.rkpp_kursr.dto.*;
 
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-@NoArgsConstructor(force = true)
+//@NoArgsConstructor(force = true)
 public class ReportsController {
 
     @FXML private DatePicker reportDateFrom;
@@ -22,9 +23,9 @@ public class ReportsController {
     @FXML private TableView  reportTable;
     @FXML private ComboBox<String> reportTypeCombo;
 
-    private final ReportDaoImpl reportDao;
+    private final ReportDao reportDao;
 
-    public ReportsController(ReportDaoImpl reportDao) {
+    public ReportsController(ReportDao reportDao) {
         this.reportDao = reportDao;
     }
 

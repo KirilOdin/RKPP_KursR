@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor(force = true)
+//@NoArgsConstructor(force = true)
 public class NewOrderController {
     @FXML private TextField patientField;
     @FXML private TextField barcodeField;
@@ -32,14 +32,14 @@ public class NewOrderController {
 
     //TODO: Убрать Alert'ы, заменить на обычный label?
 
-    private final PatientDaoImpl patientDao;
-    private final OrderDaoImpl orderDao;
-    private final AnalysisTestDaoImpl testDao;
-    private final SpecimenDaoImpl specimenDao;
-    private final OrderItemDaoImpl orderItemDao;
+    private final PatientDao patientDao;
+    private final AnalysisTestDao testDao;
+    private final OrderDao orderDao;
+    private final SpecimenDao specimenDao;
+    private final OrderItemDao orderItemDao;
 
-    public NewOrderController(PatientDaoImpl patientDao, AnalysisTestDaoImpl testDao,OrderDaoImpl orderDao,
-                              SpecimenDaoImpl specimenDao, OrderItemDaoImpl orderItemDao) {
+    public NewOrderController(PatientDao patientDao, AnalysisTestDao testDao,OrderDao orderDao,
+                              SpecimenDao specimenDao, OrderItemDao orderItemDao) {
         this.patientDao = patientDao;
         this.testDao = testDao;
         this.orderDao = orderDao;

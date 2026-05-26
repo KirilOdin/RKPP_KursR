@@ -7,8 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ru.kafpin124.rkpp_kursr.dao.OrderDao;
-import ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl;
+import javafx.util.Callback;
+import ru.kafpin124.rkpp_kursr.dao.*;
+import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 import ru.kafpin124.rkpp_kursr.model.Order;
 
@@ -59,23 +60,57 @@ public class MainTabController {
 
     @FXML
     void initialize() throws IOException {
+        OrderDao orderDao = new OrderDaoImpl();
+        PatientDao patientDao = new PatientDaoImpl();
+        AnalysisTestDao testDao = new AnalysisTestDaoImpl();
+        SpecimenDao specimenDao = new SpecimenDaoImpl();
+        OrderItemDao itemDao = new OrderItemDaoImpl();
+        ReferenceValueDao refDao = new ReferenceValueDaoImpl();
+        EmployeeDao employeeDao = new EmployeeDaoImpl();
+        ReportDao reportDao = new ReportDaoImpl();
+
+        Callback<Class<?>, Object> factory = clazz -> {
+            if (clazz == OrdersListController.class) {
+                return new OrdersListController(orderDao);
+            } else if (clazz == NewOrderController.class) {
+                return new NewOrderController(patientDao, testDao, orderDao, specimenDao, itemDao);
+            } else if (clazz == NewResultController.class) {
+                return new NewResultController(orderDao, itemDao, refDao);
+            } else if (clazz == VerificationController.class) {
+                return new VerificationController(orderDao, itemDao);
+            } else if (clazz == ReportsController.class) {
+                return new ReportsController(reportDao);
+            } else if (clazz == ManageEmployeesController.class) {
+                return new ManageEmployeesController(employeeDao);
+            } else if (clazz == ManageTestsController.class) {
+                return new ManageTestsController(testDao, refDao);
+            }
+            return null;
+        };
         // Загружаем содержимое каждой вкладки и получаем контроллеры
-        ordersListController = loadTab(ordersTab, "/ru/kafpin124/rkpp_kursr/orders_list.fxml");
-        newOrderController = loadTab(newOrderTab, "/ru/kafpin124/rkpp_kursr/new_order_demo.fxml");
-        newResultController = loadTab(resultsTab, "/ru/kafpin124/rkpp_kursr/new_result_demo.fxml");
-        verificationController = loadTab(verificationTab, "/ru/kafpin124/rkpp_kursr/verification.fxml");
-        reportsController = loadTab(reportsTab, "/ru/kafpin124/rkpp_kursr/reports.fxml");
-        manageEmployeesController = loadTab(employeesTab, "/ru/kafpin124/rkpp_kursr/manage_employees.fxml");
-        manageTestsController = loadTab(testsTab, "/ru/kafpin124/rkpp_kursr/manage_tests.fxml");
+        ordersListController = loadTab(ordersTab, "/ru/kafpin124/rkpp_kursr/orders_list.fxml", factory);
+        newOrderController = loadTab(newOrderTab, "/ru/kafpin124/rkpp_kursr/new_order.fxml", factory);
+        newResultController = loadTab(resultsTab, "/ru/kafpin124/rkpp_kursr/new_result.fxml", factory);
+        verificationController = loadTab(verificationTab, "/ru/kafpin124/rkpp_kursr/verification.fxml", factory);
+        reportsController = loadTab(reportsTab, "/ru/kafpin124/rkpp_kursr/reports.fxml", factory);
+        manageEmployeesController = loadTab(employeesTab, "/ru/kafpin124/rkpp_kursr/manage_employees.fxml", factory);
+        manageTestsController = loadTab(testsTab, "/ru/kafpin124/rkpp_kursr/manage_tests.fxml", factory);
     }
 
 
-    private <T> T loadTab(Tab tab, String fxmlPath) throws IOException {
+//    private <T> T loadTab(Tab tab, String fxmlPath) throws IOException {
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+//        tab.setContent(loader.load());
+//        return loader.getController();
+//    }
+
+
+    private <T> T loadTab(Tab tab, String fxmlPath, Callback<Class<?>, Object> controllerFactory) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        loader.setControllerFactory(controllerFactory);
         tab.setContent(loader.load());
         return loader.getController();
     }
-
 
     public void setCurrentUser(Employee user) {
         this.currentUser = user;

@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import lombok.NoArgsConstructor;
+import ru.kafpin124.rkpp_kursr.dao.AnalysisTestDao;
+import ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.*;
 
@@ -15,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-@NoArgsConstructor(force = true)
+//@NoArgsConstructor(force = true)
 public class ManageTestsController {
 
     @FXML private TableView<AnalysisTest> testsTable;
@@ -24,13 +26,13 @@ public class ManageTestsController {
     @FXML private TableColumn<AnalysisTest, Integer> colTime;
     @FXML private TableColumn<AnalysisTest, BigDecimal> colPrice;
 
-    private final AnalysisTestDaoImpl testDao;
-    private final ReferenceValueDaoImpl refDao;
+    private final AnalysisTestDao testDao;
+    private final ReferenceValueDao refDao;
 
     private ObservableList<AnalysisTest> testList = FXCollections.observableArrayList();
 
 
-    public ManageTestsController(AnalysisTestDaoImpl testDao, ReferenceValueDaoImpl refDao) {
+    public ManageTestsController(AnalysisTestDao testDao, ReferenceValueDao refDao) {
         this.testDao = testDao;
         this.refDao = refDao;
     }

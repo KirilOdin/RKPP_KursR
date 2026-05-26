@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor(force = true)
+//@NoArgsConstructor(force = true)
 public class OrdersListController {
     @FXML private TableView<Order> ordersTable;
     @FXML private ComboBox<String> filterStatus;
     @FXML private TextField searchField;
     @FXML private DatePicker dateFrom, dateTo;
 
-    private final OrderDaoImpl orderDao;
-    public OrdersListController(OrderDaoImpl orderDao) {
+    private final OrderDao orderDao;
+    public OrdersListController(OrderDao orderDao) {
         this.orderDao = orderDao;
     }
 

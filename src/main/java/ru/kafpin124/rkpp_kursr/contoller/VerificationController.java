@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import lombok.NoArgsConstructor;
+import ru.kafpin124.rkpp_kursr.dao.OrderDao;
+import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl;
 import ru.kafpin124.rkpp_kursr.dao.impl.OrderItemDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.*;
@@ -12,18 +14,18 @@ import ru.kafpin124.rkpp_kursr.model.Employee;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@NoArgsConstructor(force = true)
+//@NoArgsConstructor(force = true)
 public class VerificationController {
     @FXML private TableView<Order> pendingOrdersTable;
     @FXML private TableView<OrderItem> resultsTable;
     @FXML private TextField commentField;
 
-    private final OrderDaoImpl orderDao;
-    private final OrderItemDaoImpl itemDao;
+    private final OrderDao orderDao;
+    private final OrderItemDao itemDao;
     private Employee currentUser;
 
 
-    public VerificationController(OrderDaoImpl orderDao, OrderItemDaoImpl itemDao) {
+    public VerificationController(OrderDao orderDao, OrderItemDao itemDao) {
         this.orderDao = orderDao;
         this.itemDao = itemDao;
     }

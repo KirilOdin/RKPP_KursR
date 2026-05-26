@@ -9,24 +9,25 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import lombok.NoArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
+import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.EmployeeDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 
 import java.util.List;
 import java.util.Optional;
 
-@NoArgsConstructor(force = true)
+//@NoArgsConstructor(force = true)
 public class ManageEmployeesController {
 
     @FXML private TableView<Employee> employeesTable;
     @FXML private TableColumn<Employee, Long> colId;
     @FXML private TableColumn<Employee, String> colLastName, colFirstName, colMiddleName, colPosition, colRole;
 
-    private final EmployeeDaoImpl employeeDao;
+    private final EmployeeDao employeeDao;
     private ObservableList<Employee> employeeList = FXCollections.observableArrayList();
 
 
-    public ManageEmployeesController(EmployeeDaoImpl employeeDao) {
+    public ManageEmployeesController(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;
     }
 
