@@ -5,6 +5,7 @@ module ru.kafpin124.rkpp_kursr {
     requires static lombok;
     requires jbcrypt;
     requires spring.security.crypto;
+    requires java.prefs;
 
 
     opens ru.kafpin124.rkpp_kursr to javafx.fxml;

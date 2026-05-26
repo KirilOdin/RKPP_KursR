@@ -28,6 +28,11 @@ public class MainTabController {
     private ManageTestsController manageTestsController;
 
     private Employee currentUser;
+    private Stage primaryStage;   // ссылка на главное окно
+
+    public void setPrimaryStage(Stage stage) {
+        this.primaryStage = stage;
+    }
 
     private OrderDao orderDao;
 

@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import ru.kafpin124.rkpp_kursr.LocalizationService;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.MainApplication;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
@@ -19,6 +20,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class LoginController {
+    @FXML private ComboBox<Locale> languageCombo;
     @FXML private RadioButton rbDB;
     @FXML private ToggleGroup authModeGroup;
     @FXML private RadioButton rbBCrypt;
@@ -39,10 +41,32 @@ public class LoginController {
         this.encoder = encoder;
     }
 
+    public LoginController() {
+        this.employeeDao = new EmployeeDaoImpl();
+        this.encoder = new BCryptPasswordEncoder();
+    }
+
     @FXML
     void initialize() {
+        languageCombo.getItems().addAll(
+                new Locale("en"),
+                new Locale("ru", "RU"),
+                new Locale("de", "DE")
+        );
+        languageCombo.setValue(LocalizationService.getCurrentLocale());
+
+        languageCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                LocalizationService.changeLocale(newVal);
+                // Перезагружаем окно входа с новым языком
+                reloadLoginWindow();
+            }
+        });
+
+
         btnLogin.setOnAction(e -> login());
         btnClose.setOnAction(e -> ((Stage) btnClose.getScene().getWindow()).close());
+
     }
 
     private void login() {
@@ -89,8 +113,8 @@ public class LoginController {
             SpecimenDaoImpl specimenDao = new SpecimenDaoImpl();
             ReportDaoImpl reportDao = new ReportDaoImpl();
             ReferenceValueDaoImpl refDao = new ReferenceValueDaoImpl();
-            Locale locale = Locale.getDefault(); // new Locale("de", "DE")
-            ResourceBundle bundle = ResourceBundle.getBundle("text", locale);
+
+            ResourceBundle bundle = ResourceBundle.getBundle("text", LocalizationService.getCurrentLocale());
             FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("main_tab.fxml"), bundle);
 
             loader.setControllerFactory(clazz -> {
@@ -135,6 +159,24 @@ public class LoginController {
         } catch (IOException e) {
             e.printStackTrace();
             messageLabel.setText("Ошибка загрузки главного окна");
+        }
+    }
+
+    private void reloadLoginWindow() {
+        try {
+            Stage currentStage = (Stage) languageCombo.getScene().getWindow();
+            currentStage.close();
+
+            ResourceBundle bundle = LocalizationService.getBundle();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ru/kafpin124/rkpp_kursr/login.fxml"),
+                    bundle
+            );
+            Stage newStage = new Stage();
+            newStage.setScene(new Scene(loader.load()));
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -17,8 +17,6 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        Locale locale = new Locale("de", "DE");
-        Locale.setDefault(locale);
         ResourceBundle bundle = ResourceBundle.getBundle("text", Locale.getDefault());
 
         EmployeeDao employeeDao = new EmployeeDaoImpl();
