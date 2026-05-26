@@ -7,16 +7,23 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import ru.kafpin124.rkpp_kursr.DBHelper;
 import ru.kafpin124.rkpp_kursr.MainApplication;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class LoginController {
+    @FXML private RadioButton rbDB;
+    @FXML private ToggleGroup authModeGroup;
+    @FXML private RadioButton rbBCrypt;
+    @FXML private Label lbPassword;
+    @FXML private Label lbLogin;
     @FXML private TextField loginField;
     @FXML private PasswordField passwordField;
     @FXML private Label messageLabel;
@@ -46,18 +53,34 @@ public class LoginController {
             return;
         }
 
-        Employee emp = employeeDao.findByLogin(login);
+        boolean useBCrypt = rbBCrypt.isSelected();
+        Employee emp = null;
 
-        if (emp == null || !encoder.matches(password, emp.getPasswordHash())) {
-            messageLabel.setText("Неверный логин или пароль");
-            return;
-        }
+        if (useBCrypt) {
+            emp = employeeDao.findByLogin(login);
+            if (emp == null || !encoder.matches(password, emp.getPasswordHash())) {
+                messageLabel.setText("Неверный логин или пароль");
+                return;
+            }
+        } else {
+                try {
+                    DBHelper.initConnection(login, password);
+                } catch (SQLException e) {
+                    messageLabel.setText("Неверный логин или пароль (СУБД)");
+                    return;
+                }
+
+                emp = employeeDao.findByLogin(login);
+                if (emp == null) {
+                    messageLabel.setText("Сотрудник не найден в справочнике");
+                    return;
+                }
+            }
 
 //        System.out.println(getClass().getResource("ru/kafpin124/rkpp_kursr/main_tab.fxml"));
 
         // Открытие основного окна АРМ
         try {
-
             EmployeeDaoImpl employeeDao = new EmployeeDaoImpl();
             OrderDaoImpl orderDao = new OrderDaoImpl();
             PatientDaoImpl patientDao = new PatientDaoImpl();
@@ -92,6 +115,12 @@ public class LoginController {
                 // тогда будет использован стандартный конструктор без параметров.
                 return null;
             });
+
+
+            if (emp == null) {
+                messageLabel.setText("Ошибка: данные сотрудника не получены");
+                return;
+            }
 
             Parent root = loader.load();
             MainTabController mainCtrl = loader.getController();

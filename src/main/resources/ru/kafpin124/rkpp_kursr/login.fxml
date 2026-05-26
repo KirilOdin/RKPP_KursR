@@ -3,15 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane minWidth="270.0" minHeight="140.0"
-            maxWidth="270.0" maxHeight="140.0"
-            prefWidth="270.0" prefHeight="140.0"
-            xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ru.kafpin124.rkpp_kursr.contoller.LoginController">
+<AnchorPane maxHeight="160.0" maxWidth="290.0" minHeight="160.0" minWidth="290.0" prefHeight="160.0" prefWidth="290.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.kafpin124.rkpp_kursr.contoller.LoginController">
 
     <children>
-        <VBox spacing="8" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+        <VBox spacing="8" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10">
             <HBox spacing="5">
                 <Label fx:id="lbLogin" prefWidth="60" text="Логин:" />
                 <TextField fx:id="loginField" HBox.hgrow="ALWAYS" />
@@ -21,16 +16,26 @@
                 <PasswordField fx:id="passwordField" HBox.hgrow="ALWAYS" />
             </HBox>
             <Label fx:id="messageLabel" text="" textFill="red" />
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <RadioButton fx:id="rbBCrypt" selected="true" text="BCrypt">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="authModeGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="rbDB" text="СУБД" toggleGroup="$authModeGroup" />
+            </HBox>
         </VBox>
 
-        <Separator AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
-                   AnchorPane.topAnchor="100" />
+
+
+        <Separator AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="100" />
 
 
         <ButtonBar AnchorPane.bottomAnchor="5" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
             <buttons>
                 <Button fx:id="btnClose" text="Закрыть" />
-                <Button fx:id="btnLogin" text="Вход" defaultButton="true" />
+                <Button fx:id="btnLogin" defaultButton="true" text="Вход" />
             </buttons>
         </ButtonBar>
     </children>

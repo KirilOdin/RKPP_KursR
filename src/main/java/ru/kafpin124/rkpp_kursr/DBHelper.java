@@ -6,14 +6,24 @@ import java.sql.SQLException;
 
 public class DBHelper {
     private static final String DB_URL = "jdbc:postgresql://localhost:5432/RKPP_KR";
-    private static final String LOGIN = "postgres";
-    private static final String PASSWORD = "postgres";
+    private static final String APP_USER = "postgres";
+    private static final String APP_PASSWORD = "postgres";
 
     private static Connection connection;
+    private static String currentDbUser;
+    private static String currentDbPassword;
+
+    public static void initConnection(String user, String password) throws SQLException {
+        try (Connection testConn = DriverManager.getConnection(DB_URL, user, password)) {
+            currentDbUser = user;
+            currentDbPassword = password;
+        }
+
+    }
 
     public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection(DB_URL, LOGIN, PASSWORD);
+            connection = DriverManager.getConnection(DB_URL, APP_USER, APP_PASSWORD);
         }
         return connection;
     }

@@ -34,7 +34,7 @@ public class MainApplication extends Application {
             return null;
         });
 
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Вход в АРМ лаборанта");
         stage.setScene(scene);
         stage.show();
