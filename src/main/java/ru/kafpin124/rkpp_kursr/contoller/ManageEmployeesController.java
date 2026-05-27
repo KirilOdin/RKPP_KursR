@@ -1,5 +1,7 @@
 package ru.kafpin124.rkpp_kursr.contoller;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -38,13 +40,18 @@ public class ManageEmployeesController {
 
     @FXML
     void initialize() {
-        // Привязываем колонки к свойствам модели
-        colId.setCellValueFactory(new PropertyValueFactory<>("idEmployee"));
-        colLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        colFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        colMiddleName.setCellValueFactory(new PropertyValueFactory<>("middleName"));
-        colPosition.setCellValueFactory(new PropertyValueFactory<>("position"));
-        colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
+        colId.setCellValueFactory(cellData ->
+                new SimpleObjectProperty<>(cellData.getValue().getIdEmployee()));
+        colLastName.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getLastName()));
+        colFirstName.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getFirstName()));
+        colMiddleName.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getMiddleName()));
+        colPosition.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getPosition()));
+        colRole.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getRole()));
 
         loadEmployees();
     }

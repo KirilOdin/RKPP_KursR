@@ -14,8 +14,10 @@ import ru.kafpin124.rkpp_kursr.dao.*;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 import ru.kafpin124.rkpp_kursr.model.Order;
+import ru.kafpin124.rkpp_kursr.util.LocalizationService;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 public class MainTabController {
     @FXML private TabPane mainTabPane;
@@ -31,7 +33,7 @@ public class MainTabController {
 
     private Employee currentUser;
     private Stage primaryStage;   // ссылка на главное окно
-
+    ResourceBundle bundle = LocalizationService.getBundle();
     private OrderDao orderDao;
 
     //TODO: Добавить логирование!
@@ -99,13 +101,13 @@ public class MainTabController {
             return null;
         };
         // Загружаем содержимое каждой вкладки и получаем контроллеры
-        ordersListController = loadTab(ordersTab, "/ru/kafpin124/rkpp_kursr/orders_list.fxml", factory);
-        newOrderController = loadTab(newOrderTab, "/ru/kafpin124/rkpp_kursr/new_order.fxml", factory);
-        newResultController = loadTab(resultsTab, "/ru/kafpin124/rkpp_kursr/new_result.fxml", factory);
-        verificationController = loadTab(verificationTab, "/ru/kafpin124/rkpp_kursr/verification.fxml", factory);
-        reportsController = loadTab(reportsTab, "/ru/kafpin124/rkpp_kursr/reports.fxml", factory);
-        manageEmployeesController = loadTab(employeesTab, "/ru/kafpin124/rkpp_kursr/manage_employees.fxml", factory);
-        manageTestsController = loadTab(testsTab, "/ru/kafpin124/rkpp_kursr/manage_tests.fxml", factory);
+        ordersListController = loadTab(ordersTab, "/ru/kafpin124/rkpp_kursr/orders_list.fxml", factory, bundle);
+        newOrderController = loadTab(newOrderTab, "/ru/kafpin124/rkpp_kursr/new_order.fxml", factory, bundle);
+        newResultController = loadTab(resultsTab, "/ru/kafpin124/rkpp_kursr/new_result.fxml", factory, bundle);
+        verificationController = loadTab(verificationTab, "/ru/kafpin124/rkpp_kursr/verification.fxml", factory, bundle);
+        reportsController = loadTab(reportsTab, "/ru/kafpin124/rkpp_kursr/reports.fxml", factory, bundle);
+        manageEmployeesController = loadTab(employeesTab, "/ru/kafpin124/rkpp_kursr/manage_employees.fxml", factory, bundle);
+        manageTestsController = loadTab(testsTab, "/ru/kafpin124/rkpp_kursr/manage_tests.fxml", factory, bundle);
     }
 
 
@@ -116,8 +118,8 @@ public class MainTabController {
 //    }
 
 
-    private <T> T loadTab(Tab tab, String fxmlPath, Callback<Class<?>, Object> controllerFactory) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+    private <T> T loadTab(Tab tab, String fxmlPath, Callback<Class<?>, Object> controllerFactory, ResourceBundle bundle) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath), bundle);
         loader.setControllerFactory(controllerFactory);
         tab.setContent(loader.load());
         return loader.getController();
