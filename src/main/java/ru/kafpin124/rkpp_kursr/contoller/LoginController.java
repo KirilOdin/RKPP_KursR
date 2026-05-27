@@ -78,7 +78,7 @@ public class LoginController {
         String login = loginField.getText().trim();
         String password = passwordField.getText();
         if (login.isEmpty() || password.isEmpty()) {
-            messageLabel.setText("Заполните логин и пароль");
+            messageLabel.setText(LocalizationService.get("loginCont.messageLabel.emptyValuesWarning"));
             return;
         }
 
@@ -88,20 +88,20 @@ public class LoginController {
         if (useBCrypt) {
             emp = employeeDao.findByLogin(login);
             if (emp == null || !encoder.matches(password, emp.getPasswordHash())) {
-                messageLabel.setText("Неверный логин или пароль");
+                messageLabel.setText(LocalizationService.get("loginCont.messageLabel.wrongLoginWithHash"));
                 return;
             }
         } else {
                 try {
                     DBHelper.initConnection(login, password);
                 } catch (SQLException e) {
-                    messageLabel.setText("Неверный логин или пароль (СУБД)");
+                    messageLabel.setText(LocalizationService.get("loginCont.messageLabel.wrongLoginDB"));
                     return;
                 }
 
                 emp = employeeDao.findByLogin(login);
                 if (emp == null) {
-                    messageLabel.setText("Сотрудник не найден в справочнике");
+                    messageLabel.setText(LocalizationService.get("loginCont.messageLabel.employeeNotFound"));
                     return;
                 }
             }
@@ -147,7 +147,7 @@ public class LoginController {
 
 
             if (emp == null) {
-                messageLabel.setText("Ошибка: данные сотрудника не получены");
+                messageLabel.setText(LocalizationService.get("loginCont.messageLabel.employeeNotReceived"));
                 return;
             }
 
@@ -156,14 +156,14 @@ public class LoginController {
             mainCtrl.setCurrentUser(emp);
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
-            stage.setTitle("АРМ лаборанта");
+            stage.setTitle(LocalizationService.get("mainCont.sceneTitle"));
             stage.show();
 
             // Закрытие окна входа
             ((Stage) btnLogin.getScene().getWindow()).close();
         } catch (IOException e) {
             e.printStackTrace();
-            messageLabel.setText("Ошибка загрузки главного окна");
+            messageLabel.setText(LocalizationService.get("loginCont.messageLabel.loadSceneError"));
         }
     }
 
@@ -179,6 +179,7 @@ public class LoginController {
             );
             Stage newStage = new Stage();
             newStage.setScene(new Scene(loader.load()));
+            newStage.setTitle(LocalizationService.get("loginCont.sceneTitle"));
             newStage.show();
         } catch (IOException e) {
             e.printStackTrace();

@@ -14,18 +14,18 @@
 
     <top>
         <MenuBar>
-            <Menu text="Файл">
-                <MenuItem onAction="#onRefresh" text="Обновить" />
+            <Menu text="%m.menuBar.file">
+                <MenuItem fx:id="refreshItem" onAction="#onRefresh" text="%m.menuBar.file.refreshItem" />
                 <SeparatorMenuItem />
-                <MenuItem onAction="#onLogout" text="Выйти" />
+                <MenuItem fx:id="exitItem" onAction="#onLogout" text="%m.menuBar.file.exitItem" />
             </Menu>
-            <Menu text="Действия">
-                <MenuItem onAction="#onSetInProgress" text="Взять в работу" />
-                <MenuItem onAction="#onPrintReport" text="Печать бланка" />
+            <Menu text="%m.menuBar.actions">
+                <MenuItem fx:id="setInWorkItem" onAction="#onSetInProgress" text="%m.menuBar.service.setInWorkItem" />
+                <MenuItem fx:id="printReportItem" onAction="#onPrintReport" text="%m.menuBar.service.printReportItem" />
             </Menu>
-            <Menu text="Сервис">
-                <MenuItem onAction="#onSwitchToEmployees" text="Управление сотрудниками" />
-                <MenuItem onAction="#onSwitchToTests" text="Справочник анализов" />
+            <Menu text="%m.menuBar.service">
+                <MenuItem fx:id="switchToEmployeesItem" onAction="#onSwitchToEmployees" text="%m.menuBar.service.switchToEmployeesItem" />
+                <MenuItem fx:id="switchToTestsItem" onAction="#onSwitchToTests" text="%m.menuBar.service.switchToTestsItem" />
             </Menu>
         </MenuBar>
     </top>
@@ -61,10 +61,10 @@
 
     <bottom>
         <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 10;">
-            <Button fx:id="btUpdate" onAction="#onRefresh" text="Обновить" />
-            <Button fx:id="btGetOnWork" onAction="#onSetInProgress" text="Взять в работу" />
-            <Button fx:id="btShowResult" onAction="#onEnterResults" text="Результаты" />
-            <Button onAction="#onPrintReport" text="Печать бланка" />
+            <Button fx:id="btUpdate" onAction="#onRefresh" text="%m.buttonPanel.btUpdate" />
+            <Button fx:id="btGetOnWork" onAction="#onSetInProgress" text="%m.buttonPanel.btGetOnWork" />
+            <Button fx:id="btShowResult" onAction="#onEnterResults" text="%m.buttonPanel.btShowResult" />
+            <Button fx:id="btPrintReport" onAction="#onPrintReport" text="%m.buttonPanel.bt.PrintResult" />
         </HBox>
     </bottom>
 </BorderPane>

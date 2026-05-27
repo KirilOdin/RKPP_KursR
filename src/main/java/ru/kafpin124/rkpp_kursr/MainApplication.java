@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.kafpin124.rkpp_kursr.contoller.LoginController;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.EmployeeDaoImpl;
+import ru.kafpin124.rkpp_kursr.util.LocalizationService;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -36,7 +37,7 @@ public class MainApplication extends Application {
         });
 
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Вход в АРМ лаборанта");
+        stage.setTitle(LocalizationService.get("loginCont.sceneTitle"));
         stage.setScene(scene);
         stage.show();
         logger.info("Приложение запущено");

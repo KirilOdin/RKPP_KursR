@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -33,5 +34,14 @@ public class LocalizationService {
     public static void initFromPreferences() {
         String saved = Preferences.userRoot().node("myapp").get("locale", "ru-RU");
         currentLocale = Locale.forLanguageTag(saved);
+    }
+
+
+    public static String get(String key) {
+        try {
+            return getBundle().getString(key);
+        } catch (MissingResourceException e) {
+            return "!" + key + "!";   // заглушка, если ключ отсутствует
+        }
     }
 }
