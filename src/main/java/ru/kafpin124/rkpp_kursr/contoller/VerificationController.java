@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl;
@@ -23,6 +25,10 @@ public class VerificationController {
     private final OrderDao orderDao;
     private final OrderItemDao itemDao;
     private Employee currentUser;
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(VerificationController.class);
 
 
     public VerificationController(OrderDao orderDao, OrderItemDao itemDao) {

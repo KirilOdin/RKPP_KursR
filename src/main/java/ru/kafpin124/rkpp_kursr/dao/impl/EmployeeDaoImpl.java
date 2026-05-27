@@ -2,6 +2,8 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
@@ -13,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeDaoImpl implements EmployeeDao {
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(EmployeeDaoImpl.class);
 
 
 //    1. Вставка нового сотрудника

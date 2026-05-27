@@ -1,5 +1,8 @@
 package ru.kafpin124.rkpp_kursr.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,6 +15,10 @@ public class DBHelper {
     private static Connection connection;
     private static String currentDbUser;
     private static String currentDbPassword;
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(DBHelper.class);
 
     public static void initConnection(String user, String password) throws SQLException {
         try (Connection testConn = DriverManager.getConnection(DB_URL, user, password)) {

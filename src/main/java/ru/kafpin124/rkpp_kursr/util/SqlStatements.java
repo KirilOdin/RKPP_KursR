@@ -1,5 +1,8 @@
 package ru.kafpin124.rkpp_kursr.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +17,10 @@ public class SqlStatements {
     // try (FileInputStream fis = new FileInputStream(url.getFile())) {
     //     prop.load(fis);
     // }
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(SqlStatements.class);
 
     static {
         try (InputStream inputStream = SqlStatements.class.getResourceAsStream("/sql/statements.properties")) {

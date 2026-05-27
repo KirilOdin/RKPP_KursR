@@ -1,5 +1,7 @@
 package ru.kafpin124.rkpp_kursr.dao.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
 import ru.kafpin124.rkpp_kursr.model.*;
@@ -12,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderItemDaoImpl implements OrderItemDao {
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(OrderItemDaoImpl.class);
 
 
 //    1. Вставка новой позиции заказа

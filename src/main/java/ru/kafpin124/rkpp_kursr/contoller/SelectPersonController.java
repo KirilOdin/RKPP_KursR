@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.impl.PatientDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.Patient;
 
@@ -24,6 +26,10 @@ public class SelectPersonController {
     private PatientDaoImpl patientDao = new PatientDaoImpl();
     private List<Patient> allPatients;
     private Patient selectedPatient;
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(SelectPersonController.class);
 
     @FXML
     void initialize() {

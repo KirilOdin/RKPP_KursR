@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.*;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.*;
@@ -38,14 +40,6 @@ public class NewOrderController {
     private final SpecimenDao specimenDao;
     private final OrderItemDao orderItemDao;
 
-    public NewOrderController(PatientDao patientDao, AnalysisTestDao testDao,OrderDao orderDao,
-                              SpecimenDao specimenDao, OrderItemDao orderItemDao) {
-        this.patientDao = patientDao;
-        this.testDao = testDao;
-        this.orderDao = orderDao;
-        this.specimenDao = specimenDao;
-        this.orderItemDao = orderItemDao;
-    }
 
 //    public NewOrderController() {
 //        this.patientDao = new PatientDaoImpl();
@@ -54,15 +48,28 @@ public class NewOrderController {
 //        this.specimenDao = new SpecimenDaoImpl();
 //        this.orderItemDao = new OrderItemDaoImpl();
 //    }
-
     private Patient selectedPatient;
+
     private Employee currentUser;
     private List<AnalysisTest> selectedTests = new ArrayList<>();
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(NewOrderController.class);
 
     @FXML
     void initialize() {
         biomaterialCombo.setItems(FXCollections.observableArrayList("кровь", "моча", "мазок", "кал", "слюна"));
         collectionDatePicker.setValue(LocalDateTime.now().toLocalDate());
+    }
+
+    public NewOrderController(PatientDao patientDao, AnalysisTestDao testDao,OrderDao orderDao,
+                              SpecimenDao specimenDao, OrderItemDao orderItemDao) {
+        this.patientDao = patientDao;
+        this.testDao = testDao;
+        this.orderDao = orderDao;
+        this.specimenDao = specimenDao;
+        this.orderItemDao = orderItemDao;
     }
 
     public void setCurrentUser(Employee user) {

@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.AnalysisTestDao;
 import ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
@@ -30,6 +32,10 @@ public class ManageTestsController {
     private final ReferenceValueDao refDao;
 
     private ObservableList<AnalysisTest> testList = FXCollections.observableArrayList();
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(ManageTestsController.class);
 
 
     public ManageTestsController(AnalysisTestDao testDao, ReferenceValueDao refDao) {

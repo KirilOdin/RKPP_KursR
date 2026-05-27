@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.*;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
@@ -30,17 +32,21 @@ public class MainTabController {
     private Employee currentUser;
     private Stage primaryStage;   // ссылка на главное окно
 
-    public void setPrimaryStage(Stage stage) {
-        this.primaryStage = stage;
-    }
-
     private OrderDao orderDao;
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(MainTabController.class);
 
     public MainTabController(OrderDao orderDao) {
         this.orderDao = orderDao;
     }
 
     public MainTabController() {}
+
+    public void setPrimaryStage(Stage stage) {
+        this.primaryStage = stage;
+    }
 
 
 //    public void setCurrentUser(Employee user) {

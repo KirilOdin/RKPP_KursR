@@ -1,6 +1,8 @@
 package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.SpecimenDao;
 import ru.kafpin124.rkpp_kursr.model.Order;
@@ -12,6 +14,9 @@ import java.util.List;
 
 public class SpecimenDaoImpl implements SpecimenDao {
 
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(SpecimenDaoImpl.class);
 
 //    1. Вставка новой биологической пробы
 

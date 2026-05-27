@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.Order;
@@ -29,6 +31,11 @@ public class OrdersListController {
 //    public OrdersListController() {
 //        this.orderDao = new OrderDaoImpl();
 //    }
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(OrdersListController.class);
+
     @FXML
     void initialize() {
 

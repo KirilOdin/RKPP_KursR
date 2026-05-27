@@ -9,6 +9,8 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.StringConverter;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
 import ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao;
@@ -34,6 +36,10 @@ public class NewResultController {
     private final OrderDao orderDao;
     private final OrderItemDao itemDao;
     private final ReferenceValueDao refDao;
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(NewResultController.class);
 
     public NewResultController(OrderDao orderDao, OrderItemDao itemDao, ReferenceValueDao refDao) {
         this.orderDao = orderDao;

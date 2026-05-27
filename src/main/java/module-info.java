@@ -6,6 +6,7 @@ module ru.kafpin124.rkpp_kursr {
     requires jbcrypt;
     requires spring.security.crypto;
     requires java.prefs;
+    requires org.slf4j;
 
 
     opens ru.kafpin124.rkpp_kursr to javafx.fxml;

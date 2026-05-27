@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.impl.AnalysisTestDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.AnalysisTest;
 
@@ -20,6 +22,10 @@ public class SelectTestController {
     private AnalysisTestDaoImpl testDao = new AnalysisTestDaoImpl();
     private List<AnalysisTest> allTests;
     private List<AnalysisTest> selectedTests = new ArrayList<>();
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(SelectTestController.class);
 
     @FXML
     void initialize() {

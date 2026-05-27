@@ -1,5 +1,7 @@
 package ru.kafpin124.rkpp_kursr.dao.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.ReportDao;
 import ru.kafpin124.rkpp_kursr.dto.TestCountByType;
 import ru.kafpin124.rkpp_kursr.dto.EmployeeStatistic;
@@ -13,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportDaoImpl implements ReportDao {
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(ReportDaoImpl.class);
 
 //    public static final String GET_TEST_COUNT_BY_TYPE = "SELECT t.test_name, COUNT(oi.id_item) AS cnt " +
 //            "FROM public.order_items oi " +

@@ -7,6 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.print.PrinterJob;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.ReportDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.ReportDaoImpl;
 import ru.kafpin124.rkpp_kursr.dto.*;
@@ -24,6 +26,10 @@ public class ReportsController {
     @FXML private ComboBox<String> reportTypeCombo;
 
     private final ReportDao reportDao;
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(ReportsController.class);
 
     public ReportsController(ReportDao reportDao) {
         this.reportDao = reportDao;

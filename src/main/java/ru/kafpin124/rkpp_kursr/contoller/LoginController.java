@@ -6,8 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.kafpin124.rkpp_kursr.LocalizationService;
+import ru.kafpin124.rkpp_kursr.util.LocalizationService;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.MainApplication;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
@@ -35,6 +37,9 @@ public class LoginController {
     private final EmployeeDao employeeDao;
     private final BCryptPasswordEncoder encoder;
 
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     public LoginController(EmployeeDao employeeDao, BCryptPasswordEncoder encoder) {
         this.employeeDao = employeeDao;

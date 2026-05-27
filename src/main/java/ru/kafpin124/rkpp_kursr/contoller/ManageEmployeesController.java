@@ -9,6 +9,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import lombok.NoArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.EmployeeDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.Employee;
@@ -26,6 +28,9 @@ public class ManageEmployeesController {
     private final EmployeeDao employeeDao;
     private ObservableList<Employee> employeeList = FXCollections.observableArrayList();
 
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(ManageEmployeesController.class);
 
     public ManageEmployeesController(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;

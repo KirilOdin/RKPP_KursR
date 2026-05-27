@@ -2,6 +2,8 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.AnalysisTestDao;
 import ru.kafpin124.rkpp_kursr.model.AnalysisTest;
@@ -12,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnalysisTestDaoImpl implements AnalysisTestDao {
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(AnalysisTestDaoImpl.class);
 //
 //    URL url = this.getClass().getResource("ru/kafpin/rkpp_lb_7/statements.properties");
 //    this.property = new Properties();

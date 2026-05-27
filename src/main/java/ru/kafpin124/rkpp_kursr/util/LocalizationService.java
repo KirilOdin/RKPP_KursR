@@ -1,7 +1,7 @@
-package ru.kafpin124.rkpp_kursr;
+package ru.kafpin124.rkpp_kursr.util;
 
-import java.util.*;
-import java.util.function.Consumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -9,6 +9,10 @@ import java.util.prefs.Preferences;
 
 public class LocalizationService {
     private static Locale currentLocale = new Locale("ru", "RU");
+
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(LocalizationService.class);
 
     public static Locale getCurrentLocale() {
         return currentLocale;

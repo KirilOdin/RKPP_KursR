@@ -1,5 +1,7 @@
 package ru.kafpin124.rkpp_kursr.dao.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao;
 import ru.kafpin124.rkpp_kursr.model.AnalysisTest;
 import ru.kafpin124.rkpp_kursr.model.ReferenceValue;
@@ -14,6 +16,9 @@ import java.util.List;
 
 public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
+    //TODO: Добавить логирование!
+
+    public static final Logger logger = LoggerFactory.getLogger(ReferenceValueDaoImpl.class);
 
     // 1. Вставка нового референсного значения
 
