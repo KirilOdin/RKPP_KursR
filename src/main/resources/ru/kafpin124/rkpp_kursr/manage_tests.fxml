@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="650.0"
-            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ru.kafpin124.rkpp_kursr.contoller.ManageTestsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="650.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.kafpin124.rkpp_kursr.contoller.ManageTestsController">
 
     <center>
         <TableView fx:id="testsTable">
             <columns>
-                <TableColumn fx:id="colId" text="ID" prefWidth="40"/>
-                <TableColumn fx:id="colName" text="Наименование" prefWidth="200"/>
-                <TableColumn fx:id="colBiomaterial" text="Биоматериал" prefWidth="120"/>
-                <TableColumn fx:id="colTime" text="Срок (ч)" prefWidth="80"/>
-                <TableColumn fx:id="colPrice" text="Цена" prefWidth="80"/>
+                <TableColumn fx:id="colId" prefWidth="40" text="%manageTests.testsTable.colId" />
+                <TableColumn fx:id="colName" prefWidth="200" text="%manageTests.testsTable.colName" />
+                <TableColumn fx:id="colBiomaterial" prefWidth="120" text="%manageTests.testsTable.colBiomaterial" />
+                <TableColumn fx:id="colTime" prefWidth="100" text="%manageTests.testsTable.colTime" />
+                <TableColumn fx:id="colPrice" prefWidth="100" text="%manageTests.testsTable.colPrice" />
             </columns>
         </TableView>
     </center>
 
     <right>
-        <VBox spacing="10" style="-fx-padding: 10;" prefWidth="200">
-            <Button text="Добавить" onAction="#onAddTest" maxWidth="Infinity"/>
-            <Button text="Редактировать" onAction="#onEditTest" maxWidth="Infinity"/>
-            <Button text="Удалить" onAction="#onDeleteTest" maxWidth="Infinity"/>
-            <Separator/>
-            <Button text="Управление нормами" onAction="#onManageReferences"/>
+        <VBox prefWidth="200" spacing="10" style="-fx-padding: 10;">
+            <Button maxWidth="Infinity" onAction="#onAddTest" text="%manageTests.button.add" />
+            <Button maxWidth="Infinity" onAction="#onEditTest" text="%manageTests.button.edit" />
+            <Button maxWidth="Infinity" onAction="#onDeleteTest" text="%manageTests.button.delete" />
+            <Separator />
+            <Button onAction="#onManageReferences" text="%manageTests.button.manageRefs" />
         </VBox>
     </right>
 </BorderPane>

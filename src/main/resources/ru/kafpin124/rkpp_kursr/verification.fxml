@@ -9,7 +9,7 @@
 
     <top>
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-            <Label text="Заказы, ожидающие верификации"/>
+            <Label fx:id="lbVerifOrders" text="%verification.label.verifOrders"/>
         </HBox>
     </top>
 
@@ -17,8 +17,8 @@
         <VBox spacing="10" style="-fx-padding: 10;" prefWidth="250">
             <TableView fx:id="pendingOrdersTable">
                 <columns>
-                    <TableColumn text="ID" prefWidth="50"/>
-                    <TableColumn text="Пациент" prefWidth="200"/>
+                    <TableColumn fx:id="colID" text="%verification.pendingOrdersTable.id" prefWidth="50"/>
+                    <TableColumn fx:id="colPatient" text="%verification.pendingOrdersTable.patient" prefWidth="200"/>
                 </columns>
             </TableView>
         </VBox>
@@ -26,21 +26,21 @@
 
     <center>
         <VBox spacing="10" style="-fx-padding: 10;">
-            <Label text="Результаты по заказу:"/>
+            <Label fx:id="lbResults" text="%verification.label.results"/>
             <TableView fx:id="resultsTable">
                 <columns>
-                    <TableColumn text="Тест" prefWidth="150"/>
-                    <TableColumn text="Результат" prefWidth="120"/>
-                    <TableColumn text="Норма" prefWidth="180"/>
-                    <TableColumn text="Отклонение" prefWidth="100"/>
+                    <TableColumn fx:id="colTest" text="%verification.resultsTable.test" prefWidth="150"/>
+                    <TableColumn fx:id="colResult" text="%verification.resultsTable.result" prefWidth="120"/>
+                    <TableColumn fx:id="colNorm" text="%verification.resultsTable.norm" prefWidth="180"/>
+                    <TableColumn fx:id="colDeviation" text="%verification.resultsTable.deviation" prefWidth="100"/>
                 </columns>
             </TableView>
             <Separator/>
             <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Label text="Комментарий врача:"/>
-                <TextField fx:id="commentField" HBox.hgrow="ALWAYS" promptText="При необходимости"/>
-                <Button text="Утвердить заказ" onAction="#onApproveOrder"/>
-                <Button text="Отклонить" onAction="#onRejectOrder"/>
+                <Label fx:id="lbComment" text="%verification.label.comment"/>
+                <TextField fx:id="commentField" HBox.hgrow="ALWAYS" promptText="%verification.textField.commentField"/>
+                <Button fx:id="btApprove" text="%verification.button.approve" onAction="#onApproveOrder"/>
+                <Button fx:id="btReject" text="%verification.button.reject" onAction="#onRejectOrder"/>
             </HBox>
         </VBox>
     </center>

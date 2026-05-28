@@ -26,9 +26,16 @@ import java.util.List;
 
 //@NoArgsConstructor(force = true)
 public class NewResultController {
+    @FXML private Button btCancel;
+    @FXML private Button btSaveResults;
+    @FXML private Label lbResult;
+    @FXML private Button btSelectOrder;
+    @FXML private Label lbOrder;
     @FXML private TextField orderField;
     @FXML private TextField searchBarcodeField;
     @FXML private TableView<OrderItem> resultTable;
+    @FXML private TableColumn<OrderItem, String> colNorm, colResult, colDeviation;
+    @FXML private TableColumn<OrderItem, String> colTest;
     @FXML private Label statusLabel;
 
     private Order currentOrder;

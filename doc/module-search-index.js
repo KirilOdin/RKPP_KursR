@@ -1,0 +1,1 @@
+moduleSearchIndex = [{"l":"ru.kafpin124.rkpp_kursr"}];updateSearchResults();

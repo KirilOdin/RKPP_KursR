@@ -20,17 +20,17 @@
             <TextArea prefHeight="200.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
             <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
               <buttons>
-                <Button fx:id="btSelect" mnemonicParsing="false" text="Выбрать" />
-                  <Button fx:id="btCancel" mnemonicParsing="false" text="Отмена" />
+                <Button fx:id="btSelect" mnemonicParsing="false" text="%selectPerson.button.select" />
+                  <Button fx:id="btCancel" mnemonicParsing="false" text="%selectPerson.button.cancel" />
               </buttons>
             </ButtonBar>
          </children>
       </AnchorPane>
       <TableView fx:id="tableViewPerson" prefHeight="200.0" prefWidth="200.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Фамилия" />
-          <TableColumn prefWidth="75.0" text="Имя" />
-            <TableColumn prefWidth="75.0" text="Отчество" />
+          <TableColumn fx:id="colLastName" prefWidth="75.0" text="%selectPerson.tableViewPerson.lastName" />
+          <TableColumn fx:id="colFirstName" prefWidth="75.0" text="%selectPerson.tableViewPerson.firstName" />
+            <TableColumn fx:id="colMiddleName" prefWidth="75.0" text="%selectPerson.tableViewPerson.middleName" />
         </columns>
       </TableView>
    </items>

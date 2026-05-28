@@ -9,23 +9,23 @@
 
     <top>
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-            <Label text="Заказ:"/>
+            <Label fx:id="lbOrder" text="%newResult.label.order"/>
             <TextField fx:id="orderField" editable="false" HBox.hgrow="ALWAYS"
-                       promptText="Отсканируйте штрих-код или выберите заказ"/>
-            <Button text="Выбрать заказ" onAction="#onSelectOrder"/>
+                       promptText="%newResult.textField.orderField"/>
+            <Button fx:id="btSelectOrder" text="%newResult.button.selectOrder" onAction="#onSelectOrder"/>
         </HBox>
         <Separator/>
     </top>
 
     <center>
         <VBox spacing="5" style="-fx-padding: 10;">
-            <Label text="Введите результаты:"/>
+            <Label fx:id="lbResult" text="%newResult.label.results"/>
             <TableView fx:id="resultTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn text="Тест" prefWidth="150"/>
-                    <TableColumn text="Норма" prefWidth="160"/>
-                    <TableColumn text="Результат" prefWidth="150"/>
-                    <TableColumn text="Отклонение" prefWidth="80"/>
+                    <TableColumn fx:id="colTest" text="%newResult.resultTable.test" prefWidth="150"/>
+                    <TableColumn fx:id="colNorm" text="%newResult.resultTable.norm" prefWidth="160"/>
+                    <TableColumn fx:id="colResult" text="%newResult.resultTable.result" prefWidth="150"/>
+                    <TableColumn fx:id="colDeviation" text="%newResult.resultTable.deviation" prefWidth="80"/>
                 </columns>
             </TableView>
         </VBox>
@@ -33,9 +33,9 @@
 
     <bottom>
         <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
-            <Label fx:id="statusLabel" text="Статус заказа: "/>
-            <Button text="Сохранить результаты" onAction="#onSaveResults"/>
-            <Button text="Отмена" onAction="#onCancel"/>
+            <Label fx:id="statusLabel" text="%newResult.label.status"/>
+            <Button fx:id="btSaveResults" text="%newResult.button.save" onAction="#onSaveResults"/>
+            <Button fx:id="btCancel" text="%newResult.button.cancel" onAction="#onCancel"/>
         </HBox>
     </bottom>
 </BorderPane>

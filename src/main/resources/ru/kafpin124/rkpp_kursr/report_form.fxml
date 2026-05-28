@@ -10,7 +10,7 @@
 
     <top>
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-            <Label text="Бланк результатов"/>
+            <Label fx:id="lbResult" text="%reportForm.title"/>
         </HBox>
     </top>
 
@@ -22,8 +22,8 @@
     <bottom>
         <ButtonBar style="-fx-padding: 10;">
             <buttons>
-                <Button text="Печать" onAction="#onPrint"/>
-                <Button text="Закрыть" onAction="#onCancel"/>
+                <Button fx:id="btPrint" text="%reportForm.button.print" onAction="#onPrint"/>
+                <Button fx:id="btClose" text="%reportForm.button.close" onAction="#onCancel"/>
             </buttons>
         </ButtonBar>
     </bottom>

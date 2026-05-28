@@ -10,42 +10,42 @@
 
     <left>
         <VBox spacing="10" style="-fx-padding: 10;" prefWidth="200">
-            <Label text="Статус заказа:"/>
-            <ComboBox fx:id="filterStatus" promptText="Все"/>
-            <Label text="Поиск (пациент/штрих-код):"/>
-            <TextField fx:id="searchField" promptText="Введите для поиска"/>
-            <Button text="Найти" onAction="#onSearch"/>
+            <Label fx:id="lbOrderStatus" text="%ordersList.label.status"/>
+            <ComboBox fx:id="filterStatus" promptText="%ordersList.comboBox.filterStatus"/>
+            <Label fx:id="lbSearch" text="%ordersList.label.search"/>
+            <TextField fx:id="searchField" promptText="%ordersList.textField.searchField"/>
+            <Button fx:id="btSearch" text="%ordersList.button.search" onAction="#onSearch"/>
             <Separator/>
-            <Label text="Период:"/>
-            <DatePicker fx:id="dateFrom" promptText="с"/>
-            <DatePicker fx:id="dateTo" promptText="по"/>
+            <Label fx:id="lbPeriod" text="%ordersList.label.period"/>
+            <DatePicker fx:id="dateFrom" promptText="%ordersList.textField.dateFrom"/>
+            <DatePicker fx:id="dateTo" promptText="%ordersList.textField.dateTo"/>
         </VBox>
     </left>
 
     <center>
         <TableView fx:id="ordersTable">
             <columns>
-                <TableColumn text="ID заказа" prefWidth="70" resizable="false">
+                <TableColumn fx:id="colId" text="%ordersList.ordersTable.id" prefWidth="70" resizable="false">
                     <cellValueFactory>
                         <PropertyValueFactory property="idOrder"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Пациент" prefWidth="150">
+                <TableColumn fx:id="colPatient" text="%ordersList.ordersTable.patient" prefWidth="150">
                     <cellValueFactory>
                         <PropertyValueFactory property="patientName"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Штрих-код" prefWidth="120">
+                <TableColumn fx:id="colBarcode" text="%ordersList.ordersTable.barcode" prefWidth="120">
                     <cellValueFactory>
                         <PropertyValueFactory property="barcode"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Статус" prefWidth="120">
+                <TableColumn fx:id="colStatus" text="%ordersList.ordersTable.status" prefWidth="120">
                     <cellValueFactory>
                         <PropertyValueFactory property="status"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Дата регистрации" prefWidth="140">
+                <TableColumn fx:id="colRegistrationDate" text="%ordersList.ordersTable.registrationDate" prefWidth="140">
                     <cellValueFactory>
                         <PropertyValueFactory property="registrationDatetime"/>
                     </cellValueFactory>

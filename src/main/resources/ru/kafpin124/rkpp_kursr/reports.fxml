@@ -10,15 +10,15 @@
     <top>
         <VBox spacing="10" style="-fx-padding: 10;">
             <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Тип отчёта:"/>
+                <Label fx:id="lbReportType" text="%reports.label.reportType"/>
                 <ComboBox fx:id="reportTypeCombo" promptText="Выберите"/>
             </HBox>
             <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Период с:"/>
+                <Label fx:id="lbPeriodFrom" text="%reports.label.periodFrom"/>
                 <DatePicker fx:id="reportDateFrom"/>
-                <Label text="по:"/>
+                <Label fx:id="lbPeriodTo" text="%reports.label.periodTo"/>
                 <DatePicker fx:id="reportDateTo"/>
-                <Button text="Сформировать" onAction="#onGenerateReport"/>
+                <Button fx:id="btGenerate" text="%reports.button.generate" onAction="#onGenerateReport"/>
             </HBox>
         </VBox>
     </top>
@@ -32,9 +32,9 @@
     <bottom>
         <ButtonBar style="-fx-padding: 10;">
             <buttons>
-                <Button text="Экспорт" onAction="#onExport"/>
-                <Button text="Печать" onAction="#onPrint"/>
-                <Button text="Закрыть" onAction="#onCancel"/>
+                <Button fx:id="btExport" text="%reports.button.export" onAction="#onExport"/>
+                <Button fx:id="btPrint" text="%reports.button.print" onAction="#onPrint"/>
+                <Button fx:id="btClose" text="%reports.button.close" onAction="#onCancel"/>
             </buttons>
         </ButtonBar>
     </bottom>

@@ -1,0 +1,8 @@
+module:ru.kafpin124.rkpp_kursr
+ru.kafpin124.rkpp_kursr
+ru.kafpin124.rkpp_kursr.contoller
+ru.kafpin124.rkpp_kursr.dao
+ru.kafpin124.rkpp_kursr.dao.impl
+ru.kafpin124.rkpp_kursr.dto
+ru.kafpin124.rkpp_kursr.model
+ru.kafpin124.rkpp_kursr.util

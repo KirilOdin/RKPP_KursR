@@ -25,6 +25,7 @@ import java.util.UUID;
 
 //@NoArgsConstructor(force = true)
 public class NewOrderController {
+    @FXML private TableColumn colCode, colName, colBiomaterial, colTime, colPrice;
     @FXML private TextField patientField;
     @FXML private TextField barcodeField;
     @FXML private DatePicker collectionDatePicker;

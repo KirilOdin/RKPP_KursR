@@ -9,9 +9,9 @@
 
     <top>
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-            <Label text="Фильтр по типу:"/>
+            <Label fx:id="lbFilter" text="%selectTest.label.filter"/>
             <ComboBox fx:id="filterCombo" promptText="Все"/>
-            <Button text="Показать" onAction="#onFilter"/>
+            <Button fx:id="btFilter" text="%selectTest.button.show" onAction="#onFilter"/>
         </HBox>
     </top>
 
@@ -22,8 +22,8 @@
     <bottom>
         <ButtonBar style="-fx-padding: 10;">
             <buttons>
-                <Button text="Добавить выбранные" onAction="#onAddSelected"/>
-                <Button text="Отмена" onAction="#onCancel"/>
+                <Button fx:id="btAddSelected" text="%selectTest.button.addSelected" onAction="#onAddSelected"/>
+                <Button fx:id="btCancel" text="%selectTest.button.cancel" onAction="#onCancel"/>
             </buttons>
         </ButtonBar>
     </bottom>
