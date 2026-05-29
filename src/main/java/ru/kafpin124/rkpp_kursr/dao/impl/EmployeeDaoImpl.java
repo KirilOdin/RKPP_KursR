@@ -16,8 +16,6 @@ import java.util.List;
 
 public class EmployeeDaoImpl implements EmployeeDao {
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(EmployeeDaoImpl.class);
 
 
@@ -30,6 +28,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public void add(Employee employee, String rawPassword) {
+        logger.debug("Добавление нового сотрудника: {} {}", employee.getLastName(), employee.getLogin());
         try (Connection conn = DBHelper.getConnection(); PreparedStatement pstmt = conn.prepareStatement(ADD, Statement.RETURN_GENERATED_KEYS)){
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
             String hash = passwordEncoder.encode(rawPassword);
@@ -49,12 +48,13 @@ public class EmployeeDaoImpl implements EmployeeDao {
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()){
                 if (generatedKeys.next()){
                     employee.setIdEmployee(generatedKeys.getLong(1));
+                    logger.info("Добавлен новый сотрудник: {} {}", employee.getLastName(), employee.getLogin());
                 } else {
                     throw new SQLException("Creating employee failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage() );
+            logger.error("Ошибка при добавлении сотрудника '{}' '{}': {}",employee.getLastName(), employee.getLogin(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -69,14 +69,16 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public Employee findById(Long id) {
+        logger.debug("Поиск сотрудника по ID: {}", id);
         try (Connection conn = DBHelper.getConnection(); PreparedStatement pstmt = conn.prepareStatement(FIND_BY_ID)){
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()){
+                logger.info("Поиск сотрудника c ID '{}' завершён", id);
                 return mapSingle(rs);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске сотрудника с идентификатором '{}': {}", id, e.getMessage());
             throw new RuntimeException(e);
         }
         return null;
@@ -92,12 +94,15 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public List<Employee> getAll() {
+        logger.debug("Получение всех сотрудников, хранящихся в базе данных...");
         List<Employee> employeeList = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(GET_ALL)){
             employeeList = mapper(rs);
+            logger.info("Все сотрудники из базы данных получены");
         } catch (SQLException e) {
+            logger.error("Ошибка при получении всех сотрудников, хранящихся в базе данных: {}", e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -114,6 +119,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public void update(Employee employee) {
+        logger.debug("Обновление данных сотрудника с ID {}", employee.getIdEmployee());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(UPDATE)){
             pstmt.setString(1, employee.getRole());
@@ -130,9 +136,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
             if (addedRows == 0){
                 throw new SQLException("Updating employee failed, no rows added.");
             }
-
+            logger.info("Обновлены данные сотрудника с ID {}", employee.getIdEmployee());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении сотрудника с идентификатором '{}': {}", employee.getIdEmployee(), e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -152,6 +158,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public void deleteById(Long id) {
+        logger.debug("Удаление cотрудника с ID: {}", id);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(DELETE_BY_ID)) {
             pstmt.setLong(1, id);
@@ -161,9 +168,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
             if (deletedRows == 0){
                 throw new SQLException("Deleting employee failed, no rows deleted.");
             }
+            logger.info("Удалён сотрудник с ID {}", id);
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при удалении сотрудника с идентификатором '{}': {}", id, e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -180,15 +188,17 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public Employee findByLogin(String login) {
+        logger.debug("Поиск сотрудника по логину: {}", login);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(FIND_BY_LOGIN)){
             pstmt.setString(1, login);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()){
+                logger.info("Поиск сотрудника по логину '{}' завершён", login);
                 return mapSingle(rs);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске сотрудника по логину '{}': {}", login, e.getMessage());
             throw new RuntimeException(e);
         }
         return null;
@@ -204,16 +214,18 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public List<Employee> findByRole(String role) {
+        logger.debug("Поиск сотрудника по Должности: {}", role);
         List<Employee> employeeList = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(FIND_BY_ROLE)){
             pstmt.setString(1, role);
             try (ResultSet rs = pstmt.executeQuery()){
                 employeeList = mapper(rs);
+                logger.info("Поиск сотрудника по Должности '{}' завершён", role);
             }
 
         } catch (SQLException e){
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске сотрудника по Должности '{}': {}", role, e.getMessage());
             throw new RuntimeException(e);
         }
         return employeeList;
@@ -230,15 +242,17 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public List<Employee> searchByFullName(String pattern) {
+        logger.debug("Поиск сотрудника по ФИО: {}", pattern);
         List<Employee> employeeList = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SEARCH_BY_FULLNAME)) {
             pstmt.setString(1, "%" + pattern + "%");
             try (ResultSet rs = pstmt.executeQuery()) {
                 employeeList = mapper(rs);
+                logger.info("Поиск сотрудника по ФИО  '{}' завершён", pattern);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске сотрудника по ФИО '{}': {}", pattern, e.getMessage());
             throw new RuntimeException(e);
         }
         return employeeList;
@@ -252,22 +266,27 @@ public class EmployeeDaoImpl implements EmployeeDao {
                 employeeList.add(mapSingle(rs));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при работе маппера: '{}'", e.getMessage());
             throw new RuntimeException(e);
         }
         return employeeList;
     }
 
-    private Employee mapSingle(ResultSet rs) throws SQLException {
+    private Employee mapSingle(ResultSet rs){
         Employee employee = new Employee();
-        employee.setIdEmployee(rs.getLong("id_employee"));
-        employee.setRole(rs.getString("role"));
-        employee.setPosition(rs.getString("position"));
-        employee.setLastName(rs.getString("last_name"));
-        employee.setFirstName(rs.getString("first_name"));
-        employee.setMiddleName(rs.getString("middle_name"));
-        employee.setLogin(rs.getString("login"));
-        employee.setPasswordHash(rs.getString("password_hash"));
+        try {
+            employee.setIdEmployee(rs.getLong("id_employee"));
+            employee.setRole(rs.getString("role"));
+            employee.setPosition(rs.getString("position"));
+            employee.setLastName(rs.getString("last_name"));
+            employee.setFirstName(rs.getString("first_name"));
+            employee.setMiddleName(rs.getString("middle_name"));
+            employee.setLogin(rs.getString("login"));
+            employee.setPasswordHash(rs.getString("password_hash"));
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе single-маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
+        }
 
         return employee;
     }

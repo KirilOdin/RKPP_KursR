@@ -16,8 +16,6 @@ import java.util.List;
 
 public class OrderDaoImpl implements OrderDao {
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(OrderDaoImpl.class);
 
 //    1. Вставка нового заказа
@@ -31,6 +29,8 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void add(Order order) {
+        Long patientId = order.getPatient() != null ? order.getPatient().getIdPatient() : null;
+        logger.debug("Попытка создания заказа для пациента ID: {}", patientId);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(ADD, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -68,12 +68,13 @@ public class OrderDaoImpl implements OrderDao {
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     order.setIdOrder(keys.getLong(1));
+                    logger.info("Заказ успешно создан. ID заказа: {}, Пациент ID: {}", order.getIdOrder(), patientId);
                 } else {
                     throw new SQLException("Creating order failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при создании заказа для пациента ID {}: {}", patientId, e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -90,16 +91,18 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order findById(Long id) {
+        logger.debug("Поиск заказа по ID: {}", id);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_ID)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    logger.info("Поиск заказа по ID '{}' завершён", id);
                     return mapSingle(rs);
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Заказ с ID {} не найден", id);
             throw new RuntimeException(e);
         }
         return null;
@@ -115,13 +118,15 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> getAll() {
+        logger.debug("Получение всех заказов, находящихся в базе данных...");
         List<Order> orders = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(GET_ALL)) {
             orders = mapper(rs);
+            logger.info("Все заказы из базы данных получены");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при получении всех заказов, хранящихся в базе данных: {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return orders;
@@ -137,6 +142,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void update(Order order) {
+        logger.info("Обновление заказа с ID: {}", order.getIdOrder());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE)) {
 
@@ -172,8 +178,9 @@ public class OrderDaoImpl implements OrderDao {
 
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Updating order failed, no rows affected.");
+            logger.info("Обновлены данные заказа с ID {}", order.getIdOrder());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении заказа с идентификатором '{}': {}", order.getIdOrder(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -186,13 +193,15 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void delete(Order order) {
+        logger.info("Удаление заказа с ID: {}", order.getIdOrder());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(DELETE_BY_ID)) {
             ps.setLong(1, order.getIdOrder());
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Deleting order failed, no rows deleted.");
+            logger.info("Удалён заказ с ID {}", order.getIdOrder());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при удалении заказа с идентификатором '{}': {}", order.getIdOrder(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -208,15 +217,17 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> findByPatientId(Long patientId) {
+        logger.debug("Поиск заказа по ID пациента: {}", patientId);
         List<Order> orders = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_PATIENT_ID)) {
             ps.setLong(1, patientId);
             try (ResultSet rs = ps.executeQuery()) {
                 orders = mapper(rs);
+                logger.info("Поиск заказа по ID пациента '{}' завершён", patientId);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске заказа по ID пациента '{}': {}", patientId, e.getMessage());
             throw new RuntimeException(e);
         }
         return orders;
@@ -234,15 +245,17 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> findByStatusId(Long statusId) {
+        logger.debug("Поиск заказа по ID Статуса Заказа: {}", statusId);
         List<Order> orders = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_STATUS_ID)) {
             ps.setLong(1, statusId);
             try (ResultSet rs = ps.executeQuery()) {
                 orders = mapper(rs);
+                logger.debug("Поиск заказа по ID Статуса Заказа '{}' завершён", statusId);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске заказа по ID Статуса Заказа '{}': {}", statusId, e.getMessage());
             throw new RuntimeException(e);
         }
         return orders;
@@ -262,6 +275,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> findByDateRange(LocalDateTime from, LocalDateTime to) {
+        logger.debug("Поиск заказов в диапазоне дат: {} - {}", from, to);
         List<Order> orders = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_DATE_RANGE)) {
@@ -269,9 +283,10 @@ public class OrderDaoImpl implements OrderDao {
             ps.setTimestamp(2, Timestamp.valueOf(to));
             try (ResultSet rs = ps.executeQuery()) {
                 orders = mapper(rs);
+                logger.debug("Найдено {} заказов в заданном диапазоне", orders.size());
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске заказов по датам ({} – {}): {}", from, to, e.getMessage());
             throw new RuntimeException(e);
         }
         return orders;
@@ -289,15 +304,17 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> findByRegisteredBy(Long employeeId) {
+        logger.debug("Поиск заказов, зарегистрированных сотрудником с ID: {}", employeeId);
         List<Order> orders = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_REGISTERED_BY)) {
             ps.setLong(1, employeeId);
             try (ResultSet rs = ps.executeQuery()) {
                 orders = mapper(rs);
+                logger.debug("Найдено {} заказов для сотрудника ID: {}", orders.size(), employeeId);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске заказов по сотруднику (ID: {}): {}", employeeId, e.getMessage());
             throw new RuntimeException(e);
         }
         return orders;
@@ -317,18 +334,22 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order findBySpecimenBarcode(String barcode) {
+        logger.debug("Поиск заказа по штрих-коду пробы: {}", barcode);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_SPECIMEN_BARCODE)) {
             ps.setString(1, barcode);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapSingle(rs);
+                    Order order = mapSingle(rs);
+                    logger.debug("Заказ с ID {} найден по штрих-коду {}", order.getIdOrder(), barcode);
+                    return order;
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске заказа по штрих-коду {}: {}", barcode, e.getMessage());
             throw new RuntimeException(e);
         }
+        logger.warn("Заказ по штрих-коду {} не найден", barcode);
         return null;
     }
 
@@ -341,77 +362,89 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void updateStatus(Long orderId, Long statusId) {
+        logger.info("Изменение статуса заказа с идентификатором {} на статус ID {}", orderId, statusId);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE_STATUS)) {
             ps.setLong(1, statusId);
             ps.setLong(2, orderId);
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Updating status failed, no rows affected.");
+            logger.info("Изменение статуса заказа с идентификатором {} на статус ID {}", orderId, statusId);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.info("Ошибка при изменении статуса заказа с идентификатором {} на статус ID {}: {}", orderId, statusId, e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
-    protected List<Order> mapper(ResultSet rs) throws SQLException {
+    protected List<Order> mapper(ResultSet rs){
         List<Order> orders = new ArrayList<>();
-        while (rs.next()) {
-            orders.add(mapSingle(rs));
+        try {
+            while (rs.next()) {
+                orders.add(mapSingle(rs));
+            }
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
         return orders;
     }
 
-    private Order mapSingle(ResultSet rs) throws SQLException {
+    private Order mapSingle(ResultSet rs){
         Order order = new Order();
-        order.setIdOrder(rs.getLong("id_order"));
+        try {
+            order.setIdOrder(rs.getLong("id_order"));
 
-        OrderStatus orderStatus = new OrderStatus();
-        orderStatus.setIdStatus(rs.getLong("status_id"));
-        order.setStatus(orderStatus);
+            OrderStatus orderStatus = new OrderStatus();
+            orderStatus.setIdStatus(rs.getLong("status_id"));
+            order.setStatus(orderStatus);
 
-        Patient patient = new Patient();
-        patient.setIdPatient(rs.getLong("patient_id"));
-        order.setPatient(patient);
+            Patient patient = new Patient();
+            patient.setIdPatient(rs.getLong("patient_id"));
+            order.setPatient(patient);
 
-        long orgId = rs.getLong("organization_id");
-        if (!rs.wasNull()) {
-            Organization org = new Organization();
-            org.setIdOrg(orgId);
-            order.setOrganization(org);
-        }
+            long orgId = rs.getLong("organization_id");
+            if (!rs.wasNull()) {
+                Organization org = new Organization();
+                org.setIdOrg(orgId);
+                order.setOrganization(org);
+            }
 
-        Employee registeredBy = new Employee();
-        registeredBy.setIdEmployee(rs.getLong("registered_by"));
-        order.setRegisteredBy(registeredBy);
+            Employee registeredBy = new Employee();
+            registeredBy.setIdEmployee(rs.getLong("registered_by"));
+            order.setRegisteredBy(registeredBy);
 
-        long acceptedById = rs.getLong("accepted_by");
-        if (!rs.wasNull()) {
-            Employee acceptedBy = new Employee();
-            acceptedBy.setIdEmployee(acceptedById);
-            order.setAcceptedBy(acceptedBy);
-        }
+            long acceptedById = rs.getLong("accepted_by");
+            if (!rs.wasNull()) {
+                Employee acceptedBy = new Employee();
+                acceptedBy.setIdEmployee(acceptedById);
+                order.setAcceptedBy(acceptedBy);
+            }
 
 
-        long verifiedById = rs.getLong("verified_by");
-        if (!rs.wasNull()) {
-            Employee verifiedBy = new Employee();
-            verifiedBy.setIdEmployee(verifiedById);
-            order.setVerifiedBy(verifiedBy);
-        }
+            long verifiedById = rs.getLong("verified_by");
+            if (!rs.wasNull()) {
+                Employee verifiedBy = new Employee();
+                verifiedBy.setIdEmployee(verifiedById);
+                order.setVerifiedBy(verifiedBy);
+            }
 
-        Timestamp regTs = rs.getTimestamp("registration_datetime");
-        if (regTs != null) {
-            order.setRegistrationDatetime(regTs.toLocalDateTime());
-        }
+            Timestamp regTs = rs.getTimestamp("registration_datetime");
+            if (regTs != null) {
+                order.setRegistrationDatetime(regTs.toLocalDateTime());
+            }
 
-        Timestamp accTs = rs.getTimestamp("acceptance_datetime");
-        if (accTs != null) {
-            order.setAcceptanceDatetime(accTs.toLocalDateTime());
-        }
+            Timestamp accTs = rs.getTimestamp("acceptance_datetime");
+            if (accTs != null) {
+                order.setAcceptanceDatetime(accTs.toLocalDateTime());
+            }
 
-        Timestamp verTs = rs.getTimestamp("verification_datetime");
-        if (verTs != null) {
-            order.setVerificationDatetime(verTs.toLocalDateTime());
+            Timestamp verTs = rs.getTimestamp("verification_datetime");
+            if (verTs != null) {
+                order.setVerificationDatetime(verTs.toLocalDateTime());
+            }
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе single-маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
 
         return order;

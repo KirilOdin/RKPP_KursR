@@ -16,21 +16,26 @@ public class DBHelper {
     private static String currentDbUser;
     private static String currentDbPassword;
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(DBHelper.class);
 
     public static void initConnection(String user, String password) throws SQLException {
+        logger.info("Попытка проверки подключения пользователем {}", user);
         try (Connection testConn = DriverManager.getConnection(DB_URL, user, password)) {
             currentDbUser = user;
             currentDbPassword = password;
+            logger.info("Успешная проверка подключения для {}", user);
+        } catch (SQLException e) {
+            logger.error("Ошибка проверки подключения для {}: {}", user, e.getMessage());
+            throw e;
         }
 
     }
 
     public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
+            logger.info("Установка нового подключения к БД как {}", APP_USER);
             connection = DriverManager.getConnection(DB_URL, APP_USER, APP_PASSWORD);
+            logger.debug("Соединение установлено");
         }
         return connection;
     }
@@ -39,8 +44,9 @@ public class DBHelper {
         if (connection != null) {
             try {
                 connection.close();
+                logger.info("Соединение с БД закрыто");
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.warn("Ошибка при закрытии соединения: {}", e.getMessage());
             }
         }
     }

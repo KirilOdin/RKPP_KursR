@@ -11,8 +11,6 @@ import java.util.prefs.Preferences;
 public class LocalizationService {
     private static Locale currentLocale = new Locale("ru", "RU");
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(LocalizationService.class);
 
     public static Locale getCurrentLocale() {
@@ -26,14 +24,17 @@ public class LocalizationService {
 
 
     public static void changeLocale(Locale locale) {
+        logger.info("Смена локали на {}", locale.toLanguageTag());
         currentLocale = locale;
         // HKEY_CURRENT_USER\Software\JavaSoft\Prefs\myapp
         Preferences.userRoot().node("myapp").put("locale", locale.toLanguageTag());
+        logger.debug("Локаль сохранена в Preferences");
     }
 
     public static void initFromPreferences() {
         String saved = Preferences.userRoot().node("myapp").get("locale", "ru-RU");
         currentLocale = Locale.forLanguageTag(saved);
+        logger.info("Локаль загружена из настроек: {}", saved);
     }
 
 
@@ -41,6 +42,7 @@ public class LocalizationService {
         try {
             return getBundle().getString(key);
         } catch (MissingResourceException e) {
+            logger.warn("Отсутствует ключ локализации: {}", key);
             return "!" + key + "!";   // заглушка, если ключ отсутствует
         }
     }

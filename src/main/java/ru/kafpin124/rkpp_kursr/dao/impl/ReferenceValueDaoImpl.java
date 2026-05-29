@@ -16,7 +16,6 @@ import java.util.List;
 
 public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
-    //TODO: Добавить логирование!
 
     public static final Logger logger = LoggerFactory.getLogger(ReferenceValueDaoImpl.class);
 
@@ -30,6 +29,7 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     @Override
     public void add(ReferenceValue referenceValue) {
+        logger.debug("Добавление референсного значения для теста с ID: {}", referenceValue.getTest().getIdTest());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(ADD, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -65,12 +65,13 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     referenceValue.setIdReference(keys.getLong(1));
+                    logger.info("Референсное значение добавлено с ID: {}", referenceValue.getIdReference());
                 } else {
                     throw new SQLException("Creating reference value failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при добавлении референсного значения: {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -86,16 +87,18 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     @Override
     public ReferenceValue getById(Long id) {
+        logger.debug("Поиск референсного значения по ID: {}", id);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_BY_ID)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    logger.info("Поиск референсного значения по ID '{}' завершён", id);
                     return mapSingle(rs);
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске референсного значения с ID {}: {}", id, e.getMessage());
             throw new RuntimeException(e);
         }
         return null;
@@ -112,13 +115,15 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     @Override
     public List<ReferenceValue> getAll() {
+        logger.debug("Получение всех референсных значений, находящихся в базе данных...");
         List<ReferenceValue> list = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(GET_ALL)) {
             list = mapper(rs);
+            logger.debug("Загружено {} референсных значений", list.size());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при получении всех референсных значений, хранящихся в базе данных: {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return list;
@@ -135,6 +140,7 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     @Override
     public void update(ReferenceValue referenceValue) {
+        logger.debug("Обновление референсного значения с ID: {}", referenceValue.getIdReference());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE)) {
 
@@ -168,8 +174,9 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Updating reference value failed, no rows affected.");
+            logger.info("Референсное значение с ID {} обновлено", referenceValue.getIdReference());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении референсного значения с ID {}: {}", referenceValue.getIdReference(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -182,13 +189,15 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     @Override
     public void delete(ReferenceValue referenceValue) {
+        logger.debug("Удаление референсного значения с ID: {}", referenceValue.getIdReference());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(DELETE)) {
             ps.setLong(1, referenceValue.getIdReference());
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Deleting reference value failed, no rows deleted.");
+            logger.info("Референсное значение с ID {} удалено", referenceValue.getIdReference());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при удалении референсного значения с ID {}: {}", referenceValue.getIdReference(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -202,15 +211,17 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     @Override
     public List<ReferenceValue> findByTestId(Long testId) {
+        logger.debug("Поиск референсных значений для теста с ID: {}", testId);
         List<ReferenceValue> list = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_TEST_ID)) {
             ps.setLong(1, testId);
             try (ResultSet rs = ps.executeQuery()) {
                 list = mapper(rs);
+                logger.debug("Найдено {} референсных значений для теста с ID {}", list.size(), testId);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске референсных значений для теста с ID {}: {}", testId, e.getMessage());
             throw new RuntimeException(e);
         }
         return list;
@@ -228,6 +239,7 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
 
     @Override
     public ReferenceValue findByTestAndGenderAndAge(Long testId, char gender, int age) {
+        logger.debug("Поиск референсного значения: тест={}, пол={}, возраст={}", testId, gender, age);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_TEST_AND_GENDER_AND_AGE)) {
             ps.setLong(1, testId);
@@ -236,53 +248,65 @@ public class ReferenceValueDaoImpl implements ReferenceValueDao {
             ps.setInt(4, age);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    logger.info("Найдено референсное значение для теста={}, пола={}, возраста={}", testId, gender, age);
                     return mapSingle(rs);
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске референсного значения по критериям (тест={}, пол={}, возраст={}): {}", testId, gender, age, e.getMessage());
             throw new RuntimeException(e);
         }
+        logger.warn("Референсное значение не найдено для теста={}, пола={}, возраста={}", testId, gender, age);
         return null;
     }
 
 
-    private ReferenceValue mapSingle(ResultSet rs) throws SQLException {
+    private ReferenceValue mapSingle(ResultSet rs){
         ReferenceValue rv = new ReferenceValue();
-        rv.setIdReference(rs.getLong("id_reference"));
+        try {
+            rv.setIdReference(rs.getLong("id_reference"));
 
-        // связь с тестом
-        AnalysisTest test = new AnalysisTest();
-        test.setIdTest(rs.getLong("test_id"));
-        rv.setTest(test);
+            // связь с тестом
+            AnalysisTest test = new AnalysisTest();
+            test.setIdTest(rs.getLong("test_id"));
+            rv.setTest(test);
 
-        rv.setGenderApplicable(rs.getString("gender_applicable").charAt(0));
+            rv.setGenderApplicable(rs.getString("gender_applicable").charAt(0));
 
-        int ageMin = rs.getInt("age_min");
-        if (!rs.wasNull()) {
-            rv.setAgeMin(ageMin);
-        }
-        int ageMax = rs.getInt("age_max");
-        if (!rs.wasNull()) {
-            rv.setAgeMax(ageMax);
-        }
+            int ageMin = rs.getInt("age_min");
+            if (!rs.wasNull()) {
+                rv.setAgeMin(ageMin);
+            }
+            int ageMax = rs.getInt("age_max");
+            if (!rs.wasNull()) {
+                rv.setAgeMax(ageMax);
+            }
 
-        BigDecimal minVal = rs.getBigDecimal("ref_value_min");
-        if (minVal != null) {
-            rv.setRefValueMin(minVal);
+            BigDecimal minVal = rs.getBigDecimal("ref_value_min");
+            if (minVal != null) {
+                rv.setRefValueMin(minVal);
+            }
+            BigDecimal maxVal = rs.getBigDecimal("ref_value_max");
+            if (maxVal != null) {
+                rv.setRefValueMax(maxVal);
+            }
+            rv.setRefText(rs.getString("ref_text"));
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе single-маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
-        BigDecimal maxVal = rs.getBigDecimal("ref_value_max");
-        if (maxVal != null) {
-            rv.setRefValueMax(maxVal);
-        }
-        rv.setRefText(rs.getString("ref_text"));
         return rv;
     }
 
-    private List<ReferenceValue> mapper(ResultSet rs) throws SQLException {
+    private List<ReferenceValue> mapper(ResultSet rs){
         List<ReferenceValue> list = new ArrayList<>();
-        while (rs.next()) {
-            list.add(mapSingle(rs));
+        try {
+            while (rs.next()) {
+                list.add(mapSingle(rs));
+            }
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
         return list;
     }

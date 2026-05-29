@@ -14,8 +14,6 @@ import java.util.List;
 
 public class OrderStatusDaoImpl implements OrderStatusDao {
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(OrderStatusDaoImpl.class);
 
 
@@ -27,6 +25,7 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
 
     @Override
     public void add(OrderStatus orderStatus) {
+        logger.debug("Добавление нового статуса заказа: {}", orderStatus.getStatusName());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(ADD, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -40,12 +39,13 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     orderStatus.setIdStatus(keys.getLong(1));
+                    logger.info("Статус заказа '{}' добавлен с ID {}", orderStatus.getStatusName(), orderStatus.getIdStatus());
                 } else {
                     throw new SQLException("Creating order status failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при добавлении статуса заказа '{}': {}", orderStatus.getStatusName(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -59,6 +59,7 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
 
     @Override
     public OrderStatus getById(Long id) {
+        logger.debug("Поиск статуса заказа по ID: {}", id);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_ID)) {
 
@@ -66,13 +67,15 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    logger.info("Поиск статуса заказа по ID '{}' завершён", id);
                     return mapSingle(rs);
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске статуса заказа с ID {}: {}", id, e.getMessage());
             throw new RuntimeException(e);
         }
+        logger.warn("Статус заказа с ID {} не найден", id);
         return null;
     }
 
@@ -84,14 +87,16 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
 
     @Override
     public List<OrderStatus> getAll() {
+        logger.debug("Получение всех статусов заказов, находящихся в базе данных...");
         List<OrderStatus> list = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(GET_ALL)) {
 
             list = mapper(rs);
+            logger.info("Все статусы заказов из базы данных получены");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при получении всех статусов заказов, хранящихся в базе данных: {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return list;
@@ -105,6 +110,7 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
 
     @Override
     public void update(OrderStatus orderStatus) {
+        logger.debug("Обновление статуса заказа с ID {}", orderStatus.getIdStatus());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE)) {
 
@@ -115,8 +121,9 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
             if (rows == 0) {
                 throw new SQLException("Updating order status failed, no rows affected.");
             }
+            logger.info("Статус заказа с ID {} обновлён", orderStatus.getIdStatus());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении статуса заказа с ID {}: {}", orderStatus.getIdStatus(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -128,6 +135,7 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
     public static final String DELETE_BY_ID = SqlStatements.get("sql.OrderStatus.DELETE_BY_ID");
     @Override
     public void delete(OrderStatus orderStatus) {
+        logger.debug("Удаление статуса заказа с ID {}", orderStatus.getIdStatus());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(DELETE_BY_ID)) {
 
@@ -137,24 +145,35 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
             if (rows == 0) {
                 throw new SQLException("Deleting order status failed, no rows deleted.");
             }
+            logger.info("Статус заказа с ID {} удалён", orderStatus.getIdStatus());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при удалении статуса заказа с ID {}: {}", orderStatus.getIdStatus(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
 
-    private OrderStatus mapSingle(ResultSet rs) throws SQLException {
+    private OrderStatus mapSingle(ResultSet rs){
         OrderStatus status = new OrderStatus();
-        status.setIdStatus(rs.getLong("id_status"));
-        status.setStatusName(rs.getString("status_name"));
+        try {
+            status.setIdStatus(rs.getLong("id_status"));
+            status.setStatusName(rs.getString("status_name"));
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе single-маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
+        }
         return status;
     }
 
-    private List<OrderStatus> mapper(ResultSet rs) throws SQLException {
+    private List<OrderStatus> mapper(ResultSet rs) {
         List<OrderStatus> list = new ArrayList<>();
-        while (rs.next()) {
-            list.add(mapSingle(rs));
+        try {
+            while (rs.next()) {
+                list.add(mapSingle(rs));
+            }
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
         return list;
     }

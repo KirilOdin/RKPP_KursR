@@ -15,8 +15,6 @@ import java.util.List;
 
 public class PatientDaoImpl implements PatientDao {
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(PatientDaoImpl.class);
 
 //    1. Вставка нового пациента
@@ -29,6 +27,7 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public void add(Patient patient) {
+        logger.debug("Добавление нового пациента: {} {}", patient.getLastName(), patient.getFirstName());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(ADD, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -45,12 +44,13 @@ public class PatientDaoImpl implements PatientDao {
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     patient.setIdPatient(keys.getLong(1));
+                    logger.info("Пациент добавлен с ID: {} ({} {})", patient.getIdPatient(), patient.getLastName(), patient.getFirstName());
                 } else {
                     throw new SQLException("Creating patient failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при добавлении пациента: {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -67,18 +67,21 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public Patient findById(Long id) {
+        logger.debug("Поиск пациента по ID: {}", id);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_ID)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    logger.debug("Поиск пациента по ID '{}' завершён", id);
                     return mapSingle(rs);
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске пациента с ID {}: {}", id, e.getMessage());
             throw new RuntimeException(e);
         }
+        logger.warn("Пациент с ID {} не найден", id);
         return null;
     }
 
@@ -92,13 +95,15 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public List<Patient> getAll() {
+        logger.debug("Получение всех пациентов, находящихся в базе данных...");
         List<Patient> patients = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(GET_ALL)) {
             patients = mapper(rs);
+            logger.debug("Загружено {} пациентов", patients.size());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("ООшибка при получении всех пациентов, хранящихся в базе данных: {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return patients;
@@ -114,6 +119,7 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public void update(Patient patient) {
+        logger.debug("Обновление данных пациента с ID: {}", patient.getIdPatient());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE)) {
 
@@ -128,8 +134,9 @@ public class PatientDaoImpl implements PatientDao {
 
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Updating patient failed, no rows affected.");
+            logger.info("Пациент с ID {} обновлён", patient.getIdPatient());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении пациента с ID {}: {}", patient.getIdPatient(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -144,13 +151,15 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public void delete(Patient patient) {
+        logger.debug("Удаление пациента с ID: {}", patient.getIdPatient());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(DELETE_BY_ID)) {
             ps.setLong(1, patient.getIdPatient());
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Deleting patient failed, no rows deleted.");
+            logger.info("Пациент с ID {} удалён", patient.getIdPatient());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при удалении пациента с ID {}: {}", patient.getIdPatient(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -165,18 +174,21 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public Patient findByPolicyNumber(String policyNumber) {
+        logger.debug("Поиск пациента по номеру полиса: {}", policyNumber);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_POLICY)) {
             ps.setString(1, policyNumber);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    logger.debug("Поиск пациента по номеру полиса '{}' завершён", policyNumber);
                     return mapSingle(rs);
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске пациента по полису {}: {}", policyNumber, e.getMessage());
             throw new RuntimeException(e);
         }
+        logger.warn("Пациент с полисом {} не найден", policyNumber);
         return null;
     }
 
@@ -190,40 +202,52 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public List<Patient> searchByFullName(String pattern) {
+        logger.debug("Поиск пациентов по ФИО: {}", pattern);
         List<Patient> patients = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(SEARCH_BY_FULLNAME)) {
             ps.setString(1, "%" + pattern + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 patients = mapper(rs);
+                logger.debug("Найдено {} пациентов по запросу '{}'", patients.size(), pattern);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске пациентов по ФИО '{}': {}", pattern, e.getMessage());
             throw new RuntimeException(e);
         }
         return patients;
     }
 
-    private Patient mapSingle(ResultSet rs) throws SQLException {
+    private Patient mapSingle(ResultSet rs){
         Patient patient = new Patient();
-        patient.setIdPatient(rs.getLong("id_patient"));
-        patient.setPolicyNumber(rs.getString("policy_number"));
-        patient.setLastName(rs.getString("last_name"));
-        patient.setFirstName(rs.getString("first_name"));
-        patient.setMiddleName(rs.getString("middle_name"));
-        patient.setGender(rs.getString("gender").charAt(0));
-        Date date = rs.getDate("birth_date");
-        if (date != null) {
-            patient.setBirthDate(date.toLocalDate());
+        try {
+            patient.setIdPatient(rs.getLong("id_patient"));
+            patient.setPolicyNumber(rs.getString("policy_number"));
+            patient.setLastName(rs.getString("last_name"));
+            patient.setFirstName(rs.getString("first_name"));
+            patient.setMiddleName(rs.getString("middle_name"));
+            patient.setGender(rs.getString("gender").charAt(0));
+            Date date = rs.getDate("birth_date");
+            if (date != null) {
+                patient.setBirthDate(date.toLocalDate());
+            }
+            patient.setPhone(rs.getString("phone"));
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе single-маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
-        patient.setPhone(rs.getString("phone"));
         return patient;
     }
 
-    private List<Patient> mapper(ResultSet rs) throws SQLException {
+    private List<Patient> mapper(ResultSet rs) {
         List<Patient> patients = new ArrayList<>();
-        while (rs.next()) {
-            patients.add(mapSingle(rs));
+        try {
+            while (rs.next()) {
+                patients.add(mapSingle(rs));
+            }
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
         return patients;
     }

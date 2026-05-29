@@ -15,8 +15,6 @@ import java.util.List;
 
 public class OrderItemDaoImpl implements OrderItemDao {
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(OrderItemDaoImpl.class);
 
 
@@ -30,6 +28,8 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public void add(OrderItem orderItem) {
+        Long orderId = orderItem.getOrder() != null ? orderItem.getOrder().getIdOrder() : null;
+        logger.debug("Добавление позиции заказа для заказа ID: {}, тест ID: {}", orderId, orderItem.getTest() != null ? orderItem.getTest().getIdTest() : null);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(ADD, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -63,12 +63,13 @@ public class OrderItemDaoImpl implements OrderItemDao {
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     orderItem.setIdItem(keys.getLong(1));
+                    logger.info("Позиция заказа добавлена с ID: {} (заказ ID: {})", orderItem.getIdItem(), orderId);
                 } else {
                     throw new SQLException("Creating order_item failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при добавлении позиции заказа: {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -84,18 +85,21 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public OrderItem findById(Long id) {
+        logger.debug("Поиск позиции заказа по ID: {}", id);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_ID)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    logger.info("Поиск позиции заказа по ID '{}' завершён", id);
                     return mapSingle(rs);
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске позиции заказа с ID {}: {}", id, e.getMessage());
             throw new RuntimeException(e);
         }
+        logger.warn("Позиция заказа с ID {} не найдена", id);
         return null;
     }
 
@@ -110,13 +114,15 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public List<OrderItem> getAll() {
+        logger.debug("Получение всех позиций заказа, находящихся в базе данных...");
         List<OrderItem> items = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(GET_ALL)) {
             items = mapper(rs);
+            logger.debug("Загружено {} позиций заказов", items.size());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при загрузке всех позиций заказов, хранящихся в базе данных: {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return items;
@@ -134,6 +140,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public void update(OrderItem orderItem) {
+        logger.debug("Обновление позиции заказа с ID: {}", orderItem.getIdItem());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE)) {
 
@@ -165,8 +172,9 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Updating order_item failed, no rows affected.");
+            logger.info("Позиция заказа с ID {} обновлена", orderItem.getIdItem());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении позиции заказа с ID {}: {}", orderItem.getIdItem(), e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -180,13 +188,15 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public void delete(OrderItem orderItem) {
+        logger.debug("Удаление позиции заказа с ID: {}", orderItem.getIdItem());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(DELETE)) {
             ps.setLong(1, orderItem.getIdItem());
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Deleting order_item failed, no rows deleted.");
+            logger.info("Позиция заказа с ID {} удалена", orderItem.getIdItem());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при удалении позиции заказа с ID {}: {}", orderItem.getIdItem(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -201,16 +211,18 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public List<OrderItem> findByOrderId(Long orderId) {
+        logger.debug("Поиск позиций заказа по ID заказа: {}", orderId);
         List<OrderItem> items = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_ORDER_ID)) {
             ps.setLong(1, orderId);
             try (ResultSet rs = ps.executeQuery()) {
                 items = mapper(rs);
+                logger.debug("Найдено {} позиций для заказа ID {}", items.size(), orderId);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            throw new RuntimeException(e);
+            logger.error("Ошибка при поиске позиций заказа по ID заказа {}: {}", orderId, e.getMessage());
         }
         return items;
     }
@@ -226,15 +238,17 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public List<OrderItem> findBySpecimenId(Long specimenId) {
+        logger.debug("Поиск позиций заказа по ID пробы: {}", specimenId);
         List<OrderItem> items = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_SPECIMEN_ID)) {
             ps.setLong(1, specimenId);
             try (ResultSet rs = ps.executeQuery()) {
                 items = mapper(rs);
+                logger.debug("Найдено {} позиций для пробы ID {}", items.size(), specimenId);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске позиций заказа по ID пробы {}: {}", specimenId, e.getMessage());
             throw new RuntimeException(e);
         }
         return items;
@@ -250,15 +264,17 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public List<OrderItem> findByEnteredBy(Long employeeId) {
+        logger.debug("Поиск позиций заказа, введённых сотрудником с ID: {}", employeeId);
         List<OrderItem> items = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_ENTERED_BY)) {
             ps.setLong(1, employeeId);
             try (ResultSet rs = ps.executeQuery()) {
                 items = mapper(rs);
+                logger.debug("Найдено {} позиций, введённых сотрудником ID {}", items.size(), employeeId);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске позиций по сотруднику ID {}: {}", employeeId, e.getMessage());
             throw new RuntimeException(e);
         }
         return items;
@@ -275,6 +291,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public void updateResult(Long itemId, BigDecimal value, String text, boolean abnormal, Long idEmployee) {
+        logger.debug("Обновление результата позиции ID: {}, значение: {}, отклонение: {}", itemId, value, abnormal);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE_RESULT)) {
             ps.setBigDecimal(1, value);
@@ -285,8 +302,9 @@ public class OrderItemDaoImpl implements OrderItemDao {
             ps.setLong(6, itemId);
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Updating result failed, no rows affected.");
+            logger.info("Результат позиции ID {} обновлён", itemId);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении результата позиции ID {}: {}", itemId, e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -300,69 +318,81 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public void updateStatus(Long itemId, String status) {
+        logger.debug("Обновление статуса позиции ID {} на '{}'", itemId, status);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE_STATUS)) {
             ps.setString(1, status);
             ps.setLong(2, itemId);
             int rows = ps.executeUpdate();
             if (rows == 0) throw new SQLException("Updating status failed, no rows affected.");
+            logger.info("Статус позиции ID {} изменён на '{}'", itemId, status);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении статуса позиции ID {}: {}", itemId, e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
 
 
-    private OrderItem mapSingle(ResultSet rs) throws SQLException {
+    private OrderItem mapSingle(ResultSet rs) {
         OrderItem item = new OrderItem();
 
-        item.setIdItem(rs.getLong("id_item"));
+        try {
+            item.setIdItem(rs.getLong("id_item"));
 
-        Order order = new Order();
-        order.setIdOrder(rs.getLong("order_id"));
-        item.setOrder(order);
+            Order order = new Order();
+            order.setIdOrder(rs.getLong("order_id"));
+            item.setOrder(order);
 
-        AnalysisTest test = new AnalysisTest();
-        test.setIdTest(rs.getLong("test_id"));
-        item.setTest(test);
+            AnalysisTest test = new AnalysisTest();
+            test.setIdTest(rs.getLong("test_id"));
+            item.setTest(test);
 
-        Specimen specimen = new Specimen();
-        specimen.setIdSpecimen(rs.getLong("specimen_id"));
-        item.setSpecimen(specimen);
+            Specimen specimen = new Specimen();
+            specimen.setIdSpecimen(rs.getLong("specimen_id"));
+            item.setSpecimen(specimen);
 
-        item.setStatus(rs.getString("status"));
+            item.setStatus(rs.getString("status"));
 
-        BigDecimal value = rs.getBigDecimal("result_value");
-        if (!rs.wasNull()) {
-            item.setResultValue(value);
-        }
-        item.setResultText(rs.getString("result_text"));
+            BigDecimal value = rs.getBigDecimal("result_value");
+            if (!rs.wasNull()) {
+                item.setResultValue(value);
+            }
+            item.setResultText(rs.getString("result_text"));
 
-        Boolean abnormal = rs.getBoolean("is_abnormal");
-        if (!rs.wasNull()) {
-            item.setIsAbnormal(abnormal);
-        }
+            Boolean abnormal = rs.getBoolean("is_abnormal");
+            if (!rs.wasNull()) {
+                item.setIsAbnormal(abnormal);
+            }
 
-        long enteredById = rs.getLong("entered_by");
-        if (!rs.wasNull()) {
-            Employee enteredBy = new Employee();
-            enteredBy.setIdEmployee(enteredById);
-            item.setEnteredBy(enteredBy);
-        }
+            long enteredById = rs.getLong("entered_by");
+            if (!rs.wasNull()) {
+                Employee enteredBy = new Employee();
+                enteredBy.setIdEmployee(enteredById);
+                item.setEnteredBy(enteredBy);
+            }
 
-        Timestamp entryTs = rs.getTimestamp("entry_datetime");
-        if (entryTs != null) {
-            item.setEntryDatetime(entryTs.toLocalDateTime());
+            Timestamp entryTs = rs.getTimestamp("entry_datetime");
+            if (entryTs != null) {
+                item.setEntryDatetime(entryTs.toLocalDateTime());
+            }
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе single-маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
 
         return item;
     }
 
-    private List<OrderItem> mapper(ResultSet rs) throws SQLException {
+    private List<OrderItem> mapper(ResultSet rs){
         List<OrderItem> items = new ArrayList<>();
-        while (rs.next()) {
-            items.add(mapSingle(rs));
+        try {
+            while (rs.next()) {
+                items.add(mapSingle(rs));
+            }
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
         }
         return items;
     }

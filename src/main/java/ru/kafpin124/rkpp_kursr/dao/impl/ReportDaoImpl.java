@@ -16,8 +16,6 @@ import java.util.List;
 
 public class ReportDaoImpl implements ReportDao {
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(ReportDaoImpl.class);
 
 //    public static final String GET_TEST_COUNT_BY_TYPE = "SELECT t.test_name, COUNT(oi.id_item) AS cnt " +
@@ -32,6 +30,7 @@ public class ReportDaoImpl implements ReportDao {
 
     @Override
     public List<TestCountByType> getTestCountByType(LocalDate from, LocalDate to) {
+        logger.debug("Формирование отчёта 'Количество анализов по видам' за период {} – {}", from, to);
         List<TestCountByType> result = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_TEST_COUNT_BY_TYPE)) {
@@ -41,8 +40,9 @@ public class ReportDaoImpl implements ReportDao {
             while (rs.next()) {
                 result.add(new TestCountByType(rs.getString("test_name"), rs.getLong("cnt")));
             }
+            logger.debug("Отчёт 'Количество анализов по видам' сформирован, строк: {}", result.size());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при формировании отчёта 'Количество анализов по видам': {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return result;
@@ -61,6 +61,7 @@ public class ReportDaoImpl implements ReportDao {
 
     @Override
     public List<EmployeeStatistic> getWorkloadByEmployee(LocalDate from, LocalDate to) {
+        logger.debug("Формирование отчёта 'Нагрузка сотрудников' за период {} – {}", from, to);
         List<EmployeeStatistic> result = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_WORKLOAD_BY_EMPLOYEE)) {
@@ -70,8 +71,9 @@ public class ReportDaoImpl implements ReportDao {
             while (rs.next()) {
                 result.add(new EmployeeStatistic(rs.getString("fullname"), rs.getLong("cnt")));
             }
+            logger.debug("Отчёт 'Нагрузка сотрудников' сформирован, строк: {}", result.size());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при формировании отчёта 'Нагрузка сотрудников': {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return result;
@@ -90,6 +92,7 @@ public class ReportDaoImpl implements ReportDao {
 
     @Override
     public List<OrganizationStatistic> getRevenueByOrganization(LocalDate from, LocalDate to) {
+        logger.debug("Формирование отчёта 'Выручка по организациям' за период {} – {}", from, to);
         List<OrganizationStatistic> result = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_REVENUE_BY_ORGANIZATION)) {
@@ -99,8 +102,9 @@ public class ReportDaoImpl implements ReportDao {
             while (rs.next()) {
                 result.add(new OrganizationStatistic(rs.getString("org_name"), rs.getBigDecimal("total_revenue")));
             }
+            logger.debug("Отчёт 'Выручка по организациям' сформирован, строк: {}", result.size());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при формировании отчёта 'Выручка по организациям': {}", e.getMessage());
             throw new RuntimeException(e);
         }
         return result;

@@ -15,8 +15,6 @@ import java.util.List;
 
 public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(AnalysisTestDaoImpl.class);
 //
 //    URL url = this.getClass().getResource("ru/kafpin/rkpp_lb_7/statements.properties");
@@ -33,8 +31,10 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 //            "VALUES (?, ?, ?, ?, ?);";
 
     private static final String ADD = SqlStatements.get("sql.AnalysisTest.ADD");
+
     @Override
     public void add(AnalysisTest analysisTest) {
+        logger.debug("Добавление нового теста: {}", analysisTest.getTestName());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(ADD, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -52,12 +52,13 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     analysisTest.setIdTest(generatedKeys.getLong(1));
+                    logger.info("Тест '{}' успешно добавлен с ID {}", analysisTest.getTestName(), analysisTest.getIdTest());
                 } else {
                     throw new SQLException("Creating analysis_test failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при добавлении теста '{}': {}", analysisTest.getTestName(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -71,16 +72,18 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
     @Override
     public AnalysisTest findById(Long id) {
+        logger.debug("Поиск теста по ID: {}", id);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(FIND_BY_ID)) {
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
+                logger.info("Поиск теста c ID '{}' завершён", id);
                 return mapSingle(rs);
             }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске теста с идентификатором '{}': {}", id, e.getMessage());
             throw new RuntimeException(e);
         }
         return null;
@@ -96,13 +99,15 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
     @Override
     public List<AnalysisTest> getAll() {
+        logger.debug("Получение всех тестов, хранящихся в базе данных...");
         List<AnalysisTest> analysisTestList = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(GET_ALL)) {
             analysisTestList = mapper(rs);
+            logger.info("Все тесты из базы данных получены");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при получении всех тестов, хранящихся в базе данных: {}", e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -119,6 +124,7 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
     @Override
     public void update(AnalysisTest analysisTest) {
+        logger.debug("Обновление теста с ID: {}", analysisTest.getIdTest());
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(UPDATE)) {
             pstmt.setString(1, analysisTest.getTestName());
@@ -133,8 +139,9 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
             if (addedRows == 0) {
                 throw new SQLException("Updating analysis_test failed, no rows added.");
             }
+            logger.info("Тест с ID '{}' обновлён", analysisTest.getIdTest());
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при обновлении теста с идентификатором '{}': {}", analysisTest.getIdTest(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -153,6 +160,7 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
     @Override
     public void deleteById(Long id) {
+        logger.debug("Удаление теста с ID: {}", id);
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(DELETE_BY_ID)) {
             pstmt.setLong(1, id);
@@ -161,9 +169,10 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
             if (deletedRows == 0) {
                 throw new SQLException("Deleting analysis_test failed, no rows deleted.");
             }
+            logger.info("Тест с ID '{}' удалён", id);
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при удалении теста с идентификатором '{}': {}", id, e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -178,15 +187,17 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
     @Override
     public List<AnalysisTest> findByBiomaterial(String biomaterial) {
+        logger.debug("Поиск теста по Биоматериалу: {}", biomaterial);
         List<AnalysisTest> analysisTestList = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(FIND_BY_MATERIAL)) {
             pstmt.setString(1, biomaterial);
             try (ResultSet rs = pstmt.executeQuery()) {
                 analysisTestList = mapper(rs);
+                logger.info("Поиск теста c Биоматериалу '{}' завершён", biomaterial);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске теста по Биоматериалу '{}': {}", biomaterial, e.getMessage());
             throw new RuntimeException(e);
         }
         return analysisTestList;
@@ -202,15 +213,17 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
 
     @Override
     public List<AnalysisTest> searchByName(String testName) {
+        logger.debug("Поиск теста по названию: {}", testName);
         List<AnalysisTest> analysisTestList = new ArrayList<>();
         try (Connection conn = DBHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SEARCH_BY_NAME)) {
             pstmt.setString(1, "%" + testName + "%");
             try (ResultSet rs = pstmt.executeQuery()) {
                 analysisTestList = mapper(rs);
+                logger.info("Поиск теста по названию '{}' завершён", testName);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при поиске теста по названию '{}': {}", testName, e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -226,20 +239,25 @@ public class AnalysisTestDaoImpl implements AnalysisTestDao {
                 analysisTestList.add(mapSingle(rs));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.error("Ошибка при работе маппера: '{}'", e.getMessage());
             throw new RuntimeException(e);
         }
         return analysisTestList;
     }
 
-    private AnalysisTest mapSingle(ResultSet rs) throws SQLException {
+    private AnalysisTest mapSingle(ResultSet rs){
         AnalysisTest analysisTest = new AnalysisTest();
-        analysisTest.setIdTest(rs.getLong("id_test"));
-        analysisTest.setTestName(rs.getString("test_name"));
-        analysisTest.setBiomaterial(rs.getString("biomaterial"));
-        analysisTest.setExecutionTimeHours(rs.getInt("execution_time_hours"));
-        analysisTest.setPrice(rs.getBigDecimal("price"));
-        analysisTest.setUnit(rs.getString("unit"));
+        try {
+            analysisTest.setIdTest(rs.getLong("id_test"));
+            analysisTest.setTestName(rs.getString("test_name"));
+            analysisTest.setBiomaterial(rs.getString("biomaterial"));
+            analysisTest.setExecutionTimeHours(rs.getInt("execution_time_hours"));
+            analysisTest.setPrice(rs.getBigDecimal("price"));
+            analysisTest.setUnit(rs.getString("unit"));
+        } catch (SQLException e) {
+            logger.error("Ошибка при работе single-маппера: '{}'", e.getMessage());
+            throw new RuntimeException(e);
+        }
 
         return analysisTest;
     }
