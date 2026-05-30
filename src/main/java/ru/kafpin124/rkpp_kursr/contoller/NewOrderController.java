@@ -54,15 +54,7 @@ public class NewOrderController {
     private Employee currentUser;
     private List<AnalysisTest> selectedTests = new ArrayList<>();
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(NewOrderController.class);
-
-    @FXML
-    void initialize() {
-        biomaterialCombo.setItems(FXCollections.observableArrayList("кровь", "моча", "мазок", "кал", "слюна"));
-        collectionDatePicker.setValue(LocalDateTime.now().toLocalDate());
-    }
 
     public NewOrderController(PatientDao patientDao, AnalysisTestDao testDao,OrderDao orderDao,
                               SpecimenDao specimenDao, OrderItemDao orderItemDao) {
@@ -71,30 +63,50 @@ public class NewOrderController {
         this.orderDao = orderDao;
         this.specimenDao = specimenDao;
         this.orderItemDao = orderItemDao;
+        logger.debug("NewOrderController создан");
+    }
+
+    @FXML
+    void initialize() {
+        logger.info("Инициализация формы создания заказа");
+        biomaterialCombo.setItems(FXCollections.observableArrayList("кровь", "моча", "мазок", "кал", "слюна"));
+        collectionDatePicker.setValue(LocalDateTime.now().toLocalDate());
+        logger.debug("ComboBox биоматериалов заполнен, дата забора установлена на сегодня");
     }
 
     public void setCurrentUser(Employee user) {
         this.currentUser = user;
+        logger.debug("Установлен текущий пользователь для NewOrderController: {}", user.getLogin());
     }
 
     @FXML
     void onSelectPatient() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/select_person.fxml"));
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(new Scene(loader.load()));
-        stage.showAndWait();
+        logger.info("Открытие диалога выбора пациента");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/select_person.fxml"));
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(loader.load()));
+            stage.showAndWait();
 
-        SelectPersonController controller = loader.getController();
-        Patient patient = controller.getSelectedPatient();
-        if (patient != null) {
-            this.selectedPatient = patient;
-            patientField.setText(patient.getLastName() + " " + patient.getFirstName());
+            SelectPersonController controller = loader.getController();
+            Patient patient = controller.getSelectedPatient();
+            if (patient != null) {
+                this.selectedPatient = patient;
+                patientField.setText(patient.getLastName() + " " + patient.getFirstName());
+                logger.info("Выбран пациент: {} {} (ID={})", patient.getLastName(), patient.getFirstName(), patient.getIdPatient());
+            } else {
+                logger.debug("Выбор пациента отменён");
+            }
+        } catch (IOException e) {
+            logger.error("Ошибка загрузки select_person.fxml", e);
+            showAlert("Ошибка", "Не удалось открыть окно выбора пациента");
         }
     }
 
     @FXML
     void onAddTest() {
+        logger.info("Открытие диалога добавления тестов");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/select_test_demo.fxml"));
             Stage stage = new Stage();
@@ -107,34 +119,48 @@ public class NewOrderController {
             if (tests != null && !tests.isEmpty()) {
                 selectedTests.addAll(tests);
                 selectedTestsTable.setItems(FXCollections.observableArrayList(selectedTests));
+                logger.info("Добавлено {} тестов в заказ", tests.size());
+                for (AnalysisTest t : tests) {
+                    logger.debug("Добавлен тест: {} (ID={})", t.getTestName(), t.getIdTest());
+                }
+            } else {
+                logger.debug("Тесты не выбраны");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Ошибка загрузки select_test_demo.fxml", e);
+            showAlert("Ошибка", "Не удалось открыть окно выбора тестов");
         }
     }
 
     @FXML
     void onGenerateBarcode() {
-        barcodeField.setText(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 12));
+        String barcode = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 12);
+        barcodeField.setText(barcode);
+        logger.debug("Сгенерирован штрих-код: {}", barcode);;
     }
 
     @FXML
     void onCreateOrder() {
+        logger.info("Попытка создания заказа");
         if (selectedPatient == null) {
+            logger.warn("Создание заказа отменено: не выбран пациент");
             showAlert("Ошибка", "Выберите пациента");
             return;
         }
         if (selectedTests.isEmpty()) {
+            logger.warn("Создание заказа отменено: не добавлено ни одного теста");
             showAlert("Ошибка", "Добавьте хотя бы один анализ");
             return;
         }
         String barcode = barcodeField.getText();
         if (barcode.isEmpty()) {
+            logger.warn("Создание заказа отменено: не сгенерирован штрих-код");
             showAlert("Ошибка", "Сгенерируйте штрих-код");
             return;
         }
         String biomaterial = biomaterialCombo.getValue();
         if (biomaterial == null) {
+            logger.warn("Создание заказа отменено: не выбран тип биоматериала");
             showAlert("Ошибка", "Выберите тип биоматериала");
             return;
         }
@@ -149,6 +175,7 @@ public class NewOrderController {
 
         OrderDaoImpl orderDao = new OrderDaoImpl();
         orderDao.add(order);   // после вызова в order присвоится id
+        logger.info("Создан заказ ID={} для пациента {} {}", order.getIdOrder(), selectedPatient.getLastName(), selectedPatient.getFirstName());
 
         // Создаём пробу
         Specimen specimen = new Specimen();
@@ -160,6 +187,8 @@ public class NewOrderController {
 
         SpecimenDaoImpl specimenDao = new SpecimenDaoImpl();
         specimenDao.add(specimen);
+        logger.debug("Создана проба с штрих-кодом {} для заказа {}", barcode, order.getIdOrder());
+
 
         // Создаём позиции заказа (order_items)
         OrderItemDaoImpl itemDao = new OrderItemDaoImpl();
@@ -171,9 +200,11 @@ public class NewOrderController {
             item.setStatus("назначен");
             // result_value и т.д. пока null
             itemDao.add(item);
+            logger.debug("Добавлена позиция заказа для теста {} (ID={})", test.getTestName(), test.getIdTest());
         }
 
         showAlert("Готово", "Заказ создан");
+        logger.info("Заказ {} успешно создан, содержит {} тестов", order.getIdOrder(), selectedTests.size());
         // Очистка полей
         patientField.clear();
         selectedPatient = null;
@@ -188,11 +219,15 @@ public class NewOrderController {
         if (selected != null) {
             selectedTests.remove(selected);
             selectedTestsTable.getItems().remove(selected);
+            logger.info("Удалён тест из списка: {}", selected.getTestName());
+        } else {
+            logger.debug("Попытка удалить тест без выбора");
         }
     }
 
     @FXML
     void onCancel() {
+        logger.info("Отмена создания заказа, очистка формы");
         // Очистить форму
         patientField.clear();
         selectedTests.clear();

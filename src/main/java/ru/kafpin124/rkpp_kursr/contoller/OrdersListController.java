@@ -26,19 +26,20 @@ public class OrdersListController {
     private final OrderDao orderDao;
     public OrdersListController(OrderDao orderDao) {
         this.orderDao = orderDao;
+        logger.debug("OrdersListController создан");
     }
 
 //    public OrdersListController() {
 //        this.orderDao = new OrderDaoImpl();
 //    }
 
-    //TODO: Добавить логирование!
 
     public static final Logger logger = LoggerFactory.getLogger(OrdersListController.class);
 
     @FXML
     void initialize() {
-
+        logger.info("Инициализация списка заказов");
+        // Настройка колонок
         TableColumn<Order, Long> idCol = (TableColumn<Order, Long>) ordersTable.getColumns().get(0);
         idCol.setCellValueFactory(new PropertyValueFactory<>("idOrder"));
 
@@ -70,11 +71,13 @@ public class OrdersListController {
         filterStatus.setItems(FXCollections.observableArrayList(
                 "Все", "зарегистрирован", "в работе", "выполнен", "утверждён"));
         filterStatus.setValue("Все");
+        logger.debug("ComboBox статусов заполнен, значение по умолчанию 'Все'");
         loadOrders();
     }
 
     @FXML
     void onSearch() {
+        logger.debug("Применение фильтров к списку заказов");
         loadOrders();
     }
 
@@ -84,7 +87,10 @@ public class OrdersListController {
         LocalDateTime from = dateFrom.getValue() != null ? dateFrom.getValue().atStartOfDay() : null;
         LocalDateTime to = dateTo.getValue() != null ? dateTo.getValue().atTime(23, 59, 59) : null;
 
+        logger.debug("Фильтры: статус='{}', поиск='{}', дата с={}, дата по={}", status, searchText, from, to);
+
         List<Order> orders = orderDao.getAll();
+        int totalBeforeFilter = orders.size();
         // Фильтрация с помощью Stream
         List<Order> filtered = orders.stream()
                 .filter(o -> status.equals("Все") || o.getStatus().getStatusName().equals(status))
@@ -97,10 +103,17 @@ public class OrdersListController {
                 .collect(Collectors.toList());
 
         ordersTable.setItems(FXCollections.observableArrayList(filtered));
+        logger.info("Загружено {} заказов, после фильтрации осталось {}", totalBeforeFilter, filtered.size());
     }
 
     /** Возвращает выбранный заказ */
     public Order getSelectedOrder() {
-        return ordersTable.getSelectionModel().getSelectedItem();
+        Order selected = ordersTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            logger.debug("Выбран заказ ID={}", selected.getIdOrder());
+        } else {
+            logger.debug("getSelectedOrder: ничего не выбрано");
+        }
+        return selected;
     }
 }

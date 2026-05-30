@@ -30,16 +30,16 @@ public class ManageEmployeesController {
     private final EmployeeDao employeeDao;
     private ObservableList<Employee> employeeList = FXCollections.observableArrayList();
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(ManageEmployeesController.class);
 
     public ManageEmployeesController(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;
+        logger.debug("ManageEmployeesController создан");
     }
 
     @FXML
     void initialize() {
+        logger.info("Инициализация ManageEmployeesController");
         colId.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getIdEmployee()));
         colLastName.setCellValueFactory(cellData ->
@@ -52,18 +52,22 @@ public class ManageEmployeesController {
                 new SimpleStringProperty(cellData.getValue().getPosition()));
         colRole.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getRole()));
+        logger.debug("Колонки таблицы настроены");
 
         loadEmployees();
     }
 
     private void loadEmployees() {
+        logger.debug("Загрузка списка сотрудников");
         List<Employee> list = employeeDao.getAll();
         employeeList.setAll(list);
         employeesTable.setItems(employeeList);
+        logger.info("Загружено {} сотрудников", list.size());
     }
 
     @FXML
     void onAddEmployee(ActionEvent event) {
+        logger.info("Открытие диалога добавления нового сотрудника");
         Employee newEmp = showEmployeeDialog(null);
         if (newEmp != null) {
             // хэшируем пароль перед сохранением
@@ -71,7 +75,10 @@ public class ManageEmployeesController {
             String hash = BCrypt.hashpw(rawPassword, BCrypt.gensalt(12));
             newEmp.setPasswordHash(hash);
             employeeDao.add(newEmp, rawPassword);
+            logger.info("Добавлен новый сотрудник: {} {} (логин: {})", newEmp.getLastName(), newEmp.getFirstName(), newEmp.getLogin());
             loadEmployees();
+        } else {
+            logger.debug("Добавление сотрудника отменено пользователем");
         }
     }
 
@@ -79,36 +86,50 @@ public class ManageEmployeesController {
     void onEditEmployee(ActionEvent event) {
         Employee selected = employeesTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
+            logger.warn("Попытка редактирования без выбора сотрудника");
             showAlert("Выберите сотрудника для редактирования");
             return;
         }
+        logger.info("Редактирование сотрудника: {} {} (ID={})", selected.getLastName(), selected.getFirstName(), selected.getIdEmployee());
         Employee edited = showEmployeeDialog(selected);
         if (edited != null) {
-            // если пароль изменился (пользователь ввёл новый) – хэшируем
             if (edited.getPasswordHash() != null && !edited.getPasswordHash().isEmpty()) {
                 String hash = BCrypt.hashpw(edited.getPasswordHash(), BCrypt.gensalt(12));
                 edited.setPasswordHash(hash);
+                logger.debug("Пароль изменён, новый хэш установлен");
             } else {
                 // оставляем старый хэш
                 edited.setPasswordHash(selected.getPasswordHash());
             }
             employeeDao.update(edited);
+            logger.info("Сотрудник {} {} обновлён", edited.getLastName(), edited.getFirstName());
             loadEmployees();
+        } else {
+            logger.debug("Редактирование сотрудника отменено пользователем");
         }
     }
 
     @FXML
     void onDeleteEmployee(ActionEvent event) {
         Employee selected = employeesTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Удалить сотрудника " + selected.getLastName() + "?");
-            confirm.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    employeeDao.delete(selected);
-                    loadEmployees();
-                }
-            });
+        if (selected == null) {
+            logger.warn("Попытка удаления без выбора сотрудника");
+            showAlert("Выберите сотрудника для удаления");
+            return;
         }
+        logger.info("Запрос на удаление сотрудника: {} {} (ID={})",
+                selected.getLastName(), selected.getFirstName(), selected.getIdEmployee());
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Удалить сотрудника " + selected.getLastName() + " " + selected.getFirstName() + "?");
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                employeeDao.delete(selected);
+                logger.info("Сотрудник {} {} удалён", selected.getLastName(), selected.getFirstName());
+                loadEmployees();
+            } else {
+                logger.debug("Удаление сотрудника отменено пользователем");
+            }
+        });
     }
 
     // Диалог для ввода/редактирования сотрудника
@@ -116,12 +137,14 @@ public class ManageEmployeesController {
         Dialog<Employee> dialog = new Dialog<>();
         dialog.setTitle(existing == null ? "Новый сотрудник" : "Редактирование");
         dialog.setHeaderText("Введите данные сотрудника");
+        logger.debug("Отображение диалога {} сотрудника", existing == null ? "создания" : "редактирования");
 
         ButtonType saveButtonType = new ButtonType("Сохранить", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
-        grid.setHgap(10); grid.setVgap(10);
+        grid.setHgap(10);
+        grid.setVgap(10);
 
         TextField lastNameField = new TextField();
         TextField firstNameField = new TextField();
@@ -164,6 +187,7 @@ public class ManageEmployeesController {
                 if (lastNameField.getText().isEmpty() || firstNameField.getText().isEmpty() ||
                         loginField.getText().isEmpty() || roleCombo.getValue() == null ||
                         (existing == null && passwordField.getText().isEmpty())) {
+                    logger.warn("Валидация не пройдена: не все обязательные поля заполнены");
                     showAlert("Заполните обязательные поля (фамилия, имя, логин, роль, пароль)");
                     return null;
                 }
@@ -177,6 +201,7 @@ public class ManageEmployeesController {
                 if (!passwordField.getText().isEmpty()) {
                     emp.setPasswordHash(passwordField.getText()); // сырой пароль, будет хэширован снаружи
                 }
+                logger.debug("Данные из диалога собраны успешно");
                 return emp;
             }
             return null;
@@ -187,6 +212,7 @@ public class ManageEmployeesController {
     }
 
     private void showAlert(String msg) {
+        logger.debug("Показ предупреждения: {}", msg);
         new Alert(Alert.AlertType.WARNING, msg).showAndWait();
     }
 }

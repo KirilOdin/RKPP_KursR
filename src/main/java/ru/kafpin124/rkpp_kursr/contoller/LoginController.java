@@ -37,31 +37,34 @@ public class LoginController {
     private final EmployeeDao employeeDao;
     private final BCryptPasswordEncoder encoder;
 
-    //TODO: Добавить логирование!
-
     public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     public LoginController(EmployeeDao employeeDao, BCryptPasswordEncoder encoder) {
         this.employeeDao = employeeDao;
         this.encoder = encoder;
+        logger.debug("LoginController создан с переданными DAO и encoder");
     }
 
     public LoginController() {
         this.employeeDao = new EmployeeDaoImpl();
         this.encoder = new BCryptPasswordEncoder();
+        logger.debug("LoginController создан с DAO и encoder по умолчанию");
     }
 
     @FXML
     void initialize() {
+        logger.info("Инициализация окна входа");
         languageCombo.getItems().addAll(
                 new Locale("en"),
                 new Locale("ru", "RU"),
                 new Locale("de", "DE")
         );
         languageCombo.setValue(LocalizationService.getCurrentLocale());
+        logger.debug("ComboBox языка заполнен, текущая локаль: {}", LocalizationService.getCurrentLocale());
 
         languageCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
+                logger.info("Пользователь изменил язык с {} на {}", oldVal, newVal);
                 LocalizationService.changeLocale(newVal);
                 // Перезагружаем окно входа с новым языком
                 reloadLoginWindow();
@@ -70,14 +73,20 @@ public class LoginController {
 
 
         btnLogin.setOnAction(e -> login());
-        btnClose.setOnAction(e -> ((Stage) btnClose.getScene().getWindow()).close());
+        btnClose.setOnAction(e -> {
+            logger.info("Закрытие окна входа по кнопке 'Закрыть'");
+            ((Stage) btnClose.getScene().getWindow()).close();
+        });
 
     }
 
     private void login() {
         String login = loginField.getText().trim();
         String password = passwordField.getText();
+        logger.debug("Попытка входа: логин={}, режим аутентификации={}",
+                login, rbBCrypt.isSelected() ? "BCrypt" : "DB");
         if (login.isEmpty() || password.isEmpty()) {
+            logger.warn("Пустой логин или пароль при попытке входа");
             messageLabel.setText(LocalizationService.get("loginCont.messageLabel.emptyValuesWarning"));
             return;
         }
@@ -95,28 +104,35 @@ public class LoginController {
             }
             emp = employeeDao.findByLogin(login);
             if (emp == null || !encoder.matches(password, emp.getPasswordHash())) {
+                logger.warn("Неудачная попытка входа (BCrypt): логин '{}' не найден или пароль не совпадает", login);
                 messageLabel.setText(LocalizationService.get("loginCont.messageLabel.wrongLoginWithHash"));
                 return;
             }
+            logger.info("Пользователь {} успешно аутентифицирован через BCrypt и данные в системе", login);
         } else {
                 try {
                     DBHelper.initConnection(login, password);
+                    logger.debug("Соединение с БД установлено под пользователем {}", login);
                 } catch (SQLException e) {
+                    logger.warn("Неудачная попытка входа (DB): логин '{}' – ошибка подключения", login);
                     messageLabel.setText(LocalizationService.get("loginCont.messageLabel.wrongLoginDB"));
                     return;
                 }
 
                 emp = employeeDao.findByLogin(login);
                 if (emp == null) {
+                    logger.warn("Пользователь {} найден в БД, но отсутствует в таблице employees", login);
                     messageLabel.setText(LocalizationService.get("loginCont.messageLabel.employeeNotFound"));
                     return;
                 }
+                logger.info("Пользователь {} успешно аутентифицирован через СУБД", login);
             }
 
 //        System.out.println(getClass().getResource("ru/kafpin124/rkpp_kursr/main_tab.fxml"));
 
         // Открытие основного окна АРМ
         try {
+            logger.info("Загрузка главного окна для пользователя {} (роль: {})", emp.getLogin(), emp.getRole());
             EmployeeDaoImpl employeeDao = new EmployeeDaoImpl();
             OrderDaoImpl orderDao = new OrderDaoImpl();
             PatientDaoImpl patientDao = new PatientDaoImpl();
@@ -154,6 +170,7 @@ public class LoginController {
 
 
             if (emp == null) {
+                logger.error("Ошибка: сотрудник не получен, хотя аутентификация пройдена");
                 messageLabel.setText(LocalizationService.get("loginCont.messageLabel.employeeNotReceived"));
                 return;
             }
@@ -165,19 +182,24 @@ public class LoginController {
             stage.setScene(new Scene(root));
             stage.setTitle(LocalizationService.get("mainCont.sceneTitle"));
             stage.show();
+            logger.info("Главное окно успешно открыто для пользователя {}", emp.getLogin());
 
             // Закрытие окна входа
             ((Stage) btnLogin.getScene().getWindow()).close();
+            logger.debug("Окно входа закрыто");
         } catch (IOException e) {
+            logger.error("Ошибка загрузки главного окна", e);
             e.printStackTrace();
             messageLabel.setText(LocalizationService.get("loginCont.messageLabel.loadSceneError"));
         }
     }
 
     private void reloadLoginWindow() {
+        logger.info("Перезагрузка окна входа для применения нового языка");
         try {
             Stage currentStage = (Stage) languageCombo.getScene().getWindow();
             currentStage.close();
+            logger.debug("Текущее окно входа закрыто");
 
             ResourceBundle bundle = LocalizationService.getBundle();
             FXMLLoader loader = new FXMLLoader(
@@ -188,7 +210,9 @@ public class LoginController {
             newStage.setScene(new Scene(loader.load()));
             newStage.setTitle(LocalizationService.get("loginCont.sceneTitle"));
             newStage.show();
+            logger.info("Новое окно входа с языком {} отображено", LocalizationService.getCurrentLocale());
         } catch (IOException e) {
+            logger.error("Не удалось перезагрузить окно входа", e);
             e.printStackTrace();
         }
     }

@@ -16,21 +16,22 @@ public class ReportFormController {
 
     private Order order;
 
-    //TODO: Добавить логирование!
 
     public static final Logger logger = LoggerFactory.getLogger(ReportFormController.class);
 
     public void setOrder(Order order) {
         this.order = order;
+        logger.info("Установлен заказ ID={} для формирования бланка", order != null ? order.getIdOrder() : null);
         generateReport();
     }
 
     private void generateReport() {
         if (order == null) {
+            logger.warn("Попытка генерации бланка без заказа");
             reportArea.setText("Нет данных для отображения");
             return;
         }
-
+        logger.debug("Генерация бланка для заказа ID={}", order.getIdOrder());
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         StringBuilder sb = new StringBuilder();
         sb.append("========================================\n");
@@ -53,15 +54,16 @@ public class ReportFormController {
         sb.append("-------------------------------------------------------------\n");
 
         int i = 1;
+        int itemCount = 0;
         if (order.getOrderItems() != null) {
+            itemCount = order.getOrderItems().size();
             for (OrderItem item : order.getOrderItems()) {
                 String testName = item.getTest().getTestName();
                 String result = item.getResultValue() != null ? item.getResultValue().stripTrailingZeros().toPlainString()
                         : (item.getResultText() != null ? item.getResultText() : "");
                 // Формирование строки нормы
                 String norm = "";
-                // Здесь можно подгрузить ReferenceValue, но для простоты оставим "--"
-                norm = "--";
+                norm = "--"; // упрощённо, без ReferenceValue
                 String abnormal = item.getIsAbnormal() != null && item.getIsAbnormal() ? "*" : "";
                 sb.append(String.format("%-5d %-25s %-10s %-10s %-10s\n", i++, testName, result, norm, abnormal));
             }
@@ -77,22 +79,30 @@ public class ReportFormController {
         sb.append("========================================\n");
 
         reportArea.setText(sb.toString());
+        logger.info("Бланк для заказа ID={} сгенерирован, количество позиций: {}", order.getIdOrder(), itemCount);
     }
 
     @FXML
     void onPrint() {
+        logger.info("Запрос на печать бланка для заказа ID={}", order != null ? order.getIdOrder() : null);
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null && job.showPrintDialog(null)) {
+            logger.debug("Диалог печати подтверждён, отправка на печать");
             boolean success = job.printPage(reportArea.lookup("TextArea"));
             if (success) {
                 job.endJob();
+                logger.info("Бланк успешно отправлен на печать");
+            } else {
+                logger.warn("Не удалось напечатать бланк");
             }
+        } else {
+            logger.warn("Печать отменена пользователем или принтер не доступен");
         }
     }
 
     @FXML
     void onCancel() {
-        // Закрываем окно
+        logger.debug("Закрытие окна печати");
         reportArea.getScene().getWindow().hide();
     }
 }
