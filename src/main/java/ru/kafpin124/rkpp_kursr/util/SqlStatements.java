@@ -10,7 +10,21 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
+/**
+ * A utility class for loading and accessing SQL queries from a file.
+ * The properties file must contain key=SQL query pairs.
+ * All requests are loaded once when the class is accessed for the first time (in a static block).
+ * Usage example:
+ * <pre>{@code
+ *  * String sql = SqlStatements.get("sql.find_by_login");
+ *  } </pre>
+ */
+
 public class SqlStatements {
+
+    /**
+     * Storage of uploaded SQL queries (key → SQL string).
+     */
     public static final Properties props = new Properties();
     // URL url = getClass().getResource("/statements.properties");
     // Properties prop = new Properties();
@@ -18,6 +32,9 @@ public class SqlStatements {
     //     prop.load(fis);
     // }
 
+    /**
+     * The logger for this class.
+     */
     public static final Logger logger = LoggerFactory.getLogger(SqlStatements.class);
 
     static {
@@ -36,6 +53,12 @@ public class SqlStatements {
         }
     }
 
+    /**
+     * Returns an SQL query based on its key.
+     *
+     * @param key is the key in the properties file (for example, "sql.find_by_login")
+     * @return SQL string or {@code null} if the key is missing
+     */
     public static String get(String key) {
         String value = props.getProperty(key);
         if (value == null) {

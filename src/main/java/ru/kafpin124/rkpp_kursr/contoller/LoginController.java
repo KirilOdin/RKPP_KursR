@@ -86,6 +86,13 @@ public class LoginController {
         Employee emp = null;
 
         if (useBCrypt) {
+            try {
+                DBHelper.initConnection(DBHelper.getAppUser(), DBHelper.getAppPassword());
+            } catch (SQLException e) {
+                logger.error("Не удалось подключиться к БД под учётной записью приложения", e);
+                messageLabel.setText(LocalizationService.get("loginCont.messageLabel.dbConnectionError"));
+                return;
+            }
             emp = employeeDao.findByLogin(login);
             if (emp == null || !encoder.matches(password, emp.getPasswordHash())) {
                 messageLabel.setText(LocalizationService.get("loginCont.messageLabel.wrongLoginWithHash"));
