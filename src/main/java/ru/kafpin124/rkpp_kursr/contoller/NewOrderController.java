@@ -16,11 +16,13 @@ import ru.kafpin124.rkpp_kursr.dao.*;
 import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
+import ru.kafpin124.rkpp_kursr.util.LocalizationService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.UUID;
 
 //@NoArgsConstructor(force = true)
@@ -83,7 +85,7 @@ public class NewOrderController {
     void onSelectPatient() throws IOException {
         logger.info("Открытие диалога выбора пациента");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/select_person.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/kafpin124/rkpp_kursr/select_person.fxml"), LocalizationService.getBundle());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(loader.load()));
@@ -108,7 +110,7 @@ public class NewOrderController {
     void onAddTest() {
         logger.info("Открытие диалога добавления тестов");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/select_test_demo.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/kafpin124/rkpp_kursr/select_test.fxml"), LocalizationService.getBundle());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(loader.load()));
@@ -127,7 +129,7 @@ public class NewOrderController {
                 logger.debug("Тесты не выбраны");
             }
         } catch (IOException e) {
-            logger.error("Ошибка загрузки select_test_demo.fxml", e);
+            logger.error("Ошибка загрузки select_test.fxml", e);
             showAlert("Ошибка", "Не удалось открыть окно выбора тестов");
         }
     }

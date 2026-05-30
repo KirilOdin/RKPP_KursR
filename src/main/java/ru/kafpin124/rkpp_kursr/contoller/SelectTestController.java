@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 public class SelectTestController {
 
+    @FXML private Label lbFilter;
     @FXML private ListView<AnalysisTest> testListView;
     @FXML private ComboBox<String> filterCombo;
     @FXML private Button btAddSelected, btCancel, btFilter;

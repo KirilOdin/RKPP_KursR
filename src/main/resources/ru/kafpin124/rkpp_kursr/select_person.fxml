@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-
-<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
-           xmlns="http://javafx.com/javafx/25"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="ru.kafpin124.rkpp_kursr.contoller.SelectPersonController">
+<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.kafpin124.rkpp_kursr.contoller.SelectPersonController">
 
    <items>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
-            <TextArea prefHeight="200.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+            <TextField fx:id="searchField" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
             <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
               <buttons>
                 <Button fx:id="btSelect" mnemonicParsing="false" text="%selectPerson.button.select" />

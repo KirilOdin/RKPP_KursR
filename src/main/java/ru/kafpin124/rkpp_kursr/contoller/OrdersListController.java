@@ -29,9 +29,9 @@ public class OrdersListController {
         logger.debug("OrdersListController создан");
     }
 
-//    public OrdersListController() {
-//        this.orderDao = new OrderDaoImpl();
-//    }
+    public OrdersListController() {
+        this.orderDao = new OrderDaoImpl();
+    }
 
 
     public static final Logger logger = LoggerFactory.getLogger(OrdersListController.class);
