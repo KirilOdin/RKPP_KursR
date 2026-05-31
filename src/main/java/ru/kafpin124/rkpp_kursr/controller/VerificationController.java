@@ -1,16 +1,22 @@
 package ru.kafpin124.rkpp_kursr.controller;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
+import ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao;
+import ru.kafpin124.rkpp_kursr.dao.impl.ReferenceValueDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 
 //@NoArgsConstructor(force = true)
@@ -25,6 +31,7 @@ public class VerificationController {
 
     public static final Logger logger = LoggerFactory.getLogger(VerificationController.class);
 
+    ReferenceValueDao refDao = new ReferenceValueDaoImpl();
 
     public VerificationController(OrderDao orderDao, OrderItemDao itemDao) {
         this.orderDao = orderDao;
@@ -35,7 +42,62 @@ public class VerificationController {
     @FXML
     void initialize() {
         logger.info("Инициализация контроллера верификации");
+
+        // Настройка колонок таблицы ожидающих заказов
+        TableColumn<Order, Long> idCol = (TableColumn<Order, Long>) pendingOrdersTable.getColumns().get(0);
+        idCol.setCellValueFactory(new PropertyValueFactory<>("idOrder"));
+
+        TableColumn<Order, String> patientCol = (TableColumn<Order, String>) pendingOrdersTable.getColumns().get(1);
+        patientCol.setCellValueFactory(cellData -> {
+            Patient patient = cellData.getValue().getPatient();
+            String lastName = patient.getLastName() != null ? patient.getLastName() : "";
+            String firstName = patient.getFirstName() != null ? patient.getFirstName() : "";
+            String initial = firstName.isEmpty() ? "" : firstName.charAt(0) + ".";
+            return new SimpleStringProperty(lastName + " " + initial);
+        });
+
+        // Настройка колонок таблицы результатов
+        TableColumn<OrderItem, String> testCol = (TableColumn<OrderItem, String>) resultsTable.getColumns().get(0);
+        testCol.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getTest().getTestName()));
+
+        TableColumn<OrderItem, String> resultCol = (TableColumn<OrderItem, String>) resultsTable.getColumns().get(1);
+        resultCol.setCellValueFactory(cellData -> {
+            OrderItem item = cellData.getValue();
+            String res = item.getResultValue() != null ? item.getResultValue().stripTrailingZeros().toPlainString()
+                    : item.getResultText();
+            return new SimpleStringProperty(res != null ? res : "");
+        });
+
+        TableColumn<OrderItem, String> normCol = (TableColumn<OrderItem, String>) resultsTable.getColumns().get(2);
+        normCol.setCellValueFactory(cellData -> {
+            // Получаем заказ, связанный с выбранной позицией (через pendingOrdersTable)
+            Order selectedOrder = pendingOrdersTable.getSelectionModel().getSelectedItem();
+            if (selectedOrder == null || selectedOrder.getPatient() == null) {
+                return new SimpleStringProperty("");
+            }
+            Patient patient = selectedOrder.getPatient();
+            char gender = patient.getGender();
+            int age = Period.between(patient.getBirthDate(), LocalDate.now()).getYears();
+
+            ReferenceValue rv = refDao.findByTestAndGenderAndAge(
+                    cellData.getValue().getTest().getIdTest(), gender, age);
+            if (rv != null) {
+                String norm = (rv.getRefValueMin() != null ? rv.getRefValueMin().stripTrailingZeros().toPlainString() : "")
+                        + " – " + (rv.getRefValueMax() != null ? rv.getRefValueMax().stripTrailingZeros().toPlainString() : "");
+                return new SimpleStringProperty(norm);
+            }
+            return new SimpleStringProperty("");
+        });
+
+        TableColumn<OrderItem, String> deviationCol = (TableColumn<OrderItem, String>) resultsTable.getColumns().get(3);
+        deviationCol.setCellValueFactory(cellData -> {
+            Boolean abnormal = cellData.getValue().getIsAbnormal();
+            return new SimpleStringProperty(abnormal != null && abnormal ? "Да" : "Нет");
+        });
+
         bindSelection();
+        refreshPendingOrders();  // сразу загружаем заказы со статусом "выполнен"
     }
 
     public void setCurrentUser(Employee user) {

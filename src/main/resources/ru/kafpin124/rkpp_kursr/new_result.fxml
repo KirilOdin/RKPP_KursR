@@ -3,39 +3,45 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="700.0"
-            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ru.kafpin124.rkpp_kursr.controller.NewResultController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="700.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.kafpin124.rkpp_kursr.controller.NewResultController">
 
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-            <Label fx:id="lbOrder" text="%newResult.label.order"/>
-            <TextField fx:id="orderField" editable="false" HBox.hgrow="ALWAYS"
-                       promptText="%newResult.textField.orderField"/>
-            <Button fx:id="btSelectOrder" text="%newResult.button.selectOrder" onAction="#onSelectOrder"/>
-        </HBox>
-        <Separator/>
+        <Separator />
     </top>
 
     <center>
         <VBox spacing="5" style="-fx-padding: 10;">
-            <Label fx:id="lbResult" text="%newResult.label.results"/>
+            <Label fx:id="lbResult" text="%newResult.label.results" />
             <TableView fx:id="resultTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colTest" text="%newResult.resultTable.test" prefWidth="150"/>
-                    <TableColumn fx:id="colNorm" text="%newResult.resultTable.norm" prefWidth="160"/>
-                    <TableColumn fx:id="colResult" text="%newResult.resultTable.result" prefWidth="150"/>
-                    <TableColumn fx:id="colDeviation" text="%newResult.resultTable.deviation" prefWidth="80"/>
+                    <TableColumn fx:id="colTest" prefWidth="150" text="%newResult.resultTable.test" />
+                    <TableColumn fx:id="colNorm" prefWidth="160" text="%newResult.resultTable.norm" />
+                    <TableColumn fx:id="colResult" prefWidth="150" text="%newResult.resultTable.result" />
+                    <TableColumn fx:id="colDeviation" prefWidth="80" text="%newResult.resultTable.deviation" />
                 </columns>
             </TableView>
         </VBox>
     </center>
 
     <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
-            <Label fx:id="statusLabel" text="%newResult.label.status"/>
-            <Button fx:id="btSaveResults" text="%newResult.button.save" onAction="#onSaveResults"/>
-            <Button fx:id="btCancel" text="%newResult.button.cancel" onAction="#onCancel"/>
+        <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 10;">
+            <Label fx:id="statusLabel" text="%newResult.label.status" />
+            <Button fx:id="btSaveResults" onAction="#onSaveResults" text="%newResult.button.save" />
+            <Button fx:id="btCancel" onAction="#onCancel" text="%newResult.button.cancel" />
         </HBox>
     </bottom>
+   <left>
+        <VBox spacing="10" style="-fx-padding: 10;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;">
+                <Label fx:id="lbOrder" text="%newResult.label.order" />
+                <TextField fx:id="orderField" editable="false" promptText="%newResult.textField.orderField" HBox.hgrow="ALWAYS" />
+
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Штрих-код:" />
+                <TextField fx:id="searchBarcodeField" promptText="Введите штрих-код пробы" HBox.hgrow="ALWAYS" />
+                <Button fx:id="btSelectOrder" onAction="#onSelectOrder" text="%newResult.button.selectOrder" />
+            </HBox>
+        </VBox>
+   </left>
 </BorderPane>

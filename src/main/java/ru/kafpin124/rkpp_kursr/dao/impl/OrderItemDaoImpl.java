@@ -2,6 +2,7 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.kafpin124.rkpp_kursr.dao.AnalysisTestDao;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
 import ru.kafpin124.rkpp_kursr.model.*;
@@ -17,7 +18,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     public static final Logger logger = LoggerFactory.getLogger(OrderItemDaoImpl.class);
 
-
+    AnalysisTestDao testDao = new AnalysisTestDaoImpl();
 //    1. Вставка новой позиции заказа
 
 //    private static final String ADD = "INSERT INTO public.order_items(order_id, test_id, specimen_id, " +
@@ -344,8 +345,12 @@ public class OrderItemDaoImpl implements OrderItemDao {
             order.setIdOrder(rs.getLong("order_id"));
             item.setOrder(order);
 
-            AnalysisTest test = new AnalysisTest();
-            test.setIdTest(rs.getLong("test_id"));
+            long testId = rs.getLong("test_id");
+            AnalysisTest test = testDao.findById(testId);
+            if (test == null) {
+                test = new AnalysisTest();
+                test.setIdTest(testId);
+            }
             item.setTest(test);
 
             Specimen specimen = new Specimen();

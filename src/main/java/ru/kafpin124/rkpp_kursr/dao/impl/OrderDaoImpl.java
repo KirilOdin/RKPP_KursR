@@ -5,6 +5,7 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.OrderStatusDao;
+import ru.kafpin124.rkpp_kursr.dao.SpecimenDao;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.model.*;
@@ -20,6 +21,7 @@ public class OrderDaoImpl implements OrderDao {
     public static final Logger logger = LoggerFactory.getLogger(OrderDaoImpl.class);
     private PatientDaoImpl patientDao = new PatientDaoImpl();
     private final OrderStatusDao orderStatusDao = new OrderStatusDaoImpl();
+    private final SpecimenDao specimenDao = new SpecimenDaoImpl();
 //    1. Вставка нового заказа
 
 //    private static final String ADD = "INSERT INTO public.orders(status_id, patient_id, " +
@@ -435,6 +437,9 @@ public class OrderDaoImpl implements OrderDao {
                 acceptedBy.setIdEmployee(acceptedById);
                 order.setAcceptedBy(acceptedBy);
             }
+
+            List<Specimen> specimens = specimenDao.findByOrderId(order.getIdOrder());
+            order.setSpecimens(specimens);
 
 
             long verifiedById = rs.getLong("verified_by");
