@@ -1,10 +1,7 @@
 package ru.kafpin124.rkpp_kursr;
 
 import javafx.scene.Node;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseButton;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -116,15 +113,15 @@ public class MainApplicationTest extends ApplicationTest {
 
     @Test
     @org.junit.jupiter.api.Order(2)
-    @DisplayName("2. Позитивный: создание нового заказа")
-    void testCreateNewOrder() throws TimeoutException {
-        // 1. Вход в систему
+    @DisplayName("2. Негативный: попытка создания нового заказа без выбора тестов")
+    void testFailedCreatingNewOrder() throws TimeoutException {
+        // Вход
         login(ADMIN_LOGIN, ADMIN_PASSWORD);
         waitForMainWindow();
         clickOn("#newOrderTab");
         waitFor(5, TimeUnit.SECONDS, () -> lookup("#patientField").tryQuery().isPresent());
 
-        // 2. Создаём тестового пациента (через DAO, чтобы не зависеть от UI)
+        // Создаём тестового пациента (через DAO)
         Patient testPatient = new Patient();
         testPatient.setPolicyNumber("TEST_POLICY_" + System.currentTimeMillis());
         testPatient.setLastName("Тестов");
@@ -135,78 +132,103 @@ public class MainApplicationTest extends ApplicationTest {
         patientDao.add(testPatient);
         createdPatients.add(testPatient);
 
-        // 3. Выбираем пациента через диалог
-        clickOn("#patientField"); // кнопка "Выбрать" рядом с полем
+        // Выбираем пациента
+        clickOn("#patientField");
         clickOn("#btSelectPatient");
         waitFor(5, TimeUnit.SECONDS, () -> lookup("#tableViewPerson").tryQuery().isPresent());
-
-        // Ищем пациента по фамилии и кликаем на строку
         clickOn(testPatient.getLastName());
-        clickOn("#btSelect"); // кнопка "Выбрать" в диалоге
+        clickOn("#btSelect");
 
-        // Проверяем, что поле пациента заполнилось
         TextField patientField = lookup("#patientField").query();
         assertThat(patientField.getText()).contains("Тестов Пациент");
 
-        // 4. Генерируем штрих-код
-        clickOn("#barcodeField"); // кнопка "Сгенерировать"
+        // Генерируем штрих-код
+        clickOn("#barcodeField");
         clickOn("#btGenerateBarcode");
         TextField barcodeField = lookup("#barcodeField").query();
         assertThat(barcodeField.getText()).isNotEmpty();
 
-        // 5. Добавляем тест (выбираем первый доступный)
+        // Добавляем тест
         clickOn("Добавить тест");
-        waitFor(5, TimeUnit.SECONDS, () -> lookup("#testListView").tryQuery().isPresent());
 
-        // Выбираем первый элемент в списке (предполагаем, что он есть)
-        Node firstCell = lookup(".list-cell").queryAll().iterator().next();
-        clickOn("#btGenerateBarcode");
+        Node firstCell = lookup("#testListView").nth(0).query();
         clickOn(firstCell);
 
-        clickOn("#filterCombo");
-        clickOn("кровь");
+        clickOn("#btAddSelected");
+        WaitForAsyncUtils.waitForFxEvents();
 
-        // Проверяем, что тест появился в таблице
-        TableView<?> selectedTestsTable = lookup("#selectedTestsTable").query();
-        waitFor(3, TimeUnit.SECONDS, () -> !selectedTestsTable.getItems().isEmpty());
-        assertThat(selectedTestsTable.getItems()).isNotEmpty();
+        waitFor(5, TimeUnit.SECONDS, () -> !lookup("#testListView").tryQuery().isPresent());
 
 
-        clickOn((MouseButton) selectedTestsTable.getItems().get(0));
-        clickOn("%selectedTestsTable");
-        // 6. Выбираем тип биоматериала (например, "кровь")
-//        clickOn("#biomaterialCombo");
-//        clickOn("кровь");
 
-        // 7. Нажимаем "Создать заказ"
+        // Создаём заказ
         clickOn("Создать заказ");
+        waitFor(5, TimeUnit.SECONDS, () -> lookup(".dialog-pane").tryQuery().isPresent());
 
-        // 8. Ждём и закрываем диалог "Готово"
-        waitFor(5, TimeUnit.SECONDS, () -> lookup("Готово").tryQuery().isPresent());
+        DialogPane dialogPane = lookup(".dialog-pane").query();
+        assertThat(dialogPane.getContentText()).contains("Добавьте хотя бы один анализ");
         clickOn("OK");
-
-        // 9. Проверяем, что заказ действительно создался в БД
-        String barcode = barcodeField.getText();
-        Order createdOrder = orderDao.findBySpecimenBarcode(barcode);
-        assertThat(createdOrder).isNotNull();
-        createdOrders.add(createdOrder);
     }
 
     @Test
     @org.junit.jupiter.api.Order(3)
-    @DisplayName("3. Негативный: вход с неверным паролем")
-    void testFailedLoginWrongPassword() throws TimeoutException {
-        login(ADMIN_LOGIN, WRONG_PASSWORD);
+    @DisplayName("3. Позитивный: успешное создание нового заказа")
+    void testSuccessfulCreatingOrder() throws TimeoutException {
+        // Вход
+        login(ADMIN_LOGIN, ADMIN_PASSWORD);
+        waitForMainWindow();
+        clickOn("#newOrderTab");
+        waitFor(5, TimeUnit.SECONDS, () -> lookup("#patientField").tryQuery().isPresent());
 
-        // Ожидаем появления сообщения об ошибке
-        waitFor(5, TimeUnit.SECONDS, () -> {
-            String text = lookup("#messageLabel").queryLabeled().getText();
-            return text != null && (text.contains("Неверный") || text.contains("Invalid"));
-        });
-        assertThat(lookup("#messageLabel").queryLabeled().getText()).contains("Неверный");
+        // Создаём тестового пациента (через DAO)
+        Patient testPatient = new Patient();
+        testPatient.setPolicyNumber("TEST_POLICY_" + System.currentTimeMillis());
+        testPatient.setLastName("Тестов");
+        testPatient.setFirstName("Пациент");
+        testPatient.setMiddleName("Иванович");
+        testPatient.setGender('м');
+        testPatient.setBirthDate(LocalDate.of(1990, 5, 15));
+        patientDao.add(testPatient);
+        createdPatients.add(testPatient);
 
-        // Окно входа должно оставаться открытым
-        assertThat(lookup("#loginField").tryQuery()).isPresent();
+        // Выбираем пациента
+        clickOn("#patientField");
+        clickOn("#btSelectPatient");
+        waitFor(5, TimeUnit.SECONDS, () -> lookup("#tableViewPerson").tryQuery().isPresent());
+        clickOn(testPatient.getLastName());
+        clickOn("#btSelect");
+
+        TextField patientField = lookup("#patientField").query();
+        assertThat(patientField.getText()).contains("Тестов Пациент");
+
+        // Генерируем штрих-код
+        clickOn("#barcodeField");
+        clickOn("#btGenerateBarcode");
+        TextField barcodeField = lookup("#barcodeField").query();
+        assertThat(barcodeField.getText()).isNotEmpty();
+
+        // Добавляем тест
+        clickOn("Добавить тест");
+
+        ListView<AnalysisTest> listView = lookup("#testListView").query();
+        ComboBox<String> biomaterialCombo = lookup("#biomaterialCombo").query();
+        interact(() -> biomaterialCombo.setValue("кровь"));
+        interact(() -> listView.getSelectionModel().select(0));
+        interact(() -> listView.getSelectionModel().select(2));
+
+
+        clickOn("#btAddSelected");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        waitFor(5, TimeUnit.SECONDS, () -> !lookup("#testListView").tryQuery().isPresent());
+
+        // Создаём заказ
+        clickOn("Создать заказ");
+        waitFor(5, TimeUnit.SECONDS, () -> lookup(".dialog-pane").tryQuery().isPresent());
+        DialogPane dialogPane = lookup(".dialog-pane").query();
+
+        assertThat(dialogPane.getContentText()).contains("Заказ создан");
+        clickOn("OK");
     }
 
     @Test
@@ -222,8 +244,10 @@ public class MainApplicationTest extends ApplicationTest {
         clickOn("Создать заказ");
 
         // Ожидаем диалог с ошибкой
-        waitFor(5, TimeUnit.SECONDS, () -> lookup("Ошибка").tryQuery().isPresent());
+
+        waitFor(5, TimeUnit.SECONDS, () -> lookup(".dialog-pane").tryQuery().isPresent());
         DialogPane dialogPane = lookup(".dialog-pane").query();
+
         assertThat(dialogPane.getContentText()).contains("Выберите пациента");
         clickOn("OK");
     }

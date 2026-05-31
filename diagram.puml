@@ -1,0 +1,756 @@
+@startuml
+class ru.kafpin124.rkpp_kursr.dto.TestCountByType {
+- String testName
+- long count
++ String getTestName()
++ long getCount()
+}
+
+
+class ru.kafpin124.rkpp_kursr.dto.EmployeeStatistic {
+- String employeeFullName
+- long testsCount
++ String getEmployeeFullName()
++ long getTestsCount()
+}
+
+
+class ru.kafpin124.rkpp_kursr.controller.SelectTestController {
+- Label lbFilter
+- ListView<AnalysisTest> testListView
+- ComboBox<String> filterCombo
+- Button btAddSelected
+- AnalysisTestDaoImpl testDao
+- List<AnalysisTest> allTests
+- List<AnalysisTest> selectedTests
++ {static} Logger logger
+~ void initialize()
+~ void onFilter()
+~ void onAddSelected()
+~ void onCancel()
++ List<AnalysisTest> getSelectedTests()
+}
+
+
+class ru.kafpin124.rkpp_kursr.controller.SelectPersonController {
+- TableView<Patient> tableViewPerson
+- TableColumn<Patient,String> colLastName
+- TableColumn<Patient,String> colFirstName
+- TableColumn<Patient,String> colMiddleName
+- TextField searchField
+- Button btSelect
+- PatientDaoImpl patientDao
+- List<Patient> allPatients
+- Patient selectedPatient
++ {static} Logger logger
+~ void initialize()
+- void filterPatients(String)
++ Patient getSelectedPatient()
+}
+
+
+class ru.kafpin124.rkpp_kursr.dao.impl.OrderStatusDaoImpl {
++ {static} Logger logger
++ {static} String ADD
++ {static} String FIND_BY_ID
++ {static} String GET_ALL
++ {static} String UPDATE
++ {static} String DELETE_BY_ID
++ void add(OrderStatus)
++ OrderStatus getById(Long)
++ List<OrderStatus> getAll()
++ void update(OrderStatus)
++ void delete(OrderStatus)
+- OrderStatus mapSingle(ResultSet)
+- List<OrderStatus> mapper(ResultSet)
+}
+
+
+interface ru.kafpin124.rkpp_kursr.dao.PatientDao {
+~ void add(Patient)
+~ Patient findById(Long)
+~ List<Patient> getAll()
+~ void update(Patient)
+~ void delete(Patient)
+~ Patient findByPolicyNumber(String)
+~ List<Patient> searchByFullName(String)
+}
+
+class ru.kafpin124.rkpp_kursr.controller.ReportsController {
+- DatePicker reportDateFrom
+- DatePicker reportDateTo
+- TableView reportTable
+- ComboBox<String> reportTypeCombo
+- ReportDao reportDao
++ {static} Logger logger
+~ void initialize()
+~ void onGenerateReport()
+- void showTestCountByType(LocalDate,LocalDate)
+- void showEmployeeWorkload(LocalDate,LocalDate)
+- void showRevenueByOrganization(LocalDate,LocalDate)
+~ void onPrint()
+~ void onExport()
+~ void onCancel()
+- void showAlert(String)
+}
+
+
+class ru.kafpin124.rkpp_kursr.dao.impl.SpecimenDaoImpl {
++ {static} Logger logger
+- {static} String ADD
+- {static} String FIND_BY_ID
+- {static} String GET_ALL
+- {static} String UPDATE
+- {static} String DELETE
+- {static} String FIND_BY_BARCODE
+- {static} String FIND_BY_ORDER_ID
++ void add(Specimen)
++ Specimen getById(Long)
++ List<Specimen> getAll()
++ void update(Specimen)
++ void delete(Specimen)
++ Specimen findByBarcode(String)
++ List<Specimen> findByOrderId(Long)
+- Specimen mapSingle(ResultSet)
+- List<Specimen> mapper(ResultSet)
+}
+
+
+class ru.kafpin124.rkpp_kursr.dao.impl.PatientDaoImpl {
++ {static} Logger logger
++ {static} String ADD
++ {static} String FIND_BY_ID
++ {static} String GET_ALL
++ {static} String UPDATE
++ {static} String DELETE_BY_ID
++ {static} String FIND_BY_POLICY
++ {static} String SEARCH_BY_FULLNAME
++ void add(Patient)
++ Patient findById(Long)
++ List<Patient> getAll()
++ void update(Patient)
++ void delete(Patient)
++ Patient findByPolicyNumber(String)
++ List<Patient> searchByFullName(String)
+- Patient mapSingle(ResultSet)
+- List<Patient> mapper(ResultSet)
+}
+
+
+interface ru.kafpin124.rkpp_kursr.dao.EmployeeDao {
+~ void add(Employee,String)
+~ Employee findById(Long)
+~ List<Employee> getAll()
+~ void update(Employee)
+~ void delete(Employee)
+~ void deleteById(Long)
+~ Employee findByLogin(String)
+~ List<Employee> findByRole(String)
+~ List<Employee> searchByFullName(String)
+}
+
+class ru.kafpin124.rkpp_kursr.dao.impl.OrderItemDaoImpl {
++ {static} Logger logger
+~ AnalysisTestDao testDao
++ {static} String ADD
++ {static} String FIND_BY_ID
++ {static} String GET_ALL
++ {static} String UPDATE
++ {static} String DELETE
++ {static} String FIND_BY_ORDER_ID
++ {static} String FIND_BY_SPECIMEN_ID
++ {static} String FIND_BY_ENTERED_BY
++ {static} String UPDATE_RESULT
++ {static} String UPDATE_STATUS
++ void add(OrderItem)
++ OrderItem findById(Long)
++ List<OrderItem> getAll()
++ void update(OrderItem)
++ void delete(OrderItem)
++ List<OrderItem> findByOrderId(Long)
++ List<OrderItem> findBySpecimenId(Long)
++ List<OrderItem> findByEnteredBy(Long)
++ void updateResult(Long,BigDecimal,String,boolean,Long)
++ void updateStatus(Long,String)
+- OrderItem mapSingle(ResultSet)
+- List<OrderItem> mapper(ResultSet)
+}
+
+
+interface ru.kafpin124.rkpp_kursr.dao.OrderDao {
+~ void add(Order)
+~ Order findById(Long)
+~ List<Order> getAll()
+~ void update(Order)
+~ void delete(Order)
+~ List<Order> findByPatientId(Long)
+~ List<Order> findByStatusId(Long)
+~ List<Order> findByDateRange(LocalDateTime,LocalDateTime)
+~ List<Order> findByRegisteredBy(Long)
+~ Order findBySpecimenBarcode(String)
+~ void updateStatus(Long,Long)
+}
+
+class ru.kafpin124.rkpp_kursr.model.AnalysisTest {
+- Long idTest
+- String testName
+- String biomaterial
+- Integer executionTimeHours
+- BigDecimal price
+- String unit
+- List<ReferenceValue> referenceValues
+- List<OrderItem> orderItems
+}
+
+class ru.kafpin124.rkpp_kursr.controller.LoginController {
+- ComboBox<Locale> languageCombo
+- RadioButton rbDB
+- ToggleGroup authModeGroup
+- RadioButton rbBCrypt
+- Label lbPassword
+- Label lbLogin
+- TextField loginField
+- PasswordField passwordField
+- Label messageLabel
+- Button btnLogin
+- EmployeeDao employeeDao
+- BCryptPasswordEncoder encoder
++ {static} Logger logger
+~ void initialize()
+- void login()
+- void reloadLoginWindow()
+}
+
+
+class ru.kafpin124.rkpp_kursr.model.Employee {
+- Long idEmployee
+- String role
+- String position
+- String lastName
+- String firstName
+- String middleName
+- String login
+- String passwordHash
+}
+
+interface ru.kafpin124.rkpp_kursr.dao.OrganizationDao {
+~ void add(Organization)
+~ Organization getById(Long)
+~ List<Organization> getAll()
+~ void update(Organization)
+~ void delete(Organization)
+~ List<Organization> searchByName(String)
+}
+
+class ru.kafpin124.rkpp_kursr.dto.OrganizationStatistic {
+- String orgName
+- BigDecimal totalRevenue
++ String getOrgName()
++ BigDecimal getTotalRevenue()
+}
+
+
+class ru.kafpin124.rkpp_kursr.util.LocalizationService {
+- {static} Locale currentLocale
++ {static} Logger logger
++ {static} Locale getCurrentLocale()
++ {static} ResourceBundle getBundle()
++ {static} void changeLocale(Locale)
++ {static} void initFromPreferences()
++ {static} String get(String)
+}
+
+
+class ru.kafpin124.rkpp_kursr.util.SqlStatements {
++ {static} Properties props
++ {static} Logger logger
++ {static} String get(String)
+}
+
+
+class ru.kafpin124.rkpp_kursr.model.Specimen {
+- Long idSpecimen
+- String specimenType
+- String containerType
+- LocalDateTime collectionDatetime
+- String barcode
+- Order order
+}
+
+class ru.kafpin124.rkpp_kursr.controller.NewResultController {
+- Button btCancel
+- Button btSaveResults
+- Label lbResult
+- Button btSelectOrder
+- Label lbOrder
+- TextField orderField
+- TextField searchBarcodeField
+- TableView<OrderItem> resultTable
+- TableColumn<OrderItem,String> colNorm
+- TableColumn<OrderItem,String> colTest
+- Label statusLabel
+- Order currentOrder
+- Employee currentUser
+- OrderDao orderDao
+- OrderItemDao itemDao
+- ReferenceValueDao refDao
++ {static} Logger logger
+~ void initialize()
++ void setCurrentUser(Employee)
+~ void onSelectOrder()
+- void loadOrderItems(Long)
+~ void onSaveResults()
+- boolean checkAbnormal(OrderItem)
+~ void onCancel()
+- void showAlert(String)
++ void refreshOrderList()
+}
+
+
+class ru.kafpin124.rkpp_kursr.controller.ReportFormController {
+- TextArea reportArea
+- Order order
++ {static} Logger logger
++ void setOrder(Order)
+- void generateReport()
+~ void onPrint()
+~ void onCancel()
+}
+
+
+class ru.kafpin124.rkpp_kursr.model.Patient {
+- Long idPatient
+- String policyNumber
+- String lastName
+- String firstName
+- String middleName
+- Character gender
+- LocalDate birthDate
+- String phone
+- List<Order> orders
+}
+
+class ru.kafpin124.rkpp_kursr.dao.impl.ReferenceValueDaoImpl {
++ {static} Logger logger
++ {static} String ADD
++ {static} String GET_BY_ID
++ {static} String GET_ALL
++ {static} String UPDATE
++ {static} String DELETE
++ {static} String FIND_BY_TEST_ID
++ {static} String FIND_BY_TEST_AND_GENDER_AND_AGE
++ void add(ReferenceValue)
++ ReferenceValue getById(Long)
++ List<ReferenceValue> getAll()
++ void update(ReferenceValue)
++ void delete(ReferenceValue)
++ List<ReferenceValue> findByTestId(Long)
++ ReferenceValue findByTestAndGenderAndAge(Long,char,int)
+- ReferenceValue mapSingle(ResultSet)
+- List<ReferenceValue> mapper(ResultSet)
+}
+
+
+interface ru.kafpin124.rkpp_kursr.dao.OrderItemDao {
+~ void add(OrderItem)
+~ OrderItem findById(Long)
+~ List<OrderItem> getAll()
+~ void update(OrderItem)
+~ void delete(OrderItem)
+~ List<OrderItem> findByOrderId(Long)
+~ List<OrderItem> findBySpecimenId(Long)
+~ List<OrderItem> findByEnteredBy(Long)
+~ void updateResult(Long,BigDecimal,String,boolean,Long)
+~ void updateStatus(Long,String)
+}
+
+class ru.kafpin124.rkpp_kursr.model.ReferenceValue {
+- Long idReference
+- Character genderApplicable
+- Integer ageMin
+- Integer ageMax
+- BigDecimal refValueMin
+- BigDecimal refValueMax
+- String refText
+- AnalysisTest analysisTest
++ AnalysisTest getTest()
++ void setTest(AnalysisTest)
+}
+
+
+class ru.kafpin124.rkpp_kursr.util.DBHelper {
+- {static} String dbUrl
+- {static} String appUser
+- {static} String appPassword
+- {static} Connection connection
+- {static} String currentDbUser
+- {static} String currentDbPassword
++ {static} Logger logger
++ {static} void initConnection(String,String)
++ {static} Connection getConnection()
++ {static} void closeConnection()
++ {static} String getDbUrl()
++ {static} String getAppUser()
++ {static} String getAppPassword()
+}
+
+
+class ru.kafpin124.rkpp_kursr.HelloController {
+- Label welcomeText
+# void onHelloButtonClick()
+}
+
+
+class ru.kafpin124.rkpp_kursr.dao.impl.ReportDaoImpl {
++ {static} Logger logger
++ {static} String GET_TEST_COUNT_BY_TYPE
++ {static} String GET_WORKLOAD_BY_EMPLOYEE
++ {static} String GET_REVENUE_BY_ORGANIZATION
++ List<TestCountByType> getTestCountByType(LocalDate,LocalDate)
++ List<EmployeeStatistic> getWorkloadByEmployee(LocalDate,LocalDate)
++ List<OrganizationStatistic> getRevenueByOrganization(LocalDate,LocalDate)
+}
+
+
+interface ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao {
+~ void add(ReferenceValue)
+~ ReferenceValue getById(Long)
+~ List<ReferenceValue> getAll()
+~ void update(ReferenceValue)
+~ void delete(ReferenceValue)
+~ List<ReferenceValue> findByTestId(Long)
+~ ReferenceValue findByTestAndGenderAndAge(Long,char,int)
+}
+
+class ru.kafpin124.rkpp_kursr.dao.impl.AnalysisTestDaoImpl {
++ {static} Logger logger
+- {static} String ADD
++ {static} String FIND_BY_ID
++ {static} String GET_ALL
++ {static} String UPDATE
++ {static} String DELETE_BY_ID
++ {static} String FIND_BY_MATERIAL
++ {static} String SEARCH_BY_NAME
++ void add(AnalysisTest)
++ AnalysisTest findById(Long)
++ List<AnalysisTest> getAll()
++ void update(AnalysisTest)
++ void delete(AnalysisTest)
++ void deleteById(Long)
++ List<AnalysisTest> findByBiomaterial(String)
++ List<AnalysisTest> searchByName(String)
+# List<AnalysisTest> mapper(ResultSet)
+- AnalysisTest mapSingle(ResultSet)
+}
+
+
+class ru.kafpin124.rkpp_kursr.controller.NewOrderController {
+- TableColumn colCode
+- TextField patientField
+- TextField barcodeField
+- DatePicker collectionDatePicker
+- ComboBox<String> biomaterialCombo
+- TableView<AnalysisTest> selectedTestsTable
+- PatientDao patientDao
+- AnalysisTestDao testDao
+- OrderDao orderDao
+- SpecimenDao specimenDao
+- OrderItemDao orderItemDao
+- Patient selectedPatient
+- Employee currentUser
+- List<AnalysisTest> selectedTests
++ {static} Logger logger
+~ void initialize()
++ void setCurrentUser(Employee)
+~ void onSelectPatient()
+~ void onAddTest()
+~ void onGenerateBarcode()
+~ void onCreateOrder()
+~ void onRemoveTest()
+~ void onCancel()
+- void showAlert(String,String)
+}
+
+
+class ru.kafpin124.rkpp_kursr.controller.VerificationController {
+- TableView<Order> pendingOrdersTable
+- TableView<OrderItem> resultsTable
+- TextField commentField
+- OrderDao orderDao
+- OrderItemDao itemDao
+- Employee currentUser
++ {static} Logger logger
+~ ReferenceValueDao refDao
+~ void initialize()
++ void setCurrentUser(Employee)
++ void refreshPendingOrders()
+~ void onApproveOrder()
+~ void onRejectOrder()
++ void bindSelection()
+- void showAlert(String)
+}
+
+
+interface ru.kafpin124.rkpp_kursr.dao.AnalysisTestDao {
+~ void add(AnalysisTest)
+~ AnalysisTest findById(Long)
+~ List<AnalysisTest> getAll()
+~ void update(AnalysisTest)
+~ void delete(AnalysisTest)
+~ void deleteById(Long)
+~ List<AnalysisTest> findByBiomaterial(String)
+~ List<AnalysisTest> searchByName(String)
+}
+
+class ru.kafpin124.rkpp_kursr.controller.OrdersListController {
+- TableView<Order> ordersTable
+- ComboBox<String> filterStatus
+- TextField searchField
+- DatePicker dateFrom
+- OrderDao orderDao
++ {static} Logger logger
+~ void initialize()
+~ void onSearch()
++ void loadOrders()
++ Order getSelectedOrder()
+}
+
+
+class ru.kafpin124.rkpp_kursr.Launcher {
++ {static} void main(String[])
+}
+
+class ru.kafpin124.rkpp_kursr.dao.impl.OrganizationDaoImpl {
++ {static} Logger logger
++ {static} String ADD
++ {static} String FIND_BY_ID
++ {static} String GET_ALL
++ {static} String UPDATE
++ {static} String DELETE_BY_ID
++ {static} String SEARCH_BY_NAME
++ void add(Organization)
++ Organization getById(Long)
++ List<Organization> getAll()
++ void update(Organization)
++ void delete(Organization)
++ List<Organization> searchByName(String)
+- Organization mapSingle(ResultSet)
+- List<Organization> mapper(ResultSet)
+}
+
+
+interface ru.kafpin124.rkpp_kursr.dao.ReportDao {
+~ List<TestCountByType> getTestCountByType(LocalDate,LocalDate)
+~ List<EmployeeStatistic> getWorkloadByEmployee(LocalDate,LocalDate)
+~ List<OrganizationStatistic> getRevenueByOrganization(LocalDate,LocalDate)
+}
+
+class ru.kafpin124.rkpp_kursr.model.Order {
+- Long idOrder
+- OrderStatus status
+- Patient patient
+- Organization organization
+- Employee registeredBy
+- Employee acceptedBy
+- Employee verifiedBy
+- LocalDateTime registrationDatetime
+- LocalDateTime acceptanceDatetime
+- LocalDateTime verificationDatetime
+- List<OrderItem> orderItems
+- List<Specimen> specimens
+}
+
+interface ru.kafpin124.rkpp_kursr.dao.SpecimenDao {
+~ void add(Specimen)
+~ Specimen getById(Long)
+~ List<Specimen> getAll()
+~ void update(Specimen)
+~ void delete(Specimen)
+~ Specimen findByBarcode(String)
+~ List<Specimen> findByOrderId(Long)
+}
+
+class ru.kafpin124.rkpp_kursr.controller.ManageTestsController {
+- TableView<AnalysisTest> testsTable
+- TableColumn<AnalysisTest,Long> colId
+- TableColumn<AnalysisTest,String> colName
+- TableColumn<AnalysisTest,Integer> colTime
+- TableColumn<AnalysisTest,BigDecimal> colPrice
+- AnalysisTestDao testDao
+- ReferenceValueDao refDao
+- ObservableList<AnalysisTest> testList
++ {static} Logger logger
+~ void initialize()
+- void loadTests()
+~ void onAddTest(ActionEvent)
+~ void onEditTest(ActionEvent)
+~ void onDeleteTest(ActionEvent)
+~ void onManageReferences(ActionEvent)
+- AnalysisTest showTestDialog(AnalysisTest)
+- void showReferenceDialog(AnalysisTest)
+- ReferenceValue showReferenceEditDialog(AnalysisTest,ReferenceValue)
+- void showAlert(String)
+}
+
+
+class ru.kafpin124.rkpp_kursr.model.OrderItem {
+- Long idItem
+- Order order
+- AnalysisTest test
+- Specimen specimen
+- String status
+- BigDecimal resultValue
+- String resultText
+- Boolean isAbnormal
+- Employee enteredBy
+- LocalDateTime entryDatetime
++ String getResultAsString()
+}
+
+
+interface ru.kafpin124.rkpp_kursr.dao.OrderStatusDao {
+~ void add(OrderStatus)
+~ OrderStatus getById(Long)
+~ List<OrderStatus> getAll()
+~ void update(OrderStatus)
+~ void delete(OrderStatus)
+}
+
+class ru.kafpin124.rkpp_kursr.model.Organization {
+- Long idOrg
+- String orgName
+- String contractNumber
+- String contactLastName
+- String contactFirstName
+- String contactMiddleName
+- String contactPersonPhone
+}
+
+class ru.kafpin124.rkpp_kursr.controller.MainTabController {
+- TabPane mainTabPane
+- Tab ordersTab
+- OrdersListController ordersListController
+- NewOrderController newOrderController
+- NewResultController newResultController
+- VerificationController verificationController
+- ReportsController reportsController
+- ManageEmployeesController manageEmployeesController
+- ManageTestsController manageTestsController
+- Employee currentUser
+- Stage primaryStage
+~ ResourceBundle bundle
+- OrderDao orderDao
++ {static} Logger logger
++ void setPrimaryStage(Stage)
+- void configureTabsByRole()
+~ void initialize()
+- T loadTab(Tab,String,Callback<Class<?>,Object>,ResourceBundle)
++ void setCurrentUser(Employee)
+~ void onLogout()
+~ void onEnterResults()
+~ void onRefresh()
+~ void onSetInProgress()
+~ void onSwitchToEmployees()
+~ void onSwitchToTests()
+~ void onPrintReport()
+}
+
+
+class ru.kafpin124.rkpp_kursr.MainApplication {
+- {static} Logger logger
++ void start(Stage)
+}
+
+
+class ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl {
++ {static} Logger logger
+- PatientDaoImpl patientDao
+- OrderStatusDao orderStatusDao
+- SpecimenDao specimenDao
++ {static} String ADD
++ {static} String FIND_BY_ID
++ {static} String GET_ALL
++ {static} String UPDATE
++ {static} String DELETE_BY_ID
++ {static} String FIND_BY_PATIENT_ID
++ {static} String FIND_BY_STATUS_ID
++ {static} String FIND_BY_DATE_RANGE
++ {static} String FIND_BY_REGISTERED_BY
++ {static} String FIND_BY_SPECIMEN_BARCODE
++ {static} String UPDATE_STATUS
++ void add(Order)
++ Order findById(Long)
++ List<Order> getAll()
++ void update(Order)
++ void delete(Order)
++ List<Order> findByPatientId(Long)
++ List<Order> findByStatusId(Long)
++ List<Order> findByDateRange(LocalDateTime,LocalDateTime)
++ List<Order> findByRegisteredBy(Long)
++ Order findBySpecimenBarcode(String)
++ void updateStatus(Long,Long)
+# List<Order> mapper(ResultSet)
+- Order mapSingle(ResultSet)
+}
+
+
+class ru.kafpin124.rkpp_kursr.controller.ManageEmployeesController {
+- TableView<Employee> employeesTable
+- TableColumn<Employee,Long> colId
+- TableColumn<Employee,String> colLastName
+- EmployeeDao employeeDao
+- ObservableList<Employee> employeeList
++ {static} Logger logger
+~ void initialize()
+- void loadEmployees()
+~ void onAddEmployee(ActionEvent)
+~ void onEditEmployee(ActionEvent)
+~ void onDeleteEmployee(ActionEvent)
+- Employee showEmployeeDialog(Employee)
+- void showAlert(String)
+}
+
+
+class ru.kafpin124.rkpp_kursr.dao.impl.EmployeeDaoImpl {
++ {static} Logger logger
++ {static} String ADD
++ {static} String FIND_BY_ID
++ {static} String GET_ALL
++ {static} String UPDATE
++ {static} String DELETE_BY_ID
++ {static} String FIND_BY_LOGIN
++ {static} String FIND_BY_ROLE
++ {static} String SEARCH_BY_FULLNAME
++ void add(Employee,String)
++ Employee findById(Long)
++ List<Employee> getAll()
++ void update(Employee)
++ void delete(Employee)
++ void deleteById(Long)
++ Employee findByLogin(String)
++ List<Employee> findByRole(String)
++ List<Employee> searchByFullName(String)
+# List<Employee> mapper(ResultSet)
+- Employee mapSingle(ResultSet)
+}
+
+
+class ru.kafpin124.rkpp_kursr.model.OrderStatus {
+- Long idStatus
+- String statusName
+}
+
+
+
+ru.kafpin124.rkpp_kursr.dao.OrderStatusDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.OrderStatusDaoImpl
+ru.kafpin124.rkpp_kursr.dao.SpecimenDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.SpecimenDaoImpl
+ru.kafpin124.rkpp_kursr.dao.PatientDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.PatientDaoImpl
+ru.kafpin124.rkpp_kursr.dao.OrderItemDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.OrderItemDaoImpl
+ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.ReferenceValueDaoImpl
+ru.kafpin124.rkpp_kursr.dao.ReportDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.ReportDaoImpl
+ru.kafpin124.rkpp_kursr.dao.AnalysisTestDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.AnalysisTestDaoImpl
+ru.kafpin124.rkpp_kursr.dao.OrganizationDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.OrganizationDaoImpl
+javafx.application.Application <|-- ru.kafpin124.rkpp_kursr.MainApplication
+ru.kafpin124.rkpp_kursr.dao.OrderDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl
+ru.kafpin124.rkpp_kursr.dao.EmployeeDao <|.. ru.kafpin124.rkpp_kursr.dao.impl.EmployeeDaoImpl
+@enduml
