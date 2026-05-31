@@ -1,6 +1,5 @@
-package ru.kafpin124.rkpp_kursr.contoller;
+package ru.kafpin124.rkpp_kursr.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

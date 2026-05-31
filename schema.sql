@@ -236,3 +236,65 @@ CREATE INDEX idx_order_items_specimen ON order_items(specimen_id);
 CREATE INDEX idx_order_items_status ON order_items(status);
 CREATE INDEX idx_reference_test ON reference_values(test_id);
 CREATE INDEX idx_organizations_name ON organizations(org_name);
+
+
+
+
+-- 1. Количество анализов по видам
+CREATE OR REPLACE FUNCTION get_test_count_by_type(
+    from_date TIMESTAMPTZ,
+    to_date TIMESTAMPTZ
+)
+RETURNS TABLE (test_name TEXT, cnt BIGINT)
+LANGUAGE sql
+AS $$
+    SELECT t.test_name, COUNT(oi.id_item) AS cnt
+    FROM public.order_items oi
+    JOIN public.tests t ON oi.test_id = t.id_test
+    JOIN public.orders o ON oi.order_id = o.id_order
+    WHERE o.registration_datetime >= from_date
+      AND o.registration_datetime <= to_date
+      AND oi.status = 'выполнен'
+    GROUP BY t.test_name
+    ORDER BY cnt DESC;
+$$;
+
+-- 2. Нагрузка сотрудников
+CREATE OR REPLACE FUNCTION get_workload_by_employee(
+    from_date TIMESTAMPTZ,
+    to_date TIMESTAMPTZ
+)
+RETURNS TABLE (fullname TEXT, cnt BIGINT)
+LANGUAGE sql
+AS $$
+    SELECT e.last_name || ' ' || e.first_name || ' ' || e.middle_name AS fullname,
+           COUNT(oi.id_item) AS cnt
+    FROM public.order_items oi
+    JOIN public.employees e ON oi.entered_by = e.id_employee
+    JOIN public.orders o ON oi.order_id = o.id_order
+    WHERE o.registration_datetime >= from_date
+      AND o.registration_datetime <= to_date
+      AND oi.status = 'выполнен'
+    GROUP BY fullname
+    ORDER BY cnt DESC;
+$$;
+
+-- 3. Выручка по организациям
+CREATE OR REPLACE FUNCTION get_revenue_by_organization(
+    from_date TIMESTAMPTZ,
+    to_date TIMESTAMPTZ
+)
+RETURNS TABLE (org_name TEXT, total_revenue NUMERIC)
+LANGUAGE sql
+AS $$
+    SELECT org.org_name, SUM(t.price) AS total_revenue
+    FROM public.order_items oi
+    JOIN public.tests t ON oi.test_id = t.id_test
+    JOIN public.orders o ON oi.order_id = o.id_order
+    JOIN public.organizations org ON o.organization_id = org.id_org
+    WHERE o.registration_datetime >= from_date
+      AND o.registration_datetime <= to_date
+      AND oi.status = 'выполнен'
+    GROUP BY org.org_name
+    ORDER BY total_revenue DESC;
+$$;

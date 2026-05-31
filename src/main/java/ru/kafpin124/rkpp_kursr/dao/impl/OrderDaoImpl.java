@@ -4,6 +4,7 @@ package ru.kafpin124.rkpp_kursr.dao.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.kafpin124.rkpp_kursr.dao.OrderStatusDao;
 import ru.kafpin124.rkpp_kursr.util.DBHelper;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.model.*;
@@ -17,7 +18,8 @@ import java.util.List;
 public class OrderDaoImpl implements OrderDao {
 
     public static final Logger logger = LoggerFactory.getLogger(OrderDaoImpl.class);
-
+    private PatientDaoImpl patientDao = new PatientDaoImpl();
+    private final OrderStatusDao orderStatusDao = new OrderStatusDaoImpl();
 //    1. Вставка нового заказа
 
 //    private static final String ADD = "INSERT INTO public.orders(status_id, patient_id, " +
@@ -391,6 +393,7 @@ public class OrderDaoImpl implements OrderDao {
 
     private Order mapSingle(ResultSet rs){
         Order order = new Order();
+
         try {
             order.setIdOrder(rs.getLong("id_order"));
 
@@ -398,8 +401,21 @@ public class OrderDaoImpl implements OrderDao {
             orderStatus.setIdStatus(rs.getLong("status_id"));
             order.setStatus(orderStatus);
 
-            Patient patient = new Patient();
-            patient.setIdPatient(rs.getLong("patient_id"));
+            long statusId = rs.getLong("status_id");
+            OrderStatus status = orderStatusDao.getById(statusId);
+            if (status == null) {
+                status = new OrderStatus();
+                status.setIdStatus(statusId);
+                status.setStatusName("неизвестно");
+            }
+            order.setStatus(status);
+
+            long patientId = rs.getLong("patient_id");
+            Patient patient = patientDao.findById(patientId);
+            if (patient == null) {
+                patient = new Patient();
+                patient.setIdPatient(patientId);
+            }
             order.setPatient(patient);
 
             long orgId = rs.getLong("organization_id");

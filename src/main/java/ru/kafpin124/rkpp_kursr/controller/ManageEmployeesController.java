@@ -1,4 +1,4 @@
-package ru.kafpin124.rkpp_kursr.contoller;
+package ru.kafpin124.rkpp_kursr.controller;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -7,14 +7,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import lombok.NoArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
-import ru.kafpin124.rkpp_kursr.dao.impl.EmployeeDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 
 import java.util.List;

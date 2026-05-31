@@ -12,10 +12,11 @@ module ru.kafpin124.rkpp_kursr {
     opens ru.kafpin124.rkpp_kursr to javafx.fxml;
     exports ru.kafpin124.rkpp_kursr;
 
-    opens ru.kafpin124.rkpp_kursr.contoller to javafx.fxml;
-    exports ru.kafpin124.rkpp_kursr.contoller;
+    opens ru.kafpin124.rkpp_kursr.controller to javafx.fxml;
+    exports ru.kafpin124.rkpp_kursr.controller;
     exports ru.kafpin124.rkpp_kursr.util;
     opens ru.kafpin124.rkpp_kursr.util to javafx.fxml;
 
-
+    opens ru.kafpin124.rkpp_kursr.model to javafx.base;
+    opens ru.kafpin124.rkpp_kursr.dto to javafx.base;
 }

@@ -6,7 +6,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <BorderPane xmlns="http://javafx.com/javafx/25"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ru.kafpin124.rkpp_kursr.contoller.OrdersListController">
+            fx:controller="ru.kafpin124.rkpp_kursr.controller.OrdersListController">
 
     <left>
         <VBox spacing="10" style="-fx-padding: 10;" prefWidth="200">

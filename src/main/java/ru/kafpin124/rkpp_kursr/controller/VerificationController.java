@@ -1,15 +1,12 @@
-package ru.kafpin124.rkpp_kursr.contoller;
+package ru.kafpin124.rkpp_kursr.controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
-import ru.kafpin124.rkpp_kursr.dao.impl.OrderDaoImpl;
-import ru.kafpin124.rkpp_kursr.dao.impl.OrderItemDaoImpl;
 import ru.kafpin124.rkpp_kursr.model.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 

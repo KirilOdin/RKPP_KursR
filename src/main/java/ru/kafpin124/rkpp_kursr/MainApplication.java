@@ -7,21 +7,21 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.kafpin124.rkpp_kursr.contoller.LoginController;
+import ru.kafpin124.rkpp_kursr.controller.LoginController;
 import ru.kafpin124.rkpp_kursr.dao.EmployeeDao;
 import ru.kafpin124.rkpp_kursr.dao.impl.EmployeeDaoImpl;
 import ru.kafpin124.rkpp_kursr.util.LocalizationService;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class MainApplication extends Application {
     private static final Logger logger = LoggerFactory.getLogger(MainApplication.class);
     @Override
     public void start(Stage stage) throws IOException {
+        LocalizationService.initFromPreferences();
 
-        ResourceBundle bundle = ResourceBundle.getBundle("text", Locale.getDefault());
+        ResourceBundle bundle = ResourceBundle.getBundle("text", LocalizationService.getCurrentLocale());
 
         EmployeeDao employeeDao = new EmployeeDaoImpl();
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);

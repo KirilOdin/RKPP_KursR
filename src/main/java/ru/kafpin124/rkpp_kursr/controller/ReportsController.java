@@ -1,7 +1,6 @@
-package ru.kafpin124.rkpp_kursr.contoller;
+package ru.kafpin124.rkpp_kursr.controller;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -9,11 +8,10 @@ import javafx.print.PrinterJob;
 import javafx.stage.FileChooser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import lombok.NoArgsConstructor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.ReportDao;
-import ru.kafpin124.rkpp_kursr.dao.impl.ReportDaoImpl;
 import ru.kafpin124.rkpp_kursr.dto.*;
 
 import java.math.BigDecimal;

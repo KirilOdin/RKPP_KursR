@@ -1,20 +1,14 @@
-package ru.kafpin124.rkpp_kursr.contoller;
+package ru.kafpin124.rkpp_kursr.controller;
 
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.StringConverter;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.OrderDao;
 import ru.kafpin124.rkpp_kursr.dao.OrderItemDao;
 import ru.kafpin124.rkpp_kursr.dao.ReferenceValueDao;
-import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 

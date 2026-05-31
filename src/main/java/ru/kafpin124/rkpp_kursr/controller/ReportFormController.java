@@ -1,8 +1,7 @@
-package ru.kafpin124.rkpp_kursr.contoller;
+package ru.kafpin124.rkpp_kursr.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
-import javafx.scene.text.Font;
 import javafx.print.PrinterJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

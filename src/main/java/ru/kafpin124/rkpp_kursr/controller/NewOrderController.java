@@ -1,15 +1,13 @@
-package ru.kafpin124.rkpp_kursr.contoller;
+package ru.kafpin124.rkpp_kursr.controller;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.kafpin124.rkpp_kursr.dao.*;
@@ -19,10 +17,10 @@ import ru.kafpin124.rkpp_kursr.model.Employee;
 import ru.kafpin124.rkpp_kursr.util.LocalizationService;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.UUID;
 
 //@NoArgsConstructor(force = true)
@@ -71,6 +69,12 @@ public class NewOrderController {
     @FXML
     void initialize() {
         logger.info("Инициализация формы создания заказа");
+        colCode.setCellValueFactory(new PropertyValueFactory<>("idTest"));
+        colName.setCellValueFactory(new PropertyValueFactory<>("testName"));
+        colBiomaterial.setCellValueFactory(new PropertyValueFactory<>("biomaterial"));
+        colTime.setCellValueFactory(new PropertyValueFactory<>("executionTimeHours"));
+        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+
         biomaterialCombo.setItems(FXCollections.observableArrayList("кровь", "моча", "мазок", "кал", "слюна"));
         collectionDatePicker.setValue(LocalDateTime.now().toLocalDate());
         logger.debug("ComboBox биоматериалов заполнен, дата забора установлена на сегодня");
@@ -136,9 +140,15 @@ public class NewOrderController {
 
     @FXML
     void onGenerateBarcode() {
-        String barcode = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 12);
-        barcodeField.setText(barcode);
-        logger.debug("Сгенерирован штрих-код: {}", barcode);;
+//        String barcode = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 12);
+//        barcodeField.setText(barcode);
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 12; i++) {
+            sb.append(random.nextInt(10));
+        }
+        barcodeField.setText(sb.toString());
+        logger.debug("Сгенерирован штрих-код: {}", sb);;
     }
 
     @FXML
