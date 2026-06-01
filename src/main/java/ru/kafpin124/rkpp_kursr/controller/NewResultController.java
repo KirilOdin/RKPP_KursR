@@ -214,4 +214,9 @@ public class NewResultController {
             logger.debug("refreshOrderList вызван, но текущий заказ не выбран");
         }
     }
+
+    public void setBarcode(String barcode) {
+        searchBarcodeField.setText(barcode);
+        onSelectOrder();
+    }
 }

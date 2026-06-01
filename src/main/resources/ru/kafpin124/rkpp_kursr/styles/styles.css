@@ -1,0 +1,9 @@
+.root {
+    -fx-font-size: 14px;
+}
+.button {
+    -fx-font-size: 1em;
+}
+.label {
+    -fx-font-size: 1em;
+}

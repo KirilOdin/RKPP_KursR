@@ -160,7 +160,6 @@ public class MainApplicationTest extends ApplicationTest {
         waitFor(5, TimeUnit.SECONDS, () -> !lookup("#testListView").tryQuery().isPresent());
 
 
-
         // Создаём заказ
         clickOn("Создать заказ");
         waitFor(5, TimeUnit.SECONDS, () -> lookup(".dialog-pane").tryQuery().isPresent());

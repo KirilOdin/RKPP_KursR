@@ -22,6 +22,13 @@ public class OrdersListController {
     @FXML private DatePicker dateFrom, dateTo;
 
     private final OrderDao orderDao;
+
+    private MainTabController mainTabController;
+
+    public void setMainTabController(MainTabController mainTabController) {
+        this.mainTabController = mainTabController;
+        logger.debug("Смена текущей вкладки");
+    }
     public OrdersListController(OrderDao orderDao) {
         this.orderDao = orderDao;
         logger.debug("OrdersListController создан");
@@ -36,6 +43,22 @@ public class OrdersListController {
 
     @FXML
     void initialize() {
+
+        ordersTable.setRowFactory(tv -> {
+            TableRow<Order> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Order order = row.getItem();
+                    String barcode = order.getSpecimens() != null && !order.getSpecimens().isEmpty()
+                            ? order.getSpecimens().get(0).getBarcode() : null;
+                    if (barcode != null && mainTabController != null) {
+                        mainTabController.switchToResultsWithBarcode(barcode);
+                    }
+                }
+            });
+            return row;
+        });
+
         logger.info("Инициализация списка заказов");
         // Настройка колонок
         TableColumn<Order, Long> idCol = (TableColumn<Order, Long>) ordersTable.getColumns().get(0);

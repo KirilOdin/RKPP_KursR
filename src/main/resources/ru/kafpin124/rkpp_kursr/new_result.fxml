@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="700.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.kafpin124.rkpp_kursr.controller.NewResultController">
+<BorderPane stylesheets="@styles/styles.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="700.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.kafpin124.rkpp_kursr.controller.NewResultController">
 
     <top>
         <Separator />

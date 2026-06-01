@@ -14,6 +14,7 @@ import ru.kafpin124.rkpp_kursr.dao.impl.*;
 import ru.kafpin124.rkpp_kursr.model.Employee;
 import ru.kafpin124.rkpp_kursr.model.Order;
 import ru.kafpin124.rkpp_kursr.util.LocalizationService;
+import ru.kafpin124.rkpp_kursr.util.ScaleManager;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -21,6 +22,11 @@ import java.util.ResourceBundle;
 public class MainTabController {
     @FXML private TabPane mainTabPane;
     @FXML private Tab ordersTab, newOrderTab, resultsTab, verificationTab, reportsTab, employeesTab, testsTab;
+
+    @FXML void onScale80()  { ScaleManager.setScale(0.8); applyCurrentScale(); }
+    @FXML void onScale100() { ScaleManager.setScale(1.0); applyCurrentScale(); }
+    @FXML void onScale120() { ScaleManager.setScale(1.2); applyCurrentScale(); }
+    @FXML void onScale150() { ScaleManager.setScale(1.5); applyCurrentScale(); }
 
     private OrdersListController ordersListController;
     private NewOrderController newOrderController;
@@ -61,6 +67,13 @@ public class MainTabController {
 //        newResultController.setCurrentUser(user);
 //    }
 
+    private void applyCurrentScale() {
+        Scene scene = mainTabPane.getScene();
+        if (scene != null) {
+            ScaleManager.applyToScene(scene);
+        }
+    }
+
     private void configureTabsByRole() {
         String role = currentUser.getRole();
         logger.info("Настройка вкладок для роли: {}", role);
@@ -90,7 +103,9 @@ public class MainTabController {
 
         Callback<Class<?>, Object> factory = clazz -> {
             if (clazz == OrdersListController.class) {
-                return new OrdersListController(orderDao);
+                OrdersListController c = new OrdersListController(orderDao);
+                c.setMainTabController(this);   // передаём ссылку
+                return c;
             } else if (clazz == NewOrderController.class) {
                 return new NewOrderController(patientDao, testDao, orderDao, specimenDao, itemDao);
             } else if (clazz == NewResultController.class) {
@@ -104,6 +119,7 @@ public class MainTabController {
             } else if (clazz == ManageTestsController.class) {
                 return new ManageTestsController(testDao, refDao);
             }
+
             return null;
         };
         // Загружаем содержимое каждой вкладки и получаем контроллеры
@@ -239,7 +255,7 @@ public class MainTabController {
         if (selectedOrder != null && selectedOrder.getStatus().getStatusName().equals("утверждён")) {
             logger.info("Печать бланка для заказа ID={}", selectedOrder.getIdOrder());
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/report_form.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/kafpin124/rkpp_kursr/report_form.fxml"), bundle);
                 Stage stage = new Stage();
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setScene(new Scene(loader.load()));
@@ -255,5 +271,19 @@ public class MainTabController {
             logger.warn("Попытка печати без выбранного утверждённого заказа");
             new Alert(Alert.AlertType.WARNING, "Выберите утверждённый заказ для печати").show();
         }
+    }
+
+    public void switchToResultsWithBarcode(String barcode) {
+        if (barcode == null || barcode.isEmpty()) {
+            logger.warn("Попытка перейти к вводу результатов с пустым штрих-кодом");
+            return;
+        }
+        // Переключаемся на вкладку "Ввод результатов"
+        mainTabPane.getSelectionModel().select(resultsTab);
+        // Передаём штрих-код в контроллер результатов
+        if (newResultController != null) {
+            newResultController.setBarcode(barcode);
+        }
+        logger.info("Переход к вводу результатов для штрих-кода: {}", barcode);
     }
 }
