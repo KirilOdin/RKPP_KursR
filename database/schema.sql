@@ -298,3 +298,66 @@ AS $$
     GROUP BY org.org_name
     ORDER BY total_revenue DESC;
 $$;
+
+
+
+CREATE OR REPLACE FUNCTION audit_trigger_func()
+RETURNS TRIGGER AS $$
+DECLARE
+    pk_column TEXT := TG_ARGV[0];  -- имя первичного ключа, передаётся при создании триггера
+    pk_value BIGINT;
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        EXECUTE format('SELECT ($1).%I', pk_column) INTO pk_value USING NEW;
+        INSERT INTO audit_log (table_name, operation, record_id, new_data, changed_by)
+        VALUES (TG_TABLE_NAME, 'INSERT', pk_value, to_jsonb(NEW), current_user);
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        EXECUTE format('SELECT ($1).%I', pk_column) INTO pk_value USING NEW;
+        INSERT INTO audit_log (table_name, operation, record_id, old_data, new_data, changed_by)
+        VALUES (TG_TABLE_NAME, 'UPDATE', pk_value, to_jsonb(OLD), to_jsonb(NEW), current_user);
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        EXECUTE format('SELECT ($1).%I', pk_column) INTO pk_value USING OLD;
+        INSERT INTO audit_log (table_name, operation, record_id, old_data, changed_by)
+        VALUES (TG_TABLE_NAME, 'DELETE', pk_value, to_jsonb(OLD), current_user);
+        RETURN OLD;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- employees (PK = id_employee)
+CREATE TRIGGER employees_audit
+AFTER INSERT OR UPDATE OR DELETE ON public.employees
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_func('id_employee');
+
+
+
+-- patients (PK = id_patient)
+CREATE TRIGGER patients_audit AFTER INSERT OR UPDATE OR DELETE ON public.patients
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_func('id_patient');
+
+-- orders (PK = id_order)
+CREATE TRIGGER orders_audit AFTER INSERT OR UPDATE OR DELETE ON public.orders
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_func('id_order');
+
+-- specimens (PK = id_specimen)
+CREATE TRIGGER specimens_audit AFTER INSERT OR UPDATE OR DELETE ON public.specimens
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_func('id_specimen');
+
+-- tests (PK = id_test)
+CREATE TRIGGER tests_audit AFTER INSERT OR UPDATE OR DELETE ON public.tests
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_func('id_test');
+
+-- order_items (PK = id_item)
+CREATE TRIGGER order_items_audit AFTER INSERT OR UPDATE OR DELETE ON public.order_items
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_func('id_item');
+
+-- reference_values (PK = id_reference)
+CREATE TRIGGER reference_values_audit AFTER INSERT OR UPDATE OR DELETE ON public.reference_values
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_func('id_reference');
+
+-- organizations (PK = id_org)
+CREATE TRIGGER organizations_audit AFTER INSERT OR UPDATE OR DELETE ON public.organizations
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_func('id_org');

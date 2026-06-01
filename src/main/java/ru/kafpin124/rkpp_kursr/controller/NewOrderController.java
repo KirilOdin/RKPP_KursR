@@ -92,6 +92,7 @@ public class NewOrderController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/kafpin124/rkpp_kursr/select_person.fxml"), LocalizationService.getBundle());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Выбор пациента");
             stage.setScene(new Scene(loader.load()));
             stage.showAndWait();
 
@@ -117,6 +118,7 @@ public class NewOrderController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/kafpin124/rkpp_kursr/select_test.fxml"), LocalizationService.getBundle());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Выбор теста");
             stage.setScene(new Scene(loader.load()));
             stage.showAndWait();
 

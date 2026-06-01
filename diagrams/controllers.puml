@@ -1,0 +1,153 @@
+@startuml
+top to bottom direction
+skinparam linetype ortho
+skinparam nodesep 10
+skinparam ranksep 10
+
+
+package "controller" {
+
+    ' Левая колонка
+    class LoginController {
+    ~ void initialize()
+    - void login()
+    - void reloadLoginWindow()
+    }
+
+    class MainTabController {
+    + void setPrimaryStage(Stage)
+    - void applyCurrentScale()
+    - void configureTabsByRole()
+    ~ void initialize()
+    - T loadTab(Tab,String,Callback<Class<?>,Object>,ResourceBundle)
+    + void setCurrentUser(Employee)
+    ~ void onLogout()
+    ~ void onEnterResults()
+    ~ void onRefresh()
+    ~ void onSetInProgress()
+    ~ void onSwitchToEmployees()
+    ~ void onSwitchToTests()
+    ~ void onPrintReport()
+    + void switchToResultsWithBarcode(String)
+    }
+
+    class OrdersListController {
+    + void setMainTabController(MainTabController)
+    ~ void initialize()
+    ~ void onSearch()
+    + void loadOrders()
+    + Order getSelectedOrder()
+    }
+
+    class NewOrderController {
+    ~ void initialize()
+    + void setCurrentUser(Employee)
+    ~ void onSelectPatient()
+    ~ void onAddTest()
+    ~ void onGenerateBarcode()
+    ~ void onCreateOrder()
+    ~ void onRemoveTest()
+    ~ void onCancel()
+    - void showAlert(String,String)
+    }
+
+    class NewResultController {
+    ~ void initialize()
+    + void setCurrentUser(Employee)
+    ~ void onSelectOrder()
+    - void loadOrderItems(Long)
+    ~ void onSaveResults()
+    - boolean checkAbnormal(OrderItem)
+    ~ void onCancel()
+    - void showAlert(String)
+    + void refreshOrderList()
+    + void setBarcode(String)
+    }
+
+    class VerificationController {
+    ~ ReferenceValueDao refDao
+    ~ void initialize()
+    + void setCurrentUser(Employee)
+    + void refreshPendingOrders()
+    ~ void onApproveOrder()
+    ~ void onRejectOrder()
+    + void bindSelection()
+    - void showAlert(String)
+    }
+
+    ' Правая колонка
+    class ManageEmployeesController {
+    ~ void initialize()
+    - void loadEmployees()
+    ~ void onAddEmployee(ActionEvent)
+    ~ void onEditEmployee(ActionEvent)
+    ~ void onDeleteEmployee(ActionEvent)
+    - Employee showEmployeeDialog(Employee)
+    - void showAlert(String)
+    }
+
+    class ManageTestsController {
+    ~ void initialize()
+    - void loadTests()
+    ~ void onAddTest(ActionEvent)
+    ~ void onEditTest(ActionEvent)
+    ~ void onDeleteTest(ActionEvent)
+    ~ void onManageReferences(ActionEvent)
+    - AnalysisTest showTestDialog(AnalysisTest)
+    - void showReferenceDialog(AnalysisTest)
+    - ReferenceValue showReferenceEditDialog(AnalysisTest,ReferenceValue)
+    - void showAlert(String)
+    }
+
+    class ReportsController {
+     ~ void initialize()
+     ~ void onGenerateReport()
+     - void showTestCountByType(LocalDate,LocalDate)
+     - void showEmployeeWorkload(LocalDate,LocalDate)
+     - void showRevenueByOrganization(LocalDate,LocalDate)
+     ~ void onPrint()
+     ~ void onExport()
+     ~ void onCancel()
+     - void showAlert(String)
+     }
+
+     class SelectTestController {
+     ~ void initialize()
+     ~ void onFilter()
+     ~ void onAddSelected()
+     ~ void onCancel()
+     + List<AnalysisTest> getSelectedTests()
+     }
+
+    class SelectPersonController {
+    ~ void initialize()
+    - void filterPatients(String)
+    + Patient getSelectedPatient()
+    }
+
+    class ReportFormController {
+    + void setOrder(Order)
+    - void generateReport()
+    ~ void onPrint()
+    ~ void onCancel()
+    }
+
+
+    ' Вертикальное выравнивание левой колонки
+    LoginController -[hidden]down- MainTabController
+    MainTabController -[hidden]down- OrdersListController
+    OrdersListController -[hidden]down- NewOrderController
+    NewOrderController -[hidden]down- NewResultController
+    NewResultController -[hidden]down- VerificationController
+
+    ' Вертикальное выравнивание правой колонки
+    ManageEmployeesController -[hidden]down- ManageTestsController
+    ManageTestsController -[hidden]down- ReportsController
+    ReportsController -[hidden]down- SelectPersonController
+    SelectPersonController -[hidden]down- SelectTestController
+    SelectTestController -[hidden]down- ReportFormController
+
+    ' Горизонтальное выравнивание колонок (соединяем первые элементы)
+    LoginController -[hidden]right- ManageEmployeesController
+}
+@enduml

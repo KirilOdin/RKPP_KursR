@@ -1,0 +1,74 @@
+@startuml
+class ru.kafpin124.rkpp_kursr.dto.OrganizationStatistic {
+- String orgName
+- BigDecimal totalRevenue
++ String getOrgName()
++ BigDecimal getTotalRevenue()
+}
+
+
+class ru.kafpin124.rkpp_kursr.dto.TestCountByType {
+- String testName
+- long count
++ String getTestName()
++ long getCount()
+}
+
+
+class ru.kafpin124.rkpp_kursr.dto.EmployeeStatistic {
+- String employeeFullName
+- long testsCount
++ String getEmployeeFullName()
++ long getTestsCount()
+}
+
+
+class ru.kafpin124.rkpp_kursr.util.LocalizationService {
+- {static} Locale currentLocale
++ {static} Logger logger
++ {static} Locale getCurrentLocale()
++ {static} ResourceBundle getBundle()
++ {static} void changeLocale(Locale)
++ {static} void initFromPreferences()
++ {static} String get(String)
+}
+
+
+class ru.kafpin124.rkpp_kursr.util.ScaleManager {
+- {static} String SCALE_PREF_KEY
+- {static} double DEFAULT_SCALE
+- {static} double BASE_FONT_SIZE
+- {static} double currentScale
++ {static} double getScale()
++ {static} void setScale(double)
++ {static} void applyToScene(Scene)
+}
+
+
+class ru.kafpin124.rkpp_kursr.util.SqlStatements {
++ {static} Properties props
++ {static} Logger logger
++ {static} String get(String)
+}
+
+
+class ru.kafpin124.rkpp_kursr.util.DBHelper {
+- {static} String dbUrl
+- {static} String appUser
+- {static} String appPassword
+- {static} Connection connection
+- {static} String currentDbUser
+- {static} String currentDbPassword
++ {static} Logger logger
++ {static} void initConnection(String,String)
++ {static} Connection getConnection()
++ {static} void closeConnection()
++ {static} String getDbUrl()
++ {static} String getAppUser()
++ {static} String getAppPassword()
+}
+
+
+@enduml
+
+@enduml

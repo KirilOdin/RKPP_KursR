@@ -1,0 +1,104 @@
+@startuml
+class ru.kafpin124.rkpp_kursr.model.OrderItem {
+- Long idItem
+- Order order
+- AnalysisTest test
+- Specimen specimen
+- String status
+- BigDecimal resultValue
+- String resultText
+- Boolean isAbnormal
+- Employee enteredBy
+- LocalDateTime entryDatetime
++ String getResultAsString()
+}
+
+
+class ru.kafpin124.rkpp_kursr.model.ReferenceValue {
+- Long idReference
+- Character genderApplicable
+- Integer ageMin
+- Integer ageMax
+- BigDecimal refValueMin
+- BigDecimal refValueMax
+- String refText
+- AnalysisTest analysisTest
++ AnalysisTest getTest()
++ void setTest(AnalysisTest)
+}
+
+
+class ru.kafpin124.rkpp_kursr.model.AnalysisTest {
+- Long idTest
+- String testName
+- String biomaterial
+- Integer executionTimeHours
+- BigDecimal price
+- String unit
+- List<ReferenceValue> referenceValues
+- List<OrderItem> orderItems
+}
+
+class ru.kafpin124.rkpp_kursr.model.Order {
+- Long idOrder
+- OrderStatus status
+- Patient patient
+- Organization organization
+- Employee registeredBy
+- Employee acceptedBy
+- Employee verifiedBy
+- LocalDateTime registrationDatetime
+- LocalDateTime acceptanceDatetime
+- LocalDateTime verificationDatetime
+- List<OrderItem> orderItems
+- List<Specimen> specimens
+}
+
+class ru.kafpin124.rkpp_kursr.model.Organization {
+- Long idOrg
+- String orgName
+- String contractNumber
+- String contactLastName
+- String contactFirstName
+- String contactMiddleName
+- String contactPersonPhone
+}
+
+class ru.kafpin124.rkpp_kursr.model.Employee {
+- Long idEmployee
+- String role
+- String position
+- String lastName
+- String firstName
+- String middleName
+- String login
+- String passwordHash
+}
+
+class ru.kafpin124.rkpp_kursr.model.Specimen {
+- Long idSpecimen
+- String specimenType
+- String containerType
+- LocalDateTime collectionDatetime
+- String barcode
+- Order order
+}
+
+class ru.kafpin124.rkpp_kursr.model.OrderStatus {
+- Long idStatus
+- String statusName
+}
+
+class ru.kafpin124.rkpp_kursr.model.Patient {
+- Long idPatient
+- String policyNumber
+- String lastName
+- String firstName
+- String middleName
+- Character gender
+- LocalDate birthDate
+- String phone
+- List<Order> orders
+}
+
+@enduml

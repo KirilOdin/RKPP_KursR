@@ -1,0 +1,304 @@
+@startuml
+top to bottom direction
+skinparam linetype ortho
+skinparam nodesep 10
+skinparam ranksep 10
+
+package "dao" {
+    ' Левая колонка
+    interface OrderDao {
+    ~ void add(Order)
+    ~ Order findById(Long)
+    ~ List<Order> getAll()
+    ~ void update(Order)
+    ~ void delete(Order)
+    ~ List<Order> findByPatientId(Long)
+    ~ List<Order> findByStatusId(Long)
+    ~ List<Order> findByDateRange(LocalDateTime,LocalDateTime)
+    ~ List<Order> findByRegisteredBy(Long)
+    ~ Order findBySpecimenBarcode(String)
+    ~ void updateStatus(Long,Long)
+    }
+
+
+    interface OrderItemDao {
+    ~ void add(OrderItem)
+    ~ OrderItem findById(Long)
+    ~ List<OrderItem> getAll()
+    ~ void update(OrderItem)
+    ~ void delete(OrderItem)
+    ~ List<OrderItem> findByOrderId(Long)
+    ~ List<OrderItem> findBySpecimenId(Long)
+    ~ List<OrderItem> findByEnteredBy(Long)
+    ~ void updateResult(Long,BigDecimal,String,boolean,Long)
+    ~ void updateStatus(Long,String)
+    }
+
+
+    interface EmployeeDao {
+        ~ void add(Employee,String)
+        ~ Employee findById(Long)
+        ~ List<Employee> getAll()
+        ~ void update(Employee)
+        ~ void delete(Employee)
+        ~ void deleteById(Long)
+        ~ Employee findByLogin(String)
+        ~ List<Employee> findByRole(String)
+        ~ List<Employee> searchByFullName(String)
+    }
+
+
+    interface PatientDao {
+        ~ void add(Patient)
+        ~ Patient findById(Long)
+        ~ List<Patient> getAll()
+        ~ void update(Patient)
+        ~ void delete(Patient)
+        ~ Patient findByPolicyNumber(String)
+        ~ List<Patient> searchByFullName(String)
+    }
+
+    interface AnalysisTestDao {
+        ~ void add(AnalysisTest)
+        ~ AnalysisTest findById(Long)
+        ~ List<AnalysisTest> getAll()
+        ~ void update(AnalysisTest)
+        ~ void delete(AnalysisTest)
+        ~ void deleteById(Long)
+        ~ List<AnalysisTest> findByBiomaterial(String)
+        ~ List<AnalysisTest> searchByName(String)
+    }
+
+    ' Правая колонка
+    interface ReferenceValueDao {
+    ~ void add(ReferenceValue)
+    ~ ReferenceValue getById(Long)
+    ~ List<ReferenceValue> getAll()
+    ~ void update(ReferenceValue)
+    ~ void delete(ReferenceValue)
+    ~ List<ReferenceValue> findByTestId(Long)
+    ~ ReferenceValue findByTestAndGenderAndAge(Long,char,int)
+    }
+    interface SpecimenDao {
+        ~ void add(Specimen)
+        ~ Specimen getById(Long)
+        ~ List<Specimen> getAll()
+        ~ void update(Specimen)
+        ~ void delete(Specimen)
+        ~ Specimen findByBarcode(String)
+        ~ List<Specimen> findByOrderId(Long)
+    }
+    interface OrganizationDao {
+        ~ void add(Organization)
+        ~ Organization getById(Long)
+        ~ List<Organization> getAll()
+        ~ void update(Organization)
+        ~ void delete(Organization)
+        ~ List<Organization> searchByName(String)
+    }
+    interface OrderStatusDao {
+        ~ void add(OrderStatus)
+        ~ OrderStatus getById(Long)
+        ~ List<OrderStatus> getAll()
+        ~ void update(OrderStatus)
+        ~ void delete(OrderStatus)
+    }
+    interface ReportDao {
+    ~ List<TestCountByType> getTestCountByType(LocalDate,LocalDate)
+    ~ List<EmployeeStatistic> getWorkloadByEmployee(LocalDate,LocalDate)
+    ~ List<OrganizationStatistic> getRevenueByOrganization(LocalDate,LocalDate)
+    }
+
+
+
+
+
+    ' Вертикаль левой колонки
+    OrderDao -[hidden]down- OrderItemDao
+    OrderItemDao -[hidden]down- EmployeeDao
+    EmployeeDao -[hidden]down- PatientDao
+    PatientDao -[hidden]down- AnalysisTestDao
+
+    ' Вертикаль правой колонки
+    ReferenceValueDao -[hidden]down- SpecimenDao
+    SpecimenDao -[hidden]down- OrganizationDao
+    OrganizationDao -[hidden]down- OrderStatusDao
+    OrderStatusDao -[hidden]down- ReportDao
+
+    ' Горизонтальная связь между колонками (выравнивание)
+    OrderDao -[hidden]right- ReferenceValueDao
+
+}
+
+
+package "impl" {
+
+    ' Левая колонка
+    class OrderDaoImpl {
+        + void add(Order)
+        + Order findById(Long)
+        + List<Order> getAll()
+        + void update(Order)
+        + void delete(Order)
+        + List<Order> findByPatientId(Long)
+        + List<Order> findByStatusId(Long)
+        + List<Order> findByDateRange(LocalDateTime,LocalDateTime)
+        + List<Order> findByRegisteredBy(Long)
+        + Order findBySpecimenBarcode(String)
+        + void updateStatus(Long,Long)
+        # List<Order> mapper(ResultSet)
+        - Order mapSingle(ResultSet)
+    }
+
+    class OrderItemDaoImpl {
+        + void add(OrderItem)
+        + OrderItem findById(Long)
+        + List<OrderItem> getAll()
+        + void update(OrderItem)
+        + void delete(OrderItem)
+        + List<OrderItem> findByOrderId(Long)
+        + List<OrderItem> findBySpecimenId(Long)
+        + List<OrderItem> findByEnteredBy(Long)
+        + void updateResult(Long,BigDecimal,String,boolean,Long)
+        + void updateStatus(Long,String)
+        - OrderItem mapSingle(ResultSet)
+        - List<OrderItem> mapper(ResultSet)
+    }
+
+
+    class EmployeeDaoImpl {
+        + void add(Employee,String)
+        + Employee findById(Long)
+        + List<Employee> getAll()
+        + void update(Employee)
+        + void delete(Employee)
+        + void deleteById(Long)
+        + Employee findByLogin(String)
+        + List<Employee> findByRole(String)
+        + List<Employee> searchByFullName(String)
+        # List<Employee> mapper(ResultSet)
+        - Employee mapSingle(ResultSet)
+    }
+
+    class PatientDaoImpl {
+        + void add(Patient)
+        + Patient findById(Long)
+        + List<Patient> getAll()
+        + void update(Patient)
+        + void delete(Patient)
+        + Patient findByPolicyNumber(String)
+        + List<Patient> searchByFullName(String)
+        - Patient mapSingle(ResultSet)
+        - List<Patient> mapper(ResultSet)
+    }
+
+    class AnalysisTestDaoImpl {
+        + void add(AnalysisTest)
+        + AnalysisTest findById(Long)
+        + List<AnalysisTest> getAll()
+        + void update(AnalysisTest)
+        + void delete(AnalysisTest)
+        + void deleteById(Long)
+        + List<AnalysisTest> findByBiomaterial(String)
+        + List<AnalysisTest> searchByName(String)
+        # List<AnalysisTest> mapper(ResultSet)
+        - AnalysisTest mapSingle(ResultSet)
+    }
+
+
+
+
+    ' Правая колонка
+    class ReferenceValueDaoImpl {
+        + void add(ReferenceValue)
+        + ReferenceValue getById(Long)
+        + List<ReferenceValue> getAll()
+        + void update(ReferenceValue)
+        + void delete(ReferenceValue)
+        + List<ReferenceValue> findByTestId(Long)
+        + ReferenceValue findByTestAndGenderAndAge(Long,char,int)
+        - ReferenceValue mapSingle(ResultSet)
+        - List<ReferenceValue> mapper(ResultSet)
+    }
+
+    class SpecimenDaoImpl {
+    + void add(Specimen)
+    + Specimen getById(Long)
+    + List<Specimen> getAll()
+    + void update(Specimen)
+    + void delete(Specimen)
+    + Specimen findByBarcode(String)
+    + List<Specimen> findByOrderId(Long)
+    - Specimen mapSingle(ResultSet)
+    - List<Specimen> mapper(ResultSet)
+    }
+
+    class OrganizationDaoImpl {
+    + void add(Organization)
+    + Organization getById(Long)
+    + List<Organization> getAll()
+    + void update(Organization)
+    + void delete(Organization)
+    + List<Organization> searchByName(String)
+    - Organization mapSingle(ResultSet)
+    - List<Organization> mapper(ResultSet)
+    }
+
+    class OrderStatusDaoImpl {
+    + void add(OrderStatus)
+    + OrderStatus getById(Long)
+    + List<OrderStatus> getAll()
+    + void update(OrderStatus)
+    + void delete(OrderStatus)
+    - OrderStatus mapSingle(ResultSet)
+    - List<OrderStatus> mapper(ResultSet)
+    }
+
+    class ReportDaoImpl {
+    + List<TestCountByType> getTestCountByType(LocalDate,LocalDate)
+    + List<EmployeeStatistic> getWorkloadByEmployee(LocalDate,LocalDate)
+    + List<OrganizationStatistic> getRevenueByOrganization(LocalDate,LocalDate)
+    }
+
+
+
+
+
+
+    ' Вертикаль левой колонки
+    OrderDaoImpl -[hidden]down- OrderItemDaoImpl
+    OrderItemDaoImpl -[hidden]down- EmployeeDaoImpl
+    EmployeeDaoImpl -[hidden]down- PatientDaoImpl
+    PatientDaoImpl -[hidden]down- AnalysisTestDaoImpl
+
+    ' Вертикаль правой колонки
+    ReferenceValueDaoImpl -[hidden]down- SpecimenDaoImpl
+    SpecimenDaoImpl -[hidden]down- OrganizationDaoImpl
+    OrganizationDaoImpl -[hidden]down- OrderStatusDaoImpl
+    OrderStatusDaoImpl -[hidden]down- ReportDaoImpl
+
+    ' Горизонтальная связь между колонками
+    OrderDaoImpl -[hidden]right- ReferenceValueDaoImpl
+
+
+
+
+
+
+
+}
+
+
+' Связи реализации
+OrderDao <|.. OrderDaoImpl
+OrderItemDao <|.. OrderItemDaoImpl
+EmployeeDao <|.. EmployeeDaoImpl
+PatientDao <|.. PatientDaoImpl
+AnalysisTestDao <|.. AnalysisTestDaoImpl
+ReferenceValueDao <|.. ReferenceValueDaoImpl
+SpecimenDao <|.. SpecimenDaoImpl
+OrganizationDao <|.. OrganizationDaoImpl
+OrderStatusDao <|.. OrderStatusDaoImpl
+ReportDao <|.. ReportDaoImpl
+
+@enduml
