@@ -1,4 +1,10 @@
 @startuml
+top to bottom direction
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 30
+skinparam defaultFontSize 20
+skinparam classAttributeIconSize 0
 class ru.kafpin124.rkpp_kursr.dto.OrganizationStatistic {
 - String orgName
 - BigDecimal totalRevenue
@@ -68,7 +74,11 @@ class ru.kafpin124.rkpp_kursr.util.DBHelper {
 + {static} String getAppPassword()
 }
 
+    class ru.kafpin124.rkpp_kursr.MainApplication
+   class ru.kafpin124.rkpp_kursr.Launcher
 
-@enduml
 
+MainApplication -[hidden]right- Launcher
+
+javafx.application.Application <|--up MainApplication
 @enduml

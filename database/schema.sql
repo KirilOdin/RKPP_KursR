@@ -301,6 +301,28 @@ $$;
 
 
 
+
+
+
+CREATE SEQUENCE IF NOT EXISTS audit_log_seq;
+
+CREATE TABLE audit_log (
+    id BIGINT PRIMARY KEY DEFAULT nextval('audit_log_seq'),
+    table_name TEXT NOT NULL,
+    operation TEXT NOT NULL CHECK (operation IN ('INSERT', 'UPDATE', 'DELETE')),
+    record_id BIGINT NOT NULL,          -- идентификатор изменённой строки
+    old_data JSONB,                     -- старые данные (для UPDATE/DELETE)
+    new_data JSONB,                     -- новые данные (для INSERT/UPDATE)
+    changed_by TEXT,                    -- пользователь БД, выполнивший операцию
+    changed_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER SEQUENCE audit_log_seq OWNED BY audit_log.id;
+
+
+
+
+
 CREATE OR REPLACE FUNCTION audit_trigger_func()
 RETURNS TRIGGER AS $$
 DECLARE

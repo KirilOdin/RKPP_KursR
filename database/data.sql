@@ -104,3 +104,38 @@ VALUES (5, 'кровь', 'пробирка вакуумная', '2026-05-24 10:5
 
 INSERT INTO public.order_items (order_id, test_id, specimen_id, status)
 VALUES (5, 3, 5, 'назначен');
+
+
+
+
+
+-- Роли с правом входа
+CREATE ROLE adminchik WITH LOGIN PASSWORD 'admin';
+CREATE ROLE maria     WITH LOGIN PASSWORD 'lab';
+CREATE ROLE alex      WITH LOGIN PASSWORD 'lab';
+CREATE ROLE elena     WITH LOGIN PASSWORD 'doctor';
+
+-- Групповые роли
+CREATE ROLE lab_assistant_role;
+CREATE ROLE lab_doctor_role;
+CREATE ROLE admin_role;
+
+-- Включаем пользователей в группы
+GRANT lab_assistant_role TO maria, alex;
+GRANT lab_doctor_role    TO elena;
+GRANT admin_role         TO adminchik;
+
+-- Даём права группам
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO lab_assistant_role, lab_doctor_role, admin_role;
+GRANT EXECUTE ON FUNCTION get_test_count_by_type, get_workload_by_employee, get_revenue_by_organization TO lab_assistant_role, lab_doctor_role, admin_role;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO lab_assistant_role, lab_doctor_role, admin_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO lab_assistant_role, lab_doctor_role, admin_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE ON SEQUENCES TO lab_assistant_role, lab_doctor_role, admin_role;
+
+
+GRANT SELECT ON TABLE employees TO admin_role, lab_assistant_role, lab_doctor_role;
+GRANT SELECT ON TABLE orders TO admin_role, lab_assistant_role, lab_doctor_role;
+GRANT SELECT ON TABLE order_statuses TO admin_role, lab_assistant_role, lab_doctor_role;
+GRANT SELECT ON TABLE patients TO admin_role, lab_assistant_role, lab_doctor_role;
+GRANT SELECT ON TABLE specimens TO admin_role, lab_assistant_role, lab_doctor_role;
+GRANT SELECT ON TABLE tests TO admin_role, lab_assistant_role, lab_doctor_role;

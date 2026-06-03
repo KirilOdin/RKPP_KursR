@@ -128,8 +128,6 @@ package "dao" {
     ' Горизонтальная связь между колонками (выравнивание)
     OrderDao -[hidden]right- ReferenceValueDao
 
-}
-
 
 package "impl" {
 
@@ -259,6 +257,10 @@ package "impl" {
     + List<EmployeeStatistic> getWorkloadByEmployee(LocalDate,LocalDate)
     + List<OrganizationStatistic> getRevenueByOrganization(LocalDate,LocalDate)
     }
+
+}
+
+
 
 
 

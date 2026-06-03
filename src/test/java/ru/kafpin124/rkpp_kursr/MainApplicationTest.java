@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.testfx.util.WaitForAsyncUtils.waitFor;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MainApplicationTest extends ApplicationTest {
+public class    MainApplicationTest extends ApplicationTest {
 
     // Тестовые данные для входа
     private static final String ADMIN_LOGIN = "adminchik";
